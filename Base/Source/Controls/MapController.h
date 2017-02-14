@@ -21,6 +21,12 @@ private:
 	FPSCamera *camera;
 	void PanTo(float speed,Vector2 pos, double dt);
 	void GetUnitPath();
+
+	void MoveUnit(float speed, double dt);
+	vector<Vector2> unitPath;
+
+	bool b_canPlace;
+	bool b_movingUnit;
 };
 
 #endif

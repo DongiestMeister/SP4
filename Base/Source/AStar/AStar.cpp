@@ -18,11 +18,11 @@ AStar::AStar(int sx, int sy, int gx, int gy, TileMap *map)
 	start = new Node;									// Create Node Objects & Allocate Memory
 	goal = new Node;
 	start->x = sx; start->y = sy; goal->x = gx; goal->y = gy;		// Set Start and Goal x-y Values
-	cout << "Initialised start...";
+	//cout << "Initialised start...";
 	start->h = Compute_h(start);
 	start->f = start->g + start->h;
-	cout << "Initialised goal....";
-	cout << endl;
+	//cout << "Initialised goal....";
+	//cout << endl;
 	this->grid = map->theScreenMap;
 	this->ROWS = map->numTilesHeight;
 	this->COLS = map->numTilesWidth;
@@ -120,7 +120,7 @@ Node* AStar::getFromCloseList(Node* succ)
 bool AStar::Search()
 {
 	Node *temp;
-	cout << "Searching....\n\n";
+	//cout << "Searching....\n\n";
 	AddOpenList(start);									// Add Start Node To Open List
 	while ((int)openList.size() != 0)					// Checking If Open List Is Empty
 	{
@@ -223,14 +223,14 @@ void AStar::AddOpenList(Node *n) {
 	openList.push_back(n);	// Add To Open List
 	//cout << "Add to open list...\nOpen list content :\n";
 	ShowList(openList);		// Show List Content
-	cout << endl;
+	//cout << endl;
 }
 // Add To Close List, Show Its Content
 void AStar::AddCloseList(Node *n){
 	closeList.push_back(n);	// Add To Close List
 	//cout << "Add to close list...\nClose list content :\n";
 	ShowList(closeList);	// Show List Content
-	cout << endl;
+	//cout << endl;
 }
 
 // Remove Node From Open List After It Is Examined For Minimum 'f' Value

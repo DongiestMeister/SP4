@@ -6,6 +6,9 @@
 struct Vector2
 {
 	float x, y;
+
+	bool IsEqual(float a, float b) const;
+
 	Vector2( float a = 0, float b = 0 ); //default constructor
 	Vector2( const Vector2 &rhs ); //copy constructor
 	void Set( float a, float b ); //Set all data
@@ -16,6 +19,7 @@ struct Vector2
 	float Length( void ) const; //Get magnitude
 	float Dot( const Vector2& rhs ) const; //Dot product
 	Vector2 Normalized( void ); //Return a copy of this vector, normalized
+	bool IsZero(void);
 
 	friend std::ostream& operator<<(std::ostream& os, Vector2& rhs); //print to ostream
 };

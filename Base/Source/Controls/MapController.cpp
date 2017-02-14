@@ -5,6 +5,7 @@ MapController::MapController()
 {
 	selectedTile.Set(0, 0);
 	selectedUnit = nullptr;
+	b_movingUnit = false;
 }
 
 MapController::~MapController()
@@ -22,11 +23,25 @@ void MapController::Update(double dt)
 {
 	if (KeyboardController::GetInstance()->IsKeyPressed('Z'))
 	{
-		if (map->GetCharacter(selectedTile.x,selectedTile.y))
+		if (!selectedUnit)
 		{
-			std::cout << "Unit found!" << std::endl;
-			selectedUnit = map->GetCharacter(selectedTile.x, selectedTile.y);
+			if (map->GetCharacter(selectedTile.x, selectedTile.y))
+			{
+				std::cout << "Unit found!" << std::endl;
+				selectedUnit = map->GetCharacter(selectedTile.x, selectedTile.y);
+			}
 		}
+		else if (b_canPlace)
+		{
+			unitPath = map->movePath;
+			b_movingUnit = true;
+			b_canPlace = false;
+		}
+	}
+
+	if (b_movingUnit)
+	{
+		MoveUnit(5.f, dt);
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_UP))
@@ -92,24 +107,63 @@ void MapController::GetUnitPath()
 {
 	if (selectedUnit)
 	{
-		if ((selectedTile.x != selectedUnit->pos.x || selectedTile.y != selectedUnit->pos.y) && map->theScreenMap[selectedTile.y][selectedTile.x] == 0)
+		if ((selectedTile.x != (int)selectedUnit->pos.x || selectedTile.y != (int)selectedUnit->pos.y) && map->theScreenMap[selectedTile.y][selectedTile.x] == 0)
 		{
-			AStar search(selectedUnit->pos.x, selectedUnit->pos.y, selectedTile.x, selectedTile.y, map);
-			if (search.Search())
+			AStar search((int)selectedUnit->pos.x, (int)selectedUnit->pos.y, selectedTile.x, selectedTile.y, map);
+			if ((selectedUnit->pos - Vector2(selectedTile.x, selectedTile.y)).Length() > selectedUnit->character->i_movementCost)
 			{
-				if (search.bestPath.size() < selectedUnit->character->i_movementCost + 1)
+				b_canPlace = false;
+			}
+			else if (search.Search())
+			{
+				if (search.bestPath.size() <= (selectedUnit->character->i_movementCost + 1))
 				{
-					selectedUnit->character->i_stepsTaken = search.bestPath.size();
+					selectedUnit->character->i_stepsTaken = search.bestPath.size() - 1;
 					map->movePath = search.bestPath;
-				}		
+					b_canPlace = true;
+				}
+				else
+				{
+					b_canPlace = false;
+				}
 			}
 			else
 			{
 				map->movePath.clear();
+				b_canPlace = false;
 			}
 		}
 		else
 		{
+			map->movePath.clear();
+			b_canPlace = false;
+		}
+	}
+}
+
+void MapController::MoveUnit(float speed,double dt)
+{
+	if (selectedUnit)
+	{
+		if (unitPath.size() > 0)
+		{
+			if (!(unitPath[0] - selectedUnit->pos).IsZero())
+			{
+				Vector2 vel = (unitPath[0] - selectedUnit->pos).Normalized() * speed * dt;
+				selectedUnit->pos = selectedUnit->pos + vel;
+				selectedTile = selectedUnit->pos;
+			}
+			if ((unitPath[0] - selectedUnit->pos).Length() < 0.1f)
+			{
+				selectedUnit->pos = unitPath[0];
+				selectedTile = selectedUnit->pos;
+				unitPath.erase(unitPath.begin());
+			}
+		}
+		else
+		{
+			selectedUnit = nullptr;
+			b_movingUnit = false;
 			map->movePath.clear();
 		}
 	}

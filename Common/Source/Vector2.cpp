@@ -3,6 +3,11 @@
 
 // NOTE : TODO
 
+bool Vector2::IsEqual(float a, float b) const
+{
+	return a - b <= Math::EPSILON && b - a <= Math::EPSILON;
+}
+
 Vector2::Vector2( float a, float b )
 {
 	x = a;
@@ -63,4 +68,9 @@ std::ostream& operator<< (std::ostream& os, Vector2& rhs)
 {
 	os << "[" << rhs.x << "," << rhs.y << "]";
 	return os;
+}
+
+bool Vector2::IsZero(void)
+{
+	return IsEqual(x, 0.f) && IsEqual(y, 0.f);
 }
