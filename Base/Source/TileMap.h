@@ -20,9 +20,13 @@ public:
 	int screenHeight, screenWidth, numTilesHeight, numTilesWidth;
 	float tileSizeX, tileSizeY;
 	vector<vector<int> > theScreenMap;
+	vector<Vector3> characters;
 
 	bool LoadMap(const string mapName);
 	void Render();
+
+	void AddCharacter(int x, int y);
+	Vector3 GetCharacter(int x, int y);
 };
 
 

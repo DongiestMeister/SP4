@@ -14,6 +14,7 @@
 #include "Lua\LuaInterface.h"
 #include "TileMap.h"
 #include "AStar\AStar.h"
+#include "Controls\MapController.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -40,6 +41,8 @@ private:
 	FPSCamera camera;
 	//TextEntity* textObj[6];
 	Light* lights[2];
+
+	MapController controller;
 
 
 	ISound* BGM;

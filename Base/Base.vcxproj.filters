@@ -40,8 +40,8 @@
     <Filter Include="AStar">
       <UniqueIdentifier>{5bd98696-8c24-41ec-9f36-c925a13dffae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Character">
-      <UniqueIdentifier>{fdbc6d77-aa5d-40b7-923c-cb1ffe299484}</UniqueIdentifier>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{dbe5bd06-eaf6-4ff2-bcc2-c5b64d8b9783}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -129,14 +129,8 @@
     <ClCompile Include="Source\EmptyScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Character\Weapon.cpp">
-      <Filter>Character</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Character\MeleeCharacter.cpp">
-      <Filter>Character</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Character\Armor.cpp">
-      <Filter>Character</Filter>
+    <ClCompile Include="Source\Controls\MapController.cpp">
+      <Filter>Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,17 +233,8 @@
     <ClInclude Include="Source\EmptyScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Character\Character.h">
-      <Filter>Character</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Character\Weapon.h">
-      <Filter>Character</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Character\MeleeCharacter.h">
-      <Filter>Character</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Character\Armor.h">
-      <Filter>Character</Filter>
+    <ClInclude Include="Source\Controls\MapController.h">
+      <Filter>Controls</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

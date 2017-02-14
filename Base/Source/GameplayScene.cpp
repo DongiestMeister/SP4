@@ -130,6 +130,12 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateRay("laser", 10.0f);
 	MeshBuilder::GetInstance()->GenerateQuad("GRIDMESH", Color(1, 1, 1), 1.f);
 
+	MeshBuilder::GetInstance()->GenerateQuad("Selected", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Selected")->textureID = LoadTGA("Image//selected.tga");
+
+	MeshBuilder::GetInstance()->GenerateQuad("Knight", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Knight")->textureID = LoadTGA("Image//knight.tga");
+
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
@@ -158,6 +164,8 @@ void GameplayScene::Init()
 	//textObj[5]->SetPosition(Vector3(-halfWindowWidth * 0.9 - fontSize * 2, -halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
 	//textObj[5]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
 
+	controller.Init(&gameMap, &camera);
+
 	AStar search(0, 0, 9, 9, &gameMap);
 	if (search.Search())
 	{
@@ -167,6 +175,8 @@ void GameplayScene::Init()
 	{
 		cout << "Search failed" << endl;
 	}
+
+	gameMap.AddCharacter(1, 1);
 }
 
 void GameplayScene::Update(double dt)
@@ -241,9 +251,7 @@ void GameplayScene::Update(double dt)
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
 
-	//Music::GetInstance()->SetListener(playerInfo->GetPos(), playerInfo->GetPos() - playerInfo->GetTarget());
-
-	//camera.Update(dt); // Can put the camera into an entity rather than here (Then we don't have to write this)
+	controller.Update(dt);
 
 	GraphicsManager::GetInstance()->UpdateLights(dt);
 
@@ -285,8 +293,7 @@ void GameplayScene::Update(double dt)
 void GameplayScene::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 
 	// Setup 3D pipeline then render 3D
 	//GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -296,6 +303,13 @@ void GameplayScene::Render()
 	GraphicsManager::GetInstance()->UpdateLightUniforms();
 
 	gameMap.Render();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(controller.selectedTile.x * gameMap.tileSizeX + gameMap.tileSizeX / 2, -0.2, controller.selectedTile.y * gameMap.tileSizeY + gameMap.tileSizeY / 2);
+	modelStack.Rotate(90, 1, 0, 0);
+	modelStack.Scale(gameMap.tileSizeX, gameMap.tileSizeY , 1);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Selected"));
+	modelStack.PopMatrix();
 
 	EntityManager::GetInstance()->Render();
 

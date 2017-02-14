@@ -115,6 +115,10 @@ void main(){
 				// Specular : reflective highlight, like a mirror
 				vec4(material.kSpecular, 1) * vec4(lights[i].color, 1) * lights[i].power * pow(cosAlpha, material.kShininess) * attenuationFactor * spotlightEffect;
 		}
+		
+			float alpha = texture2D( colorTexture, texCoord ).a;
+			if (alpha < 0.3)
+				discard;
 	}
 	else
 	{
@@ -127,5 +131,9 @@ void main(){
 		}
 		else
 			color = vec4( fragmentColor, 1 );
+			
+		float alpha = texture2D( colorTexture, texCoord ).a;
+		if (alpha < 0.3)
+			discard;
 	}
 }

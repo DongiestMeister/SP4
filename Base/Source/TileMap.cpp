@@ -85,4 +85,35 @@ void TileMap::Render()
 			modelStack.PopMatrix();
 		}
 	}
+
+	for (vector<Vector3>::iterator it = characters.begin(); it != characters.end(); ++it)
+	{
+		Vector3 character = (*it);
+		
+		modelStack.PushMatrix();
+		modelStack.Translate(character.x * tileSizeX + tileSizeX / 2, -0.2, character.z * tileSizeY + tileSizeY / 2);
+		modelStack.Rotate(90, 1, 0, 0);
+		modelStack.Scale(tileSizeX, tileSizeY, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
+		modelStack.PopMatrix();
+	}
+}
+
+void TileMap::AddCharacter(int x, int y)
+{
+	characters.push_back(Vector3(x, 0, y));
+}
+
+Vector3 TileMap::GetCharacter(int x, int y)
+{
+	for (vector<Vector3>::iterator it = characters.begin(); it != characters.end(); ++it)
+	{
+		Vector3 character = *it;
+		if ((int)character.x == x && (int)character.z == y)
+		{
+			return character;
+		}
+	}
+
+	return Vector3(-1, -1, -1);
 }

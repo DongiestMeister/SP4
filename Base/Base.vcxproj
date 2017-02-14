@@ -13,9 +13,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\AStar\AStar.cpp" />
-    <ClCompile Include="Source\Character\Armor.cpp" />
-    <ClCompile Include="Source\Character\MeleeCharacter.cpp" />
-    <ClCompile Include="Source\Character\Weapon.cpp" />
+    <ClCompile Include="Source\Controls\MapController.cpp" />
     <ClCompile Include="Source\EmptyScene.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
     <ClCompile Include="Source\FPSCamera.cpp" />
@@ -46,10 +44,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\AStar\AStar.h" />
-    <ClInclude Include="Source\Character\Armor.h" />
-    <ClInclude Include="Source\Character\Character.h" />
-    <ClInclude Include="Source\Character\MeleeCharacter.h" />
-    <ClInclude Include="Source\Character\Weapon.h" />
+    <ClInclude Include="Source\Controls\MapController.h" />
     <ClInclude Include="Source\EmptyScene.h" />
     <ClInclude Include="Source\EntityManager.h" />
     <ClInclude Include="Source\FPSCamera.h" />
