@@ -163,9 +163,9 @@ void BattleScene::Init()
 	enemy_posx = 120;
 	b_isClashed = true;
 	
-	/*player = new MeleeCharacter();
+	player = new MeleeCharacter();
 	Weapon* wtf = new Weapon(100, 50, false);
-	player->equipWeapon(wtf);*/
+	player->equipWeapon(wtf);
 }
 
 void BattleScene::Update(double dt)
@@ -235,7 +235,7 @@ void BattleScene::Update(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
 	{
 		//cout << "Left Mouse Button was released!" << endl;
-//		player->attack();
+		player->attack();
 	}
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
 	{
@@ -405,6 +405,7 @@ void BattleScene::RenderProps()
 	modelStack.PopMatrix();
 
 
+
 	modelStack.PushMatrix();
 	modelStack.Translate(100, 0, 100);
 	modelStack.Scale(3, 3, 3);
@@ -434,6 +435,16 @@ void BattleScene::RenderProps()
 		modelStack.PopMatrix();
 	}
 
+
+
+	// Setup 2D pipeline then render 2D
+	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
+	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
+
+	GraphicsManager::GetInstance()->SetOrthographicProjection(-200, 200, -200, 200, -2000, 2000);
+	GraphicsManager::GetInstance()->DetachCamera();
+
+	EntityManager::GetInstance()->RenderUI();
 
 }
 
