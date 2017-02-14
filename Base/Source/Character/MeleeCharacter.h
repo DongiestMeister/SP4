@@ -8,8 +8,7 @@ class MeleeCharacter : public Character
 public:
 	MeleeCharacter();
 	virtual ~MeleeCharacter();
-	virtual void takeDamage(int dmg);
-	virtual bool attack();
+	virtual bool attack(Character* opponent);
 	void equipWeapon(Weapon* newWeapon);
 	void equipArmor(Armor* newArmor);
 	void calculateStats();

@@ -209,7 +209,6 @@ void EmptyScene::Update(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
 	{
 		//cout << "Left Mouse Button was released!" << endl;
-		player->attack();
 	}
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
 	{

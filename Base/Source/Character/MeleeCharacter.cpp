@@ -9,7 +9,7 @@ MeleeCharacter::MeleeCharacter()
 	i_movementCost = 3; // All melee characters have a base movement cost of 3
 
 	// Damage value of 0, so equivalent to not having a weapon at all
-	weapon = new Weapon(0,100, true);
+	weapon = new Weapon(0, 100, true, "nothing");
 
 	// All stats boosts of 0, equivalent to not having an armor
 	armor = new Armor(0, 0, 0, 0, true);
@@ -28,6 +28,11 @@ MeleeCharacter::~MeleeCharacter()
 		delete armor;
 		armor = nullptr;
 	}
+	if (characterMesh)
+	{
+		delete characterMesh;
+		characterMesh = nullptr;
+	}
 }
 
 void MeleeCharacter::calculateStats()
@@ -39,13 +44,13 @@ void MeleeCharacter::calculateStats()
 	i_Damage = ((0.2 * i_STR) + (0.3 * (weapon->i_damageValue))) + 2;
 }
 
-bool MeleeCharacter::attack(/*Enemy* enemy*/)
+bool MeleeCharacter::attack(Character* opponent)
 {
-	int hitRate = i_DEX + weapon->i_weaponAccuracy; //- enemy->i_LUK
+	int hitRate = i_DEX + weapon->i_weaponAccuracy - opponent->getLUK();
 	int hitResult = Math::RandIntMinMax(0, 100);
 	if (hitRate >= hitResult)
 	{
-		// enemy->takeDamage(i_Damage)
+		opponent->takeDamage(i_Damage);
 		std::cout << "att went tru" << std::endl;
 		b_tookAction = true;
 		return true;
@@ -57,11 +62,6 @@ bool MeleeCharacter::attack(/*Enemy* enemy*/)
 		return false;
 	}
 	return false;
-}
-
-void MeleeCharacter::takeDamage(int dmg)
-{
-	i_HP -= dmg;
 }
 
 void MeleeCharacter::equipWeapon(Weapon* newWeapon)
