@@ -20,7 +20,7 @@
 #include "SpriteEntity.h"
 #include "Light.h"
 #include "RenderHelper.h"
-
+#include "MyMath.h"
 
 
 #include <iostream>
@@ -38,6 +38,7 @@ EmptyScene::~EmptyScene()
 
 void EmptyScene::Init()
 {
+	Math::InitRNG();
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
 	Music::GetInstance()->Init();
 
@@ -151,7 +152,9 @@ void EmptyScene::Init()
 
 	//textObj[5]->SetPosition(Vector3(-halfWindowWidth * 0.9 - fontSize * 2, -halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
 	//textObj[5]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
-
+	player = new MeleeCharacter();
+	Weapon* wtf = new Weapon(100,50, false);
+	player->equipWeapon(wtf);
 }
 
 void EmptyScene::Update(double dt)
@@ -204,6 +207,7 @@ void EmptyScene::Update(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
 	{
 		//cout << "Left Mouse Button was released!" << endl;
+		player->attack();
 	}
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
 	{

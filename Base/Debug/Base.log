@@ -1,13 +1,27 @@
-﻿Build started 2/14/2017 9:36:35 AM.
-     1>Project "C:\Users\User\Desktop\SP4\Base\Base.vcxproj" on node 2 (Build target(s)).
+﻿Build started 14/2/2017 11:24:34 AM.
+     1>Project "C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\Base\Base.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\Users\User\Desktop\SP4\/Lua/include /IC:\Users\User\Desktop\SP4\/irrKlang/include /IC:\Users\User\Desktop\SP4\/Common/Source /IC:\Users\User\Desktop\SP4\/glfw/include /IC:\Users\User\Desktop\SP4\/glew/include /ZI /nologo /W3 /WX- /Od /Oy- /D _VARIADIC_MAX=10 /D WIN32 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\EmptyScene.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/Lua/include /IC:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/irrKlang/include /IC:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/Common/Source /IC:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/glfw/include /IC:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/glew/include /ZI /nologo /W3 /WX- /Od /Oy- /D _VARIADIC_MAX=10 /D WIN32 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Source\Application.cpp Source\Character\MeleeCharacter.cpp Source\Character\Weapon.cpp Source\EmptyScene.cpp Source\GameplayScene.cpp Source\IntroState.cpp Source\MenuState.cpp Source\OptionState.cpp Source\ScoreState.cpp Source\main.cpp
          EmptyScene.cpp
-     1>c:\users\user\desktop\sp4\base\source\emptyscene.cpp(45): warning C4305: 'argument' : truncation from 'double' to 'irrklang::ik_f32'
-     1>c:\users\user\desktop\sp4\base\source\emptyscene.cpp(58): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\zhiyuan\desktop\school\year2sem2\sp4\base\source\emptyscene.cpp(46): warning C4305: 'argument' : truncation from 'double' to 'irrklang::ik_f32'
+     1>c:\users\zhiyuan\desktop\school\year2sem2\sp4\base\source\emptyscene.cpp(59): warning C4305: 'argument' : truncation from 'double' to 'float'
+         Weapon.cpp
+         MeleeCharacter.cpp
+     1>c:\users\zhiyuan\desktop\school\year2sem2\sp4\base\source\character\meleecharacter.cpp(30): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         main.cpp
+         ScoreState.cpp
+         OptionState.cpp
+         MenuState.cpp
+         IntroState.cpp
+         GameplayScene.cpp
+         Application.cpp
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\User\Desktop\SP4\Debug\Base.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\Users\User\Desktop\SP4\/Lua/lib /LIBPATH:C:\Users\User\Desktop\SP4\/irrKlang/lib /LIBPATH:C:\Users\User\Desktop\SP4\Debug /LIBPATH:"C:\Users\User\Desktop\SP4\/glfw/lib-msvc100" /LIBPATH:C:\Users\User\Desktop\SP4\/glew/lib lua5.1.lib irrKlang.lib Common.lib winmm.lib opengl32.lib glu32.lib glew32.lib glfw3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\User\Desktop\SP4\Debug\Base.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\User\Desktop\SP4\Debug\Base.lib" /MACHINE:X86 Debug\Application.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\Debug\Base.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/Lua/lib /LIBPATH:C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/irrKlang/lib /LIBPATH:C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\Debug /LIBPATH:"C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/glfw/lib-msvc100" /LIBPATH:C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\/glew/lib lua5.1.lib irrKlang.lib Common.lib winmm.lib opengl32.lib glu32.lib glew32.lib glfw3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\Debug\Base.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\Debug\Base.lib" /MACHINE:X86 Debug\Application.obj
          Debug\AStar.obj
+         Debug\MeleeCharacter.obj
+         Debug\Weapon.obj
          Debug\EmptyScene.obj
          Debug\EntityManager.obj
          Debug\FPSCamera.obj
@@ -36,9 +50,9 @@
          Debug\TileMap.obj
      1>Application.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
      1>LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-         Base.vcxproj -> C:\Users\User\Desktop\SP4\Debug\Base.exe
-     1>Done Building Project "C:\Users\User\Desktop\SP4\Base\Base.vcxproj" (Build target(s)).
+         Base.vcxproj -> C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\Debug\Base.exe
+     1>Done Building Project "C:\Users\Zhiyuan\Desktop\school\Year2Sem2\SP4\Base\Base.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.45
+Time Elapsed 00:00:02.98

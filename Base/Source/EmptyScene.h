@@ -12,6 +12,8 @@
 #include <vector>
 #include "Sounds/Music.h"
 #include "Lua\LuaInterface.h"
+#include "Character/MeleeCharacter.h"
+#include "Character/Weapon.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -38,7 +40,7 @@ private:
 	FPSCamera camera;
 	//TextEntity* textObj[6];
 	Light* lights[2];
-
+	MeleeCharacter* player;
 
 	ISound* BGM;
 };

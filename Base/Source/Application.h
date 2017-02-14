@@ -7,6 +7,7 @@
 #include "OptionState.h"
 #include "ScoreState.h"
 #include "GameplayScene.h"
+#include "EmptyScene.h"
 
 class ShaderProgram;
 struct GLFWwindow;
