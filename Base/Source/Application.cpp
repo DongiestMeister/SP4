@@ -166,7 +166,7 @@ void Application::Init()
 
 	SceneManager::GetInstance()->AddScene("IntroState", new CIntroState());
 	SceneManager::GetInstance()->AddScene("MenuState", new CMenuState());
-	SceneManager::GetInstance()->AddScene("GameState", new EmptyScene());
+	SceneManager::GetInstance()->AddScene("GameState", new GameplayScene());
 	SceneManager::GetInstance()->AddScene("OptionState", new COptionState());
 	SceneManager::GetInstance()->AddScene("ScoreState", new CScoreState());
 	//
