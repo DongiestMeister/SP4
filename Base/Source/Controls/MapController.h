@@ -3,6 +3,7 @@
 #include "Vector2.h"
 #include "../TileMap.h"
 #include "../FPSCamera.h"
+#include "../AStar/AStar.h"
 
 class MapController
 {
@@ -14,10 +15,12 @@ public:
 	void Update(double dt);
 
 	Vector2 selectedTile;
+	Unit *selectedUnit;
 private:
 	TileMap *map;
 	FPSCamera *camera;
 	void PanTo(float speed,Vector2 pos, double dt);
+	void GetUnitPath();
 };
 
 #endif

@@ -3,6 +3,7 @@
 #include "../TileMap.h"
 
 #include <vector>
+#include "Vector2.h"
 using std::vector;
 
 class Node
@@ -45,7 +46,7 @@ public:
 	Node* AStar::getFromOpenList(Node* succ); // Get From List Item Same As 'succ' Successor
 	Node* AStar::getFromCloseList(Node* succ);
 
-	vector<Node *> bestPath;
+	vector<Vector2> bestPath;
 };
 
 #endif

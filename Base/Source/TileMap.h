@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Vector3.h"
+#include "Unit.h"
 
 using std::vector;
 using std::string;
@@ -20,13 +21,14 @@ public:
 	int screenHeight, screenWidth, numTilesHeight, numTilesWidth;
 	float tileSizeX, tileSizeY;
 	vector<vector<int> > theScreenMap;
-	vector<Vector3> characters;
+	vector<Unit*> characters;
+	vector<Vector2> movePath;
 
 	bool LoadMap(const string mapName);
 	void Render();
 
-	void AddCharacter(int x, int y);
-	Vector3 GetCharacter(int x, int y);
+	void AddCharacter(int x, int y,Unit *unit);
+	Unit *GetCharacter(int x, int y);
 };
 
 

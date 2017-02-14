@@ -128,9 +128,9 @@ bool AStar::Search()
 		//cin.get();									// UNCOMMENT TO SEE INTERMEDIATE RESULTS		
 		if ((n->x == goal->x) && (n->y == goal->y))			// If Current Node 'n' Matches Goal Node in x,y Values
 		{												// ie: Reached Goal
-			ShowPath(n);								// Show Path In Text Mode & Return True(Found For Search)
+			//ShowPath(n);								// Show Path In Text Mode & Return True(Found For Search)
 
-			Node* temp = goal;
+			Node* temp = n;
 			vector<Node*> tempList;
 			while (temp != nullptr)
 			{
@@ -140,7 +140,7 @@ bool AStar::Search()
 
 			for (int i = tempList.size() - 1; i >= 0; --i)
 			{
-				bestPath.push_back(tempList[i]);
+				bestPath.push_back(Vector2(tempList[i]->x,tempList[i]->y));
 			}
 			
 
@@ -160,7 +160,7 @@ bool AStar::Search()
 					successor->g = Compute_g(successor);		// Calculate 'g' Cost Value
 					successor->h = Compute_h(successor);		// Calculate 'h' Cost Value
 					successor->f = successor->g + successor->h;   // Calculate 'f' Cost Value
-					cout << "Getting successor ....";
+					//cout << "Getting successor ....";
 					if (InList(openList, successor))						// If Proposed Succesor Exists In Open List..
 					{
 						temp = getFromOpenList(successor);				// Get The Node Concerned

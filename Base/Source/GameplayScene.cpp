@@ -44,7 +44,7 @@ void GameplayScene::Init()
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
-	gameMap.Init(200, 200, 10, 10);
+	gameMap.Init(200, 200, 30, 30);
 
 	if (gameMap.LoadMap("Image//MapDesign.csv"))
 	{
@@ -176,7 +176,9 @@ void GameplayScene::Init()
 		cout << "Search failed" << endl;
 	}
 
-	gameMap.AddCharacter(1, 1);
+	Unit *knight = new Unit(new MeleeCharacter());
+
+	gameMap.AddCharacter(1, 1, knight);
 }
 
 void GameplayScene::Update(double dt)

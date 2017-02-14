@@ -13,6 +13,9 @@
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\AStar\AStar.cpp" />
+    <ClCompile Include="Source\Character\Armor.cpp" />
+    <ClCompile Include="Source\Character\MeleeCharacter.cpp" />
+    <ClCompile Include="Source\Character\Weapon.cpp" />
     <ClCompile Include="Source\Controls\MapController.cpp" />
     <ClCompile Include="Source\EmptyScene.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
@@ -44,6 +47,10 @@
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\AStar\AStar.h" />
+    <ClInclude Include="Source\Character\Armor.h" />
+    <ClInclude Include="Source\Character\Character.h" />
+    <ClInclude Include="Source\Character\MeleeCharacter.h" />
+    <ClInclude Include="Source\Character\Weapon.h" />
     <ClInclude Include="Source\Controls\MapController.h" />
     <ClInclude Include="Source\EmptyScene.h" />
     <ClInclude Include="Source\EntityManager.h" />
@@ -67,7 +74,6 @@
     <ClInclude Include="Source\SceneGraph\SceneNode.h" />
     <ClInclude Include="Source\SceneGraph\Transform.h" />
     <ClInclude Include="Source\SceneGraph\UpdateTransformation.h" />
-    <ClInclude Include="Source\SceneText.h" />
     <ClInclude Include="Source\ScoreState.h" />
     <ClInclude Include="Source\SkyBox\SkyBoxEntity.h" />
     <ClInclude Include="Source\Sounds\Music.h" />
@@ -76,6 +82,7 @@
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\TextEntity.h" />
     <ClInclude Include="Source\TileMap.h" />
+    <ClInclude Include="Source\Unit.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B172635-4E2B-46F1-A403-08F4194D00F5}</ProjectGuid>
@@ -140,15 +147,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_VARIADIC_MAX=10;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)/irrKlang/include;$(SolutionDir)/Common/Source;$(SolutionDir)/glew/include;$(SolutionDir)/glfw/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/irrKlang/include;$(SolutionDir)/Common/Source;$(SolutionDir)/glew/include;$(SolutionDir)/glfw/include;$(SolutionDir)/Lua/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)/irrKlang/lib;$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-msvc100;$(SolutionDir)/glew/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>irrKlang.lib;Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)/irrKlang/lib;$(SolutionDir)$(Configuration);$(SolutionDir)/glfw/lib-msvc100;$(SolutionDir)/glew/lib;$(SolutionDir)/Lua/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lua5.1.lib;irrKlang.lib;Common.lib;winmm.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

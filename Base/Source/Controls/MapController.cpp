@@ -4,6 +4,7 @@
 MapController::MapController()
 {
 	selectedTile.Set(0, 0);
+	selectedUnit = nullptr;
 }
 
 MapController::~MapController()
@@ -21,9 +22,10 @@ void MapController::Update(double dt)
 {
 	if (KeyboardController::GetInstance()->IsKeyPressed('Z'))
 	{
-		if (map->GetCharacter(selectedTile.x,selectedTile.y).x >= 0)
+		if (map->GetCharacter(selectedTile.x,selectedTile.y))
 		{
 			std::cout << "Unit found!" << std::endl;
+			selectedUnit = map->GetCharacter(selectedTile.x, selectedTile.y);
 		}
 	}
 
@@ -32,6 +34,7 @@ void MapController::Update(double dt)
 		if (selectedTile.y < map->numTilesHeight - 1)
 		{
 			selectedTile.y++;
+			GetUnitPath();
 		}
 	}
 
@@ -40,6 +43,7 @@ void MapController::Update(double dt)
 		if (selectedTile.y > 0)
 		{
 			selectedTile.y--;
+			GetUnitPath();
 		}
 	}
 
@@ -48,6 +52,7 @@ void MapController::Update(double dt)
 		if (selectedTile.x > 0)
 		{
 			selectedTile.x--;
+			GetUnitPath();
 		}
 	}
 
@@ -56,6 +61,7 @@ void MapController::Update(double dt)
 		if (selectedTile.x < map->numTilesWidth - 1)
 		{
 			selectedTile.x++;
+			GetUnitPath();
 		}
 	}
 
@@ -80,4 +86,31 @@ void MapController::PanTo(float speed, Vector2 pos, double dt)
 	Vector3 vel = (targetPos - camera->GetCameraPos()).Normalized() * speed * (float)dt;
 	camera->SetCameraPos(camera->GetCameraPos() + vel);
 	camera->SetCameraTarget(camera->GetCameraTarget() + vel);
+}
+
+void MapController::GetUnitPath()
+{
+	if (selectedUnit)
+	{
+		if ((selectedTile.x != selectedUnit->pos.x || selectedTile.y != selectedUnit->pos.y) && map->theScreenMap[selectedTile.y][selectedTile.x] == 0)
+		{
+			AStar search(selectedUnit->pos.x, selectedUnit->pos.y, selectedTile.x, selectedTile.y, map);
+			if (search.Search())
+			{
+				if (search.bestPath.size() < selectedUnit->character->i_movementCost + 1)
+				{
+					selectedUnit->character->i_stepsTaken = search.bestPath.size();
+					map->movePath = search.bestPath;
+				}		
+			}
+			else
+			{
+				map->movePath.clear();
+			}
+		}
+		else
+		{
+			map->movePath.clear();
+		}
+	}
 }

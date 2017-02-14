@@ -86,34 +86,48 @@ void TileMap::Render()
 		}
 	}
 
-	for (vector<Vector3>::iterator it = characters.begin(); it != characters.end(); ++it)
+	for (vector<Unit*>::iterator it = characters.begin(); it != characters.end(); ++it)
 	{
-		Vector3 character = (*it);
+		Unit *character = (*it);
 		
 		modelStack.PushMatrix();
-		modelStack.Translate(character.x * tileSizeX + tileSizeX / 2, -0.2, character.z * tileSizeY + tileSizeY / 2);
+		modelStack.Translate(character->pos.x * tileSizeX + tileSizeX / 2, -0.2, character->pos.y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
 		modelStack.PopMatrix();
 	}
-}
 
-void TileMap::AddCharacter(int x, int y)
-{
-	characters.push_back(Vector3(x, 0, y));
-}
-
-Vector3 TileMap::GetCharacter(int x, int y)
-{
-	for (vector<Vector3>::iterator it = characters.begin(); it != characters.end(); ++it)
+	if (movePath.size() > 0)
 	{
-		Vector3 character = *it;
-		if ((int)character.x == x && (int)character.z == y)
+		for (int i = 0; i < movePath.size(); ++i)
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(movePath[i].x * tileSizeX + tileSizeX / 2, -0.2, movePath[i].y * tileSizeY + tileSizeY / 2);
+			modelStack.Rotate(90, 1, 0, 0);
+			modelStack.Scale(tileSizeX, tileSizeY, 1);
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Selected"));
+			modelStack.PopMatrix();
+		}
+	}
+}
+
+void TileMap::AddCharacter(int x, int y,Unit *unit)
+{
+	unit->pos.Set(x, y);
+	characters.push_back(unit);
+}
+
+Unit* TileMap::GetCharacter(int x, int y)
+{
+	for (vector<Unit*>::iterator it = characters.begin(); it != characters.end(); ++it)
+	{
+		Unit *character = *it;
+		if ((int)character->pos.x == x && (int)character->pos.y == y)
 		{
 			return character;
 		}
 	}
 
-	return Vector3(-1, -1, -1);
+	return nullptr;
 }
