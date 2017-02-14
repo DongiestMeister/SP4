@@ -144,6 +144,9 @@
     <ClCompile Include="Source\Character\Weapon.cpp">
       <Filter>Character</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Character\Character.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">

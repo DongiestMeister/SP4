@@ -14,6 +14,7 @@
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\AStar\AStar.cpp" />
     <ClCompile Include="Source\Character\Armor.cpp" />
+    <ClCompile Include="Source\Character\Character.cpp" />
     <ClCompile Include="Source\Character\MeleeCharacter.cpp" />
     <ClCompile Include="Source\Character\Weapon.cpp" />
     <ClCompile Include="Source\Controls\MapController.cpp" />
