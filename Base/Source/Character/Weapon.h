@@ -10,7 +10,6 @@ struct Weapon
 	Weapon();
 	Weapon(int damage,int weaponAcc, bool equip,string name);
 	~Weapon();
-	void Use();
 
 	bool b_isEquippedToSomeone;
 	int i_damageValue;

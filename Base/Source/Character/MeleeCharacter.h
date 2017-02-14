@@ -11,6 +11,7 @@ public:
 	virtual void takeDamage(int dmg);
 	virtual bool attack();
 	void equipWeapon(Weapon* newWeapon);
+	void equipArmor(Armor* newArmor);
 	void calculateStats();
 private:
 

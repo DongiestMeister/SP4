@@ -2,6 +2,7 @@
 #define CHARACTER_H
 
 #include "Weapon.h"
+#include "Armor.h"
 #include "MyMath.h"
 
 class Character
@@ -16,13 +17,14 @@ public:
 	int i_stepsTaken;
 protected:
 	Weapon* weapon;
-	//Armor* armor;
+	Armor* armor;
 	int i_HP;
 	int i_Damage;
 	// Stats
 	int i_STR; // Determines the unit's attack power
 	int i_DEX; // Determines the accuracy of the attacks of this unit
 	int i_LUK; // Determines the avoidability of this unit
+	bool b_tookAction; // If the unit has already moved/attacked this turnS
 };
 
 #endif CHARACTER_H

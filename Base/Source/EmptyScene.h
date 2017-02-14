@@ -14,6 +14,7 @@
 #include "Lua\LuaInterface.h"
 #include "Character/MeleeCharacter.h"
 #include "Character/Weapon.h"
+#include "Character/Armor.h"
 
 class ShaderProgram;
 class SceneManager;

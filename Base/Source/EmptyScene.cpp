@@ -155,6 +155,8 @@ void EmptyScene::Init()
 	player = new MeleeCharacter();
 	Weapon* wtf = new Weapon(100,50, false,"Sword");
 	player->equipWeapon(wtf);
+	Armor* kek = new Armor(10, 5, 0, 200, false);
+	player->equipArmor(kek);
 }
 
 void EmptyScene::Update(double dt)
