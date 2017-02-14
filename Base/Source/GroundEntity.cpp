@@ -31,7 +31,7 @@ void GroundEntity::Render()
 {
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	modelStack.PushMatrix();
-	modelStack.Rotate(-90, 1, 0, 0);
+	modelStack.Rotate(90, 1, 0, 0);
 	// the y- and z- components are swapped because of the way that MVP is calculated inside RenderMesh
 	modelStack.Translate(position.x, position.z, position.y);
 	modelStack.Rotate(-90, 0, 0, 1);
@@ -47,6 +47,7 @@ void GroundEntity::Render()
 			modelStack.PushMatrix();
 			// the y- and z- components are swapped because of the way that MVP is calculated inside RenderMesh
 			modelStack.Translate(x - (grids.x * size.x) / 2, z - (grids.z * size.z) / 2, 0.0f);
+			//RenderHelper::RenderMesh(modelMesh[0]);
 			RenderHelper::RenderMeshWithLight(modelMesh[0]);
 			modelStack.PopMatrix();
 		}

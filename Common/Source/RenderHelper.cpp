@@ -58,10 +58,10 @@ void RenderHelper::RenderMeshWithLight(Mesh* _mesh)
 		currProg->UpdateMatrix44("MV_inverse_transpose", &modelView.a[0]);
 
 		//load material
-		//currProg->UpdateVector3("material.kAmbient", &_mesh->material.kAmbient.r);
-		//currProg->UpdateVector3("material.kDiffuse", &_mesh->material.kDiffuse.r);
-		//currProg->UpdateVector3("material.kSpecular", &_mesh->material.kSpecular.r);
-		//currProg->UpdateFloat("material.kShininess", _mesh->material.kShininess);
+		currProg->UpdateVector3("material.kAmbient", &_mesh->material.kAmbient.r);
+		currProg->UpdateVector3("material.kDiffuse", &_mesh->material.kDiffuse.r);
+		currProg->UpdateVector3("material.kSpecular", &_mesh->material.kSpecular.r);
+		currProg->UpdateFloat("material.kShininess", _mesh->material.kShininess);
 
 		// Update textures first if available
 		if (_mesh->textureID > 0)

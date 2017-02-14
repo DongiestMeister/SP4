@@ -2,11 +2,11 @@
 #define APPLICATION_H
 
 #include "timer.h"
-#include "SceneText.h"
 #include "IntroState.h"
 #include "MenuState.h"
 #include "OptionState.h"
 #include "ScoreState.h"
+#include "GameplayScene.h"
 
 class ShaderProgram;
 struct GLFWwindow;

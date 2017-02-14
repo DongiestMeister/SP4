@@ -3,7 +3,6 @@
 
 #include "Scene.h"
 #include "Mtx44.h"
-#include "PlayerInfo/PlayerInfo.h"
 #include "GroundEntity.h"
 #include "FPSCamera.h"
 #include "Mesh.h"

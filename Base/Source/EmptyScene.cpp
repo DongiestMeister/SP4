@@ -154,7 +154,7 @@ void EmptyScene::Init()
 
 }
 
-void GameplayScene::Update(double dt)
+void EmptyScene::Update(double dt)
 {
 	// Update our entities
 	EntityManager::GetInstance()->Update(dt);
@@ -267,7 +267,7 @@ void GameplayScene::Update(double dt)
 	//textObj[5]->SetText(ss1.str());
 }
 
-void GameplayScene::Render()
+void EmptyScene::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -292,7 +292,7 @@ void GameplayScene::Render()
 	EntityManager::GetInstance()->RenderUI();
 }
 
-void GameplayScene::Exit()
+void EmptyScene::Exit()
 {
 	// Detach camera from other entities
 	BGM->drop();

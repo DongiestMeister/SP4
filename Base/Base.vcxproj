@@ -11,11 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Ally\Turret.cpp" />
     <ClCompile Include="Source\Application.cpp" />
-    <ClCompile Include="Source\Enemy\Enemy.cpp" />
+    <ClCompile Include="Source\AStar\AStar.cpp" />
+    <ClCompile Include="Source\EmptyScene.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
     <ClCompile Include="Source\FPSCamera.cpp" />
+    <ClCompile Include="Source\GameplayScene.cpp" />
     <ClCompile Include="Source\GenericEntity.cpp" />
     <ClCompile Include="Source\GroundEntity.cpp" />
     <ClCompile Include="Source\IntroState.cpp" />
@@ -26,16 +27,10 @@
     <ClCompile Include="Source\MenuState.cpp" />
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\OptionState.cpp" />
-    <ClCompile Include="Source\PlayerInfo\PlayerInfo.cpp" />
-    <ClCompile Include="Source\Projectile\Explosion.cpp" />
-    <ClCompile Include="Source\Projectile\Grenade.cpp" />
-    <ClCompile Include="Source\Projectile\Laser.cpp" />
-    <ClCompile Include="Source\Projectile\Projectile.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneGraph.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneNode.cpp" />
     <ClCompile Include="Source\SceneGraph\Transform.cpp" />
     <ClCompile Include="Source\SceneGraph\UpdateTransformation.cpp" />
-    <ClCompile Include="Source\SceneText.cpp" />
     <ClCompile Include="Source\ScoreState.cpp" />
     <ClCompile Include="Source\SkyBox\SkyBoxEntity.cpp" />
     <ClCompile Include="Source\Sounds\Music.cpp" />
@@ -43,17 +38,15 @@
     <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp" />
     <ClCompile Include="Source\SpriteEntity.cpp" />
     <ClCompile Include="Source\TextEntity.cpp" />
-    <ClCompile Include="Source\WeaponInfo\GrenadeThrow.cpp" />
-    <ClCompile Include="Source\WeaponInfo\LaserBlaster.cpp" />
-    <ClCompile Include="Source\WeaponInfo\Pistol.cpp" />
-    <ClCompile Include="Source\WeaponInfo\WeaponInfo.cpp" />
+    <ClCompile Include="Source\TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Ally\Turret.h" />
     <ClInclude Include="Source\Application.h" />
-    <ClInclude Include="Source\Enemy\Enemy.h" />
+    <ClInclude Include="Source\AStar\AStar.h" />
+    <ClInclude Include="Source\EmptyScene.h" />
     <ClInclude Include="Source\EntityManager.h" />
     <ClInclude Include="Source\FPSCamera.h" />
+    <ClInclude Include="Source\GameplayScene.h" />
     <ClInclude Include="Source\GenericEntity.h" />
     <ClInclude Include="Source\GroundEntity.h" />
     <ClInclude Include="Source\IntroState.h" />
@@ -68,11 +61,6 @@
     <ClInclude Include="Source\MenuState.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\OptionState.h" />
-    <ClInclude Include="Source\PlayerInfo\PlayerInfo.h" />
-    <ClInclude Include="Source\Projectile\Explosion.h" />
-    <ClInclude Include="Source\Projectile\Grenade.h" />
-    <ClInclude Include="Source\Projectile\Laser.h" />
-    <ClInclude Include="Source\Projectile\Projectile.h" />
     <ClInclude Include="Source\SceneGraph\SceneGraph.h" />
     <ClInclude Include="Source\SceneGraph\SceneNode.h" />
     <ClInclude Include="Source\SceneGraph\Transform.h" />
@@ -85,10 +73,7 @@
     <ClInclude Include="Source\SpatialPartition\SpatialPartition.h" />
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\TextEntity.h" />
-    <ClInclude Include="Source\WeaponInfo\GrenadeThrow.h" />
-    <ClInclude Include="Source\WeaponInfo\LaserBlaster.h" />
-    <ClInclude Include="Source\WeaponInfo\Pistol.h" />
-    <ClInclude Include="Source\WeaponInfo\WeaponInfo.h" />
+    <ClInclude Include="Source\TileMap.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B172635-4E2B-46F1-A403-08F4194D00F5}</ProjectGuid>

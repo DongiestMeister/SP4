@@ -13,17 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="PlayerInfo">
-      <UniqueIdentifier>{ee63a848-364d-4119-9628-05cc3d6a4b17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Projectile">
-      <UniqueIdentifier>{e55b5c68-9d98-4cde-ba44-f0d28d0cf437}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SkyBox">
       <UniqueIdentifier>{37a125cd-b9e3-4b31-923e-1226145f54a1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="WeaponInfo">
-      <UniqueIdentifier>{7dbec654-2f78-40a8-a3ff-38691d57358e}</UniqueIdentifier>
     </Filter>
     <Filter Include="SceneGraph">
       <UniqueIdentifier>{8ac2bec7-1ed0-4c0b-9aa8-0cc9515237eb}</UniqueIdentifier>
@@ -34,14 +25,8 @@
     <Filter Include="LevelOfDetails">
       <UniqueIdentifier>{3f38a962-a883-4f37-9a91-6979b4fc1f88}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Enemy">
-      <UniqueIdentifier>{f5fb02ce-b59a-403f-b90f-1e6eba658755}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sounds">
       <UniqueIdentifier>{77ebbade-1d06-48fb-a931-1064d45a8cc1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Ally">
-      <UniqueIdentifier>{94853a3f-7262-404d-bc4a-1825c609bacc}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameStateManagement">
       <UniqueIdentifier>{e7fea300-841a-440b-b984-575959a8c38f}</UniqueIdentifier>
@@ -49,15 +34,18 @@
     <Filter Include="Lua">
       <UniqueIdentifier>{d51a0aa9-bfa7-40db-a7f6-4423e3ef2761}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tilemap">
+      <UniqueIdentifier>{8a9fbf88-6205-460e-aed4-3bd99e6c9add}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AStar">
+      <UniqueIdentifier>{5bd98696-8c24-41ec-9f36-c925a13dffae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\FPSCamera.cpp">
@@ -78,26 +66,8 @@
     <ClCompile Include="Source\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\PlayerInfo\PlayerInfo.cpp">
-      <Filter>PlayerInfo</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Projectile\Projectile.cpp">
-      <Filter>Projectile</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SkyBox\SkyBoxEntity.cpp">
       <Filter>SkyBox</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WeaponInfo\Pistol.cpp">
-      <Filter>WeaponInfo</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WeaponInfo\WeaponInfo.cpp">
-      <Filter>WeaponInfo</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WeaponInfo\LaserBlaster.cpp">
-      <Filter>WeaponInfo</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Projectile\Laser.cpp">
-      <Filter>Projectile</Filter>
     </ClCompile>
     <ClCompile Include="Source\EntityManager.cpp">
       <Filter>Source Files</Filter>
@@ -123,26 +93,11 @@
     <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp">
       <Filter>SpatialPartition</Filter>
     </ClCompile>
-    <ClCompile Include="Source\WeaponInfo\GrenadeThrow.cpp">
-      <Filter>WeaponInfo</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Projectile\Grenade.cpp">
-      <Filter>Projectile</Filter>
-    </ClCompile>
     <ClCompile Include="Source\LevelOfDetails\LevelOfDetails.cpp">
       <Filter>LevelOfDetails</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Enemy\Enemy.cpp">
-      <Filter>Enemy</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Sounds\Music.cpp">
       <Filter>Sounds</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Ally\Turret.cpp">
-      <Filter>Ally</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Projectile\Explosion.cpp">
-      <Filter>Projectile</Filter>
     </ClCompile>
     <ClCompile Include="Source\IntroState.cpp">
       <Filter>GameStateManagement</Filter>
@@ -158,6 +113,18 @@
     </ClCompile>
     <ClCompile Include="Source\ScoreState.cpp">
       <Filter>GameStateManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameplayScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TileMap.cpp">
+      <Filter>Tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AStar\AStar.cpp">
+      <Filter>AStar</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EmptyScene.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -185,26 +152,8 @@
     <ClInclude Include="Source\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\PlayerInfo\PlayerInfo.h">
-      <Filter>PlayerInfo</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Projectile\Projectile.h">
-      <Filter>Projectile</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SkyBox\SkyBoxEntity.h">
       <Filter>SkyBox</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WeaponInfo\Pistol.h">
-      <Filter>WeaponInfo</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WeaponInfo\WeaponInfo.h">
-      <Filter>WeaponInfo</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WeaponInfo\LaserBlaster.h">
-      <Filter>WeaponInfo</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Projectile\Laser.h">
-      <Filter>Projectile</Filter>
     </ClInclude>
     <ClInclude Include="Source\EntityManager.h">
       <Filter>Header Files</Filter>
@@ -230,26 +179,11 @@
     <ClInclude Include="Source\SpatialPartition\SpatialPartition.h">
       <Filter>SpatialPartition</Filter>
     </ClInclude>
-    <ClInclude Include="Source\WeaponInfo\GrenadeThrow.h">
-      <Filter>WeaponInfo</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Projectile\Grenade.h">
-      <Filter>Projectile</Filter>
-    </ClInclude>
     <ClInclude Include="Source\LevelOfDetails\LevelOfDetails.h">
       <Filter>LevelOfDetails</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Enemy\Enemy.h">
-      <Filter>Enemy</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Sounds\Music.h">
       <Filter>Sounds</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Ally\Turret.h">
-      <Filter>Ally</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Projectile\Explosion.h">
-      <Filter>Projectile</Filter>
     </ClInclude>
     <ClInclude Include="Source\IntroState.h">
       <Filter>GameStateManagement</Filter>
@@ -280,6 +214,18 @@
     </ClInclude>
     <ClInclude Include="Source\ScoreState.h">
       <Filter>GameStateManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameplayScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TileMap.h">
+      <Filter>Tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AStar\AStar.h">
+      <Filter>AStar</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EmptyScene.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
