@@ -34,7 +34,7 @@ void MapController::Update(double dt)
 {
 	if (KeyboardController::GetInstance()->IsKeyPressed('Z'))
 	{
-		if (!selectedUnit)
+		if (!selectedUnit) // Selected a unit on the map
 		{
 			if (map->GetCharacter(selectedTile.x, selectedTile.y))
 			{
@@ -46,14 +46,14 @@ void MapController::Update(double dt)
 				}
 			}
 		}
-		else if (b_canPlace)
+		else if (b_canPlace) // Moving the unit
 		{
 			unitPath = map->movePath;
 			selectedUnit->character->i_stepsTaken += unitPath.size();
 			b_movingUnit = true;
 			b_canPlace = false;
 		}
-		else if (b_activeButtons[WAIT])
+		else if (b_activeButtons[WAIT]) // If choosing a button
 		{
 			selectedButton = currentButton;
 			CloseButtons();
@@ -353,7 +353,7 @@ void MapController::CloseButtons()
 	b_activeButtons[MOVE] = false;
 	b_activeButtons[WAIT] = false;
 
-	if (selectedButton == WAIT)
+	if (selectedButton == WAIT || selectedButton == ATTACK)
 	{
 		selectedUnit->character->b_tookAction = true;
 		selectedUnit = nullptr;
