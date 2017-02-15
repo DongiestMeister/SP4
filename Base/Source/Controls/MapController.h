@@ -13,6 +13,8 @@ public:
 
 	void Init(TileMap *map,FPSCamera *camera);
 	void Update(double dt);
+	void Render();
+	void RenderUI();
 
 	Vector2 selectedTile;
 	Unit *selectedUnit;
@@ -27,6 +29,25 @@ private:
 
 	bool b_canPlace;
 	bool b_movingUnit;
+	void MovementControls(double dt);
+
+	float f_upDebounce, f_downDebounce, f_leftDebounce, f_rightDebounce;
+	float f_movementDelay; // delay in between movement of tiles when holding down
+
+	enum CTRLBUTTONS
+	{
+		ATTACK,
+		MOVE,
+		WAIT,
+		CTRL_TOTAL
+	};
+
+	void OpenButtons();
+	void CloseButtons();
+
+	bool b_activeButtons[CTRL_TOTAL];
+	CTRLBUTTONS currentButton;
+	CTRLBUTTONS selectedButton;
 };
 
 #endif

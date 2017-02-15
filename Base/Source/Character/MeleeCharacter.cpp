@@ -12,7 +12,7 @@ MeleeCharacter::MeleeCharacter()
 	// All stats boosts of 0, equivalent to not having an armor
 	armor = new Armor(0, 0, 0, 0, true);
 
-	i_movementCost = 10; // All melee characters have a base movement cost of 3
+	i_movementCost = 4; // All melee characters have a base movement cost of 3
 	// Damage value of 0, so equavalent to not having a weapon at all
 
 	calculateStats();

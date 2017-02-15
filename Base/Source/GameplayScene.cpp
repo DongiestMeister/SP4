@@ -44,7 +44,7 @@ void GameplayScene::Init()
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
-	gameMap.Init(200, 200, 30, 30);
+	gameMap.Init(200, 200, 10, 10);
 
 	if (gameMap.LoadMap("Image//MapDesign.csv"))
 	{
@@ -92,6 +92,7 @@ void GameplayScene::Init()
 	// Create and attach the camera to the scene
 	//camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	camera.Init(Vector3(100,-10,100), Vector3(100,0,100), Vector3(0,0,1));
+	camera.SetCameraOrtho(100.f, 16.f / 9.f);
 	//playerInfo->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
@@ -133,22 +134,34 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Selected", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Selected")->textureID = LoadTGA("Image//selected.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("SelectedArrow", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("SelectedArrow")->textureID = LoadTGA("Image//selectarrow.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("Knight", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Knight")->textureID = LoadTGA("Image//knight.tga");
+
+	MeshBuilder::GetInstance()->GenerateQuad("Attack", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Attack")->textureID = LoadTGA("Image//attack.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Move", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Move")->textureID = LoadTGA("Image//move.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Wait", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Wait")->textureID = LoadTGA("Image//wait.tga");
 
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(100, 0, 100));
-	groundEntity->SetScale(Vector3(200.0f, 200.0f, 200.0f));
+	groundEntity->SetScale(Vector3(750.0f, 750.0f, 750.0f));
 	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
 	//playerInfo->SetTerrain(groundEntity);
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
-	float fontSize = 25.0f;
+	float fontSize = 5.0f;
 	float halfFontSize = fontSize / 2.0f;
+
+	fps = Create::Text2DObject("text", Vector3(-100,-95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
 	//for (int i = 0; i < 6; ++i)
 	//{
 	//	textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,1.0f,0.0f));
@@ -177,8 +190,10 @@ void GameplayScene::Init()
 	}
 
 	Unit *knight = new Unit(new MeleeCharacter());
+	Unit *knight2 = new Unit(new MeleeCharacter());
 
 	gameMap.AddCharacter(1, 1, knight);
+	gameMap.AddCharacter(1, 3, knight2);
 }
 
 void GameplayScene::Update(double dt)
@@ -259,11 +274,11 @@ void GameplayScene::Update(double dt)
 
 	// Update the 2 text object values. NOTE: Can do this in their own class but i'm lazy to do it now :P
 	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
-	//std::ostringstream ss;
-	//ss.precision(5);
-	//float fps = (float)(1.f / dt);
-	//ss << "FPS: " << fps;
-	//textObj[1]->SetText(ss.str());
+	std::ostringstream ss;
+	ss.precision(5);
+	float fps2 = (float)(1.f / dt);
+	ss << "FPS: " << fps2;
+	fps->SetText(ss.str());
 
 	//std::ostringstream ss1;
 	//ss1.precision(4);
@@ -295,23 +310,16 @@ void GameplayScene::Update(double dt)
 void GameplayScene::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-
+	
 	// Setup 3D pipeline then render 3D
 	//GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
+	GraphicsManager::GetInstance()->SetOrthographicProjection(-camera.f_OrthoSize * camera.f_aspectRatio, camera.f_OrthoSize * camera.f_aspectRatio, -camera.f_OrthoSize, camera.f_OrthoSize, -2000, 2000);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	GraphicsManager::GetInstance()->UpdateLightUniforms();
 
 	gameMap.Render();
-
-	modelStack.PushMatrix();
-	modelStack.Translate(controller.selectedTile.x * gameMap.tileSizeX + gameMap.tileSizeX / 2, -0.2, controller.selectedTile.y * gameMap.tileSizeY + gameMap.tileSizeY / 2);
-	modelStack.Rotate(90, 1, 0, 0);
-	modelStack.Scale(gameMap.tileSizeX, gameMap.tileSizeY , 1);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Selected"));
-	modelStack.PopMatrix();
+	controller.Render();
 
 	EntityManager::GetInstance()->Render();
 
@@ -319,9 +327,10 @@ void GameplayScene::Render()
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
 	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
 
-	//GraphicsManager::GetInstance()->SetOrthographicProjection(-200, 200, -200, 200, -2000, 2000);
+	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
 	GraphicsManager::GetInstance()->DetachCamera();
 	
+	controller.RenderUI();
 	EntityManager::GetInstance()->RenderUI();
 }
 

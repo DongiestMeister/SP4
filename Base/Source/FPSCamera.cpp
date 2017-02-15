@@ -28,6 +28,8 @@ void FPSCamera::Init(const Vector3& pos, const Vector3& target, const Vector3& u
 	right.y = 0;
 	right.Normalize();
 	this->up = defaultUp = right.Cross(view).Normalized();
+	f_OrthoSize = 100.f;
+	f_aspectRatio = 4 / 3;
 }
 
 void FPSCamera::Update(double dt)
@@ -185,4 +187,10 @@ void FPSCamera::Reset()
 	position = defaultPosition;
 	target = defaultTarget;
 	up = defaultUp;
+}
+
+void FPSCamera::SetCameraOrtho(float ortho, float aspectratio)
+{
+	this->f_OrthoSize = ortho;
+	this->f_aspectRatio = aspectratio;
 }

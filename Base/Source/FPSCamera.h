@@ -22,6 +22,9 @@ public:
 	virtual Vector3 GetCameraUp() const;
 	virtual void SetCameraUp(Vector3 pos);
 
+	void SetCameraOrtho(float ortho, float aspectratio);
+	float f_OrthoSize;
+	float f_aspectRatio;
 private:
 	Vector3 position;
 	Vector3 target;

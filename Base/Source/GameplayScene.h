@@ -40,6 +40,7 @@ private:
 	GroundEntity* groundEntity;
 	FPSCamera camera;
 	//TextEntity* textObj[6];
+	TextEntity* fps;
 	Light* lights[2];
 
 	MapController controller;

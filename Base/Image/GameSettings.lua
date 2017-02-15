@@ -15,8 +15,8 @@ end
 
 
 title = "Assignment 2"
-width = 1024
-height = 800
+width = 1920
+height = 1080
 
 walkspeed = 40
 

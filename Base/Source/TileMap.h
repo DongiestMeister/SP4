@@ -21,7 +21,10 @@ public:
 	int screenHeight, screenWidth, numTilesHeight, numTilesWidth;
 	float tileSizeX, tileSizeY;
 	vector<vector<int> > theScreenMap;
+
 	vector<Unit*> characters;
+	vector<Unit*> enemies;
+	
 	vector<Vector2> movePath;
 
 	bool LoadMap(const string mapName);
@@ -29,6 +32,8 @@ public:
 
 	void AddCharacter(int x, int y,Unit *unit);
 	Unit *GetCharacter(int x, int y);
+private:
+	void ClearCharacters();
 };
 
 

@@ -6,6 +6,8 @@ Character::Character()
 	characterMesh = nullptr;
 	weapon = nullptr;
 	armor = nullptr;
+	b_tookAction = false;
+	i_stepsTaken = 0;
 }
 
 int Character::getSTR()

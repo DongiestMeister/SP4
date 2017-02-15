@@ -16,7 +16,7 @@ TileMap::TileMap()
 
 TileMap::~TileMap()
 {
-
+	ClearCharacters();
 }
 
 void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int numTilesWidth)
@@ -70,6 +70,7 @@ bool TileMap::LoadMap(const string mapName)
 void TileMap::Render()
 {
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+
 	for (int i = 0; i < numTilesWidth; ++i)
 	{
 		for (int j = 0; j < numTilesHeight; ++j)
@@ -91,7 +92,7 @@ void TileMap::Render()
 		Unit *character = (*it);
 		
 		modelStack.PushMatrix();
-		modelStack.Translate(character->pos.x * tileSizeX + tileSizeX / 2, -0.2, character->pos.y * tileSizeY + tileSizeY / 2);
+		modelStack.Translate(character->pos.x * tileSizeX + tileSizeX / 2, -0.4, character->pos.y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
@@ -130,4 +131,19 @@ Unit* TileMap::GetCharacter(int x, int y)
 	}
 
 	return nullptr;
+}
+
+void TileMap::ClearCharacters()
+{
+	for (vector<Unit*>::iterator it = characters.begin(); it != characters.end();)
+	{
+		delete *it;
+		it = characters.erase(it);
+	}
+
+	for (vector<Unit*>::iterator it = enemies.begin(); it != enemies.end();)
+	{
+		delete *it;
+		it = characters.erase(it);
+	}
 }
