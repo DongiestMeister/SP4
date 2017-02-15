@@ -34,8 +34,9 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
-	void RunBattleAnimation(double dt);
+	void RunBattleAnimation(double dt, bool ranged);
 	void RenderProps();
+	void TakenHitAnimation(float& type_pos);
 
 private:
 	ShaderProgram* currProg;

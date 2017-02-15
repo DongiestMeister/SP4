@@ -226,7 +226,7 @@ void BattleScene::Update(double dt)
 	}
 
 	
-	RunBattleAnimation(dt);
+	RunBattleAnimation(dt, true);
 
 	//camera.Update(dt);
 
@@ -299,27 +299,43 @@ void BattleScene::Update(double dt)
 	//textObj[5]->SetText(ss1.str());
 }
 
-void BattleScene::RunBattleAnimation(double dt)
+void BattleScene::RunBattleAnimation(double dt, bool ranged)
 {
+
+	float maxdist_forward = 0;
+	float ene_maxdist_forward = 0;
+
+	if (ranged)
+	{
+		maxdist_forward = 90;
+		ene_maxdist_forward = 110;
+	}
+	else
+	{
+		maxdist_forward = 115;
+		ene_maxdist_forward = 85;
+	}
+
+
+
 	if (PlayerInfo::GetInstance()->b_attacking)
 	{
-
 		if (!b_isClashed)
 		{
-
-			if (player_posx <= 115)
+			if (player_posx <= maxdist_forward)		//Move from left to right
 			{
 				player_posx += dt * 50;
 			}
 			else
 			{
 				b_isClashed = true;
-	//			PlayerInfo::GetInstance()->player->attack();
+				//PlayerInfo::GetInstance()->player->attack();
+				//TakenHitAnimation(enemy_posx);
 			}
 		}
 		else
 		{
-			if (player_posx > 80)
+			if (player_posx > 80)		//Return to left from right(original position)
 			{
 				player_posx -= dt * 50;
 
@@ -331,25 +347,56 @@ void BattleScene::RunBattleAnimation(double dt)
 		if (!b_isClashed)
 		{
 
-			if (enemy_posx >= 85)
+			if (enemy_posx >= ene_maxdist_forward)		//Move from right to left
 			{
 				enemy_posx -= dt * 50;
 			}
 			else
 			{
 				b_isClashed = true;
-//				PlayerInfo::GetInstance()->enemy->attack();
+				//PlayerInfo::GetInstance()->enemy->attack();
+				//TakenHitAnimation(player_posx);
 			}
 		}
 		else
 		{
-			if (enemy_posx < 120)
+			if (enemy_posx < 120)		//Return to right from left(original position)
 			{
 				enemy_posx += dt * 50;
 
 			}
 		}
 	}
+}
+
+void BattleScene::TakenHitAnimation(float& type_pos)
+{
+
+	int pos = 1;
+	int neg = -1;
+	int neg_diff = type_pos - 10;
+	int pos_diff = type_pos + 10;
+
+	int shakecounter = 5;
+
+
+	/*if (shakecounter > 0)
+	{
+		if (shakecounter % 2 == 0)
+		{
+			if (type_pos )
+			type_pos += 
+		}
+		else
+		{
+
+		}
+	}*/
+
+
+
+			
+	
 }
 
 void BattleScene::Render()
