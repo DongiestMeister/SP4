@@ -1,24 +1,21 @@
-#include "MeleeCharacter.h"
+#include "RangedCharacter.h"
 #include <iostream>
-
-MeleeCharacter::MeleeCharacter()
+RangedCharacter::RangedCharacter()
 {
 	i_STR = 10; // All melee characters have a base STR of 10
 	i_DEX = 3; // All melee characters have a base DEX of 3
 	i_LUK = 0; // All melee characters have a base LUK of 0
+	i_movementCost = 3; // All melee characters have a base movement cost of 3
 
 	// Damage value of 0, so equivalent to not having a weapon at all
 	weapon = new Weapon(0, 100, true, "nothing");
+
 	// All stats boosts of 0, equivalent to not having an armor
 	armor = new Armor(0, 0, 0, 0, true);
-
-	i_movementCost = 4; // All melee characters have a base movement cost of 3
-	// Damage value of 0, so equavalent to not having a weapon at all
-
 	calculateStats();
 }
 
-MeleeCharacter::~MeleeCharacter()
+RangedCharacter::~RangedCharacter()
 {
 	if (weapon)
 	{
@@ -37,7 +34,7 @@ MeleeCharacter::~MeleeCharacter()
 	}
 }
 
-bool MeleeCharacter::attack(Character* opponent)
+bool RangedCharacter::attack(Character* opponent)
 {
 	int hitRate = i_DEX + weapon->i_weaponAccuracy - opponent->getLUK();
 	int hitResult = Math::RandIntMinMax(0, 100);

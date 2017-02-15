@@ -13,9 +13,11 @@
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\AStar\AStar.cpp" />
+    <ClCompile Include="Source\BattleScene.cpp" />
     <ClCompile Include="Source\Character\Armor.cpp" />
     <ClCompile Include="Source\Character\Character.cpp" />
     <ClCompile Include="Source\Character\MeleeCharacter.cpp" />
+    <ClCompile Include="Source\Character\RangedCharacter.cpp" />
     <ClCompile Include="Source\Character\Weapon.cpp" />
     <ClCompile Include="Source\Controls\MapController.cpp" />
     <ClCompile Include="Source\EmptyScene.cpp" />
@@ -46,11 +48,16 @@
     <ClCompile Include="Source\TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\AI_DefenceFSM.h" />
+    <ClInclude Include="Source\AI_FSM.h" />
+    <ClInclude Include="Source\AI_OffenceFSM.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\AStar\AStar.h" />
+    <ClInclude Include="Source\BattleScene.h" />
     <ClInclude Include="Source\Character\Armor.h" />
     <ClInclude Include="Source\Character\Character.h" />
     <ClInclude Include="Source\Character\MeleeCharacter.h" />
+    <ClInclude Include="Source\Character\RangedCharacter.h" />
     <ClInclude Include="Source\Character\Weapon.h" />
     <ClInclude Include="Source\Controls\MapController.h" />
     <ClInclude Include="Source\EmptyScene.h" />
@@ -71,10 +78,12 @@
     <ClInclude Include="Source\MenuState.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\OptionState.h" />
+    <ClInclude Include="Source\PlayerInfo.h" />
     <ClInclude Include="Source\SceneGraph\SceneGraph.h" />
     <ClInclude Include="Source\SceneGraph\SceneNode.h" />
     <ClInclude Include="Source\SceneGraph\Transform.h" />
     <ClInclude Include="Source\SceneGraph\UpdateTransformation.h" />
+    <ClInclude Include="Source\SceneText.h" />
     <ClInclude Include="Source\ScoreState.h" />
     <ClInclude Include="Source\SkyBox\SkyBoxEntity.h" />
     <ClInclude Include="Source\Sounds\Music.h" />
@@ -83,7 +92,6 @@
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\TextEntity.h" />
     <ClInclude Include="Source\TileMap.h" />
-    <ClInclude Include="Source\Unit.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B172635-4E2B-46F1-A403-08F4194D00F5}</ProjectGuid>

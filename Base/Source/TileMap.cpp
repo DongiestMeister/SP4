@@ -89,10 +89,10 @@ void TileMap::Render()
 
 	for (vector<Unit*>::iterator it = characters.begin(); it != characters.end(); ++it)
 	{
-		Unit *character = (*it);
+		Unit *unit = (*it);
 		
 		modelStack.PushMatrix();
-		modelStack.Translate(character->pos.x * tileSizeX + tileSizeX / 2, -0.4, character->pos.y * tileSizeY + tileSizeY / 2);
+		modelStack.Translate(unit->character->getPos().x * tileSizeX + tileSizeX / 2, -0.2, unit->character->getPos().y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
@@ -115,7 +115,7 @@ void TileMap::Render()
 
 void TileMap::AddCharacter(int x, int y,Unit *unit)
 {
-	unit->pos.Set(x, y);
+	unit->character->setPos(Vector2(x, y));
 	characters.push_back(unit);
 }
 
@@ -123,10 +123,10 @@ Unit* TileMap::GetCharacter(int x, int y)
 {
 	for (vector<Unit*>::iterator it = characters.begin(); it != characters.end(); ++it)
 	{
-		Unit *character = *it;
-		if ((int)character->pos.x == x && (int)character->pos.y == y)
+		Unit *unit = *it;
+		if ((int)unit->character->getPos().x == x && (int)unit->character->getPos().y == y)
 		{
-			return character;
+			return unit;
 		}
 	}
 

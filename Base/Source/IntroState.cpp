@@ -54,7 +54,7 @@ void CIntroState::Update(double dt)
 	if ((timer -= dt) <= 0)
 	{
 		cout << "Loading Menustate" << endl;
-		SceneManager::GetInstance()->SetActiveScene("MenuState");
+		SceneManager::GetInstance()->SetActiveScene("GameState");
 	}
 }
 

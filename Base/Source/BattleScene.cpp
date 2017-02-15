@@ -1,4 +1,4 @@
-#include "GameplayScene.h"
+#include "BattleScene.h"
 #include "GL\glew.h"
 
 #include "shader.hpp"
@@ -20,42 +20,37 @@
 #include "SpriteEntity.h"
 #include "Light.h"
 #include "RenderHelper.h"
-
+#include "MyMath.h"
 
 
 #include <iostream>
 using namespace std;
 
 
-GameplayScene::GameplayScene()
+BattleScene::BattleScene()
 {
 }
 
 
-GameplayScene::~GameplayScene()
+BattleScene::~BattleScene()
 {
 }
 
-void GameplayScene::Init()
+void BattleScene::Init()
 {
+	Math::InitRNG();
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
 	Music::GetInstance()->Init();
 
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
-	gameMap.Init(200, 200, 10, 10);
 
-	if (gameMap.LoadMap("Image//MapDesign.csv"))
-	{
-		cout << "Succesfully loaded map!" << endl;
-	}
-	
 	srand(NULL);
-	
+
 	// Tell the graphics manager to use the shader we just loaded
 	GraphicsManager::GetInstance()->SetActiveShader("default");
-	
+
 
 	lights[0] = new Light();
 	GraphicsManager::GetInstance()->AddLight("lights[0]", lights[0]);
@@ -82,7 +77,7 @@ void GameplayScene::Init()
 
 	currProg->UpdateInt("numLights", 1);
 	currProg->UpdateInt("textEnabled", 0);
-	
+
 	// Create the playerinfo instance, which manages all information about the player
 	//playerInfo = CPlayerInfo::GetInstance();
 	//playerInfo->Init();
@@ -91,8 +86,7 @@ void GameplayScene::Init()
 
 	// Create and attach the camera to the scene
 	//camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
-	camera.Init(Vector3(100,-10,100), Vector3(100,0,100), Vector3(0,0,1));
-	camera.SetCameraOrtho(100.f, 16.f / 9.f);
+	camera.Init(Vector3(100, -20, -10), Vector3(100, 0, 100), Vector3(0, 0, 1));
 	//playerInfo->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
@@ -131,37 +125,27 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateRay("laser", 10.0f);
 	MeshBuilder::GetInstance()->GenerateQuad("GRIDMESH", Color(1, 1, 1), 1.f);
 
-	MeshBuilder::GetInstance()->GenerateQuad("Selected", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("Selected")->textureID = LoadTGA("Image//selected.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT", "OBJ//iceknight_obj.obj");
+	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT")->textureID = LoadTGA("Image//iceknight_texture.tga");
 
-	MeshBuilder::GetInstance()->GenerateQuad("SelectedArrow", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("SelectedArrow")->textureID = LoadTGA("Image//selectarrow.tga");
-
-	MeshBuilder::GetInstance()->GenerateQuad("Knight", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("Knight")->textureID = LoadTGA("Image//knight.tga");
-
-	MeshBuilder::GetInstance()->GenerateQuad("Attack", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("Attack")->textureID = LoadTGA("Image//attack.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("Move", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("Move")->textureID = LoadTGA("Image//move.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("Wait", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("Wait")->textureID = LoadTGA("Image//wait.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_TREE", "OBJ//Tree_low.obj");
+	MeshBuilder::GetInstance()->GetMesh("BASIC_TREE")->textureID = LoadTGA("Image//Tree.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_PLANT", "OBJ//Plant_low.obj");
+	MeshBuilder::GetInstance()->GetMesh("BASIC_PLANT")->textureID = LoadTGA("Image//grass_obj.tga");
 
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(100, 0, 100));
-	groundEntity->SetScale(Vector3(750.0f, 750.0f, 750.0f));
+	groundEntity->SetScale(Vector3(200.0f, 200.0f, 200.0f));
 	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
 	//playerInfo->SetTerrain(groundEntity);
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
-	float fontSize = 5.0f;
+	float fontSize = 25.0f;
 	float halfFontSize = fontSize / 2.0f;
-
-	fps = Create::Text2DObject("text", Vector3(-100,-95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
 	//for (int i = 0; i < 6; ++i)
 	//{
 	//	textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,1.0f,0.0f));
@@ -176,82 +160,80 @@ void GameplayScene::Init()
 
 	//textObj[5]->SetPosition(Vector3(-halfWindowWidth * 0.9 - fontSize * 2, -halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
 	//textObj[5]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
-
-	controller.Init(&gameMap, &camera);
-
-	AStar search(0, 0, 9, 9, &gameMap);
-	if (search.Search())
-	{
-		cout << "Search success" << endl;
-	}
-	else
-	{
-		cout << "Search failed" << endl;
-	}
-
-	Unit *knight = new Unit(new MeleeCharacter());
-	Unit *knight1 = new Unit(new MeleeCharacter());
-	Unit *knight2 = new Unit(new MeleeCharacter());
-	Unit *knight3 = new Unit(new MeleeCharacter());
-	Unit *knight4 = new Unit(new MeleeCharacter());
-
-	gameMap.AddCharacter(1, 1, knight);
-	gameMap.AddCharacter(10, 15, knight1);
-	gameMap.AddCharacter(4, 7, knight2);
-	gameMap.AddCharacter(6, 5, knight3);
-	gameMap.AddCharacter(8, 11, knight4);
+	
+	//Init Position of models;
+	player_posx = 80;
+	enemy_posx = 120;
+	b_isClashed = true;
+	
+	/*player = new MeleeCharacter();
+	Weapon* wtf = new Weapon(100, 50, false);
+	player->equipWeapon(wtf);*/
 }
 
-void GameplayScene::Update(double dt)
+void BattleScene::Update(double dt)
 {
 	// Update our entities
 	EntityManager::GetInstance()->Update(dt);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
-	if(KeyboardController::GetInstance()->IsKeyDown('1'))
+	if (KeyboardController::GetInstance()->IsKeyDown('1'))
 		glEnable(GL_CULL_FACE);
-	if(KeyboardController::GetInstance()->IsKeyDown('2'))
+	if (KeyboardController::GetInstance()->IsKeyDown('2'))
 		glDisable(GL_CULL_FACE);
-	if(KeyboardController::GetInstance()->IsKeyDown('3'))
+	if (KeyboardController::GetInstance()->IsKeyDown('3'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if(KeyboardController::GetInstance()->IsKeyDown('4'))
+	if (KeyboardController::GetInstance()->IsKeyDown('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
-	if(KeyboardController::GetInstance()->IsKeyDown('5'))
+
+	if (KeyboardController::GetInstance()->IsKeyDown('5'))
 	{
 		lights[0]->type = Light::LIGHT_POINT;
 	}
-	else if(KeyboardController::GetInstance()->IsKeyDown('6'))
+	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
 	{
 		lights[0]->type = Light::LIGHT_DIRECTIONAL;
 	}
-	else if(KeyboardController::GetInstance()->IsKeyDown('7'))
+	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
 	{
 		lights[0]->type = Light::LIGHT_SPOT;
 	}
 
-	if(KeyboardController::GetInstance()->IsKeyDown('I'))
+	if (KeyboardController::GetInstance()->IsKeyDown('I'))
 		lights[0]->position.z -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('K'))
+	if (KeyboardController::GetInstance()->IsKeyDown('K'))
 		lights[0]->position.z += (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('J'))
+	if (KeyboardController::GetInstance()->IsKeyDown('J'))
 		lights[0]->position.x -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('L'))
+	if (KeyboardController::GetInstance()->IsKeyDown('L'))
 		lights[0]->position.x += (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('O'))
+	if (KeyboardController::GetInstance()->IsKeyDown('O'))
 		lights[0]->position.y -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('P'))
+	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 		lights[0]->position.y += (float)(10.f * dt);
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
 	{
+		//Feel free to Remove/Edit.
+
+		/*cout << "Camera Pos : " << camera.GetCameraPos().x << " , " << camera.GetCameraPos().y << " , " << camera.GetCameraPos().z << endl;
+		cout << "Camera tar : " << camera.GetCameraTarget().x << " , " << camera.GetCameraTarget().y << " , " << camera.GetCameraTarget().z << endl;*/
+
+		b_isClashed = false;
 
 	}
+
+	
+	RunBattleAnimation(dt);
+
+	//camera.Update(dt);
+
 
 	// if the left mouse button was released
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
 	{
 		//cout << "Left Mouse Button was released!" << endl;
+//		player->attack();
 	}
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
 	{
@@ -274,17 +256,19 @@ void GameplayScene::Update(double dt)
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
 
-	controller.Update(dt);
+	//Music::GetInstance()->SetListener(playerInfo->GetPos(), playerInfo->GetPos() - playerInfo->GetTarget());
+
+	//camera.Update(dt); // Can put the camera into an entity rather than here (Then we don't have to write this)
 
 	GraphicsManager::GetInstance()->UpdateLights(dt);
 
 	// Update the 2 text object values. NOTE: Can do this in their own class but i'm lazy to do it now :P
 	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
-	std::ostringstream ss;
-	ss.precision(5);
-	float fps2 = (float)(1.f / dt);
-	ss << "FPS: " << fps2;
-	fps->SetText(ss.str());
+	//std::ostringstream ss;
+	//ss.precision(5);
+	//float fps = (float)(1.f / dt);
+	//ss << "FPS: " << fps;
+	//textObj[1]->SetText(ss.str());
 
 	//std::ostringstream ss1;
 	//ss1.precision(4);
@@ -313,46 +297,157 @@ void GameplayScene::Update(double dt)
 	//textObj[5]->SetText(ss1.str());
 }
 
-void GameplayScene::Render()
+void BattleScene::RunBattleAnimation(double dt)
+{
+	if (PlayerInfo::GetInstance()->b_attacking)
+	{
+
+		if (!b_isClashed)
+		{
+
+			if (player_posx <= 115)
+			{
+				player_posx += dt * 50;
+			}
+			else
+			{
+				b_isClashed = true;
+	//			PlayerInfo::GetInstance()->player->attack();
+			}
+		}
+		else
+		{
+			if (player_posx > 80)
+			{
+				player_posx -= dt * 50;
+
+			}
+		}
+	}
+	else
+	{
+		if (!b_isClashed)
+		{
+
+			if (enemy_posx >= 85)
+			{
+				enemy_posx -= dt * 50;
+			}
+			else
+			{
+				b_isClashed = true;
+//				PlayerInfo::GetInstance()->enemy->attack();
+			}
+		}
+		else
+		{
+			if (enemy_posx < 120)
+			{
+				enemy_posx += dt * 50;
+
+			}
+		}
+	}
+}
+
+void BattleScene::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
+
+
 	// Setup 3D pipeline then render 3D
-	//GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	GraphicsManager::GetInstance()->SetOrthographicProjection(-camera.f_OrthoSize * camera.f_aspectRatio, camera.f_OrthoSize * camera.f_aspectRatio, -camera.f_OrthoSize, camera.f_OrthoSize, -2000, 2000);
+	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
+	//GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	GraphicsManager::GetInstance()->UpdateLightUniforms();
 
-	gameMap.Render();
-	controller.Render();
-
 	EntityManager::GetInstance()->Render();
+
+
+	RenderProps();
+	
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
 	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
 
-	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
+	GraphicsManager::GetInstance()->SetOrthographicProjection(-200, 200, -200, 200, -2000, 2000);
 	GraphicsManager::GetInstance()->DetachCamera();
-	
-	controller.RenderUI();
+
 	EntityManager::GetInstance()->RenderUI();
 }
 
-void GameplayScene::Exit()
+void BattleScene::RenderProps()
+{
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+
+
+	//Right - Enemy Render
+	modelStack.PushMatrix();
+	modelStack.Translate(enemy_posx, 0, 60);
+	modelStack.Scale(3, 3, 3);
+	modelStack.Rotate(180, 0, 0, 1);
+	modelStack.Rotate(110, 0, 1, 0);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT"));
+	modelStack.PopMatrix();
+
+	//Left - Player Render
+	modelStack.PushMatrix();
+	modelStack.Translate(player_posx, 0, 60);
+	modelStack.Scale(3, 3, 3);
+	modelStack.Rotate(180, 0, 0, 1);
+	modelStack.Rotate(-110, 0, 1, 0);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT"));
+	modelStack.PopMatrix();
+
+
+	modelStack.PushMatrix();
+	modelStack.Translate(100, 0, 100);
+	modelStack.Scale(3, 3, 3);
+	modelStack.Rotate(180, 0, 0, 1);
+	modelStack.Rotate(-110, 0, 1, 0);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BASIC_PLANT"));
+	modelStack.PopMatrix();
+
+	for (int i = 40; i <= 160; i += 60)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(i, 0, 180);
+		modelStack.Scale(8, 8, 8);
+		modelStack.Rotate(180, 0, 0, 1);
+		modelStack.Rotate(90, 0, 1, 0);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BASIC_TREE"));
+		modelStack.PopMatrix();
+	}
+
+	for (int i = 20; i < 180; i += 30)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(i, 0, 150);
+		modelStack.Scale(5, 5, 5);
+		modelStack.Rotate(180, 0, 0, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BASIC_TREE"));
+		modelStack.PopMatrix();
+	}
+
+
+}
+
+void BattleScene::Exit()
 {
 	// Detach camera from other entities
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
 	//playerInfo->DetachCamera();
 
-//	if (playerInfo->DropInstance() == false)
-//	{
-//#if _DEBUGMODE==1
-//		cout << "Unable to drop PlayerInfo class" << endl;
-//#endif
-//	}
+	//	if (playerInfo->DropInstance() == false)
+	//	{
+	//#if _DEBUGMODE==1
+	//		cout << "Unable to drop PlayerInfo class" << endl;
+	//#endif
+	//	}
 
 	// Delete the lights
 	delete lights[0];

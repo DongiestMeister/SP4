@@ -8,6 +8,7 @@
 #include "ScoreState.h"
 #include "GameplayScene.h"
 #include "EmptyScene.h"
+#include "BattleScene.h"
 
 class ShaderProgram;
 struct GLFWwindow;

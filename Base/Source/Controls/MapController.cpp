@@ -123,7 +123,7 @@ void MapController::Update(double dt)
 			}
 		}
 	}
-	
+
 
 	// Moving the camera to the selected tile
 	Vector2 currentPos(camera->GetCameraPos().x, camera->GetCameraPos().z);
@@ -142,7 +142,7 @@ void MapController::Update(double dt)
 
 void MapController::PanTo(float speed, Vector2 pos, double dt)
 {
-	Vector3 targetPos(selectedTile.x * map->tileSizeX + map->tileSizeX / 2,0, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
+	Vector3 targetPos(selectedTile.x * map->tileSizeX + map->tileSizeX / 2, 0, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
 	Vector3 vel = (targetPos - camera->GetCameraPos()).Normalized() * speed * (float)dt;
 	camera->SetCameraPos(camera->GetCameraPos() + vel);
 	camera->SetCameraTarget(camera->GetCameraTarget() + vel);
@@ -152,10 +152,10 @@ void MapController::GetUnitPath()
 {
 	if (selectedUnit)
 	{
-		if (!map->GetCharacter(selectedTile.x,selectedTile.y) && map->theScreenMap[selectedTile.y][selectedTile.x] == 0)
+		if (!map->GetCharacter(selectedTile.x, selectedTile.y) && map->theScreenMap[selectedTile.y][selectedTile.x] == 0)
 		{
-			AStar search((int)selectedUnit->pos.x, (int)selectedUnit->pos.y, selectedTile.x, selectedTile.y, map);
-			if ((selectedUnit->pos - Vector2(selectedTile.x, selectedTile.y)).Length() > selectedUnit->character->i_movementCost)
+			AStar search((int)selectedUnit->character->getPos().x, (int)selectedUnit->character->getPos().y, selectedTile.x, selectedTile.y, map);
+			if ((selectedUnit->character->getPos() - Vector2(selectedTile.x, selectedTile.y)).Length() > selectedUnit->character->i_movementCost)
 			{
 				b_canPlace = false;
 			}
@@ -185,22 +185,22 @@ void MapController::GetUnitPath()
 	}
 }
 
-void MapController::MoveUnit(float speed,double dt)
+void MapController::MoveUnit(float speed, double dt)
 {
 	if (selectedUnit)
 	{
 		if (unitPath.size() > 0)
 		{
-			if (!(unitPath[0] - selectedUnit->pos).IsZero())
+			if (!(unitPath[0] - selectedUnit->character->getPos()).IsZero())
 			{
-				Vector2 vel = (unitPath[0] - selectedUnit->pos).Normalized() * speed * dt;
-				selectedUnit->pos = selectedUnit->pos + vel;
-				selectedTile = selectedUnit->pos;
+				Vector2 vel = (unitPath[0] - selectedUnit->character->getPos()).Normalized() * speed * dt;
+				selectedUnit->character->setPos(selectedUnit->character->getPos() + vel);
+				selectedTile = selectedUnit->character->getPos();
 			}
-			if ((unitPath[0] - selectedUnit->pos).Length() < 0.1f)
+			if ((unitPath[0] - selectedUnit->character->getPos()).Length() < 0.1f)
 			{
-				selectedUnit->pos = unitPath[0];
-				selectedTile = selectedUnit->pos;
+				selectedUnit->character->setPos(unitPath[0]);
+				selectedTile = selectedUnit->character->getPos();
 				unitPath.erase(unitPath.begin());
 			}
 		}
@@ -319,7 +319,7 @@ void MapController::OpenButtons()
 	const struct { int x, y; } succ[4] = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
 	for (int i = 0; i < 4; ++i)
 	{
-		if (map->GetCharacter(selectedUnit->pos.x + succ[i].x, selectedUnit->pos.y + succ[i].y))
+		if (map->GetCharacter(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y))
 		{
 			b_activeButtons[ATTACK] = true;
 			break;
@@ -388,7 +388,7 @@ void MapController::RenderUI()
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(camera->f_OrthoSize / 5, f_yOffset, 1.f);
-			f_yOffset -= camera->f_OrthoSize/8;
+			f_yOffset -= camera->f_OrthoSize / 8;
 			modelStack.Scale(camera->f_OrthoSize / 10 * 4 / 3, camera->f_OrthoSize / 10, 1.f);
 			if ((int)currentButton == i)
 			{
