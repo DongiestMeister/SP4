@@ -44,7 +44,7 @@
       <UniqueIdentifier>{dbe5bd06-eaf6-4ff2-bcc2-c5b64d8b9783}</UniqueIdentifier>
     </Filter>
     <Filter Include="Character">
-      <UniqueIdentifier>{3306ee31-dde1-472f-b721-282c0ccfd29a}</UniqueIdentifier>
+      <UniqueIdentifier>{4454d9ed-a9f0-441e-a744-298d459babbf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -135,9 +135,6 @@
     <ClCompile Include="Source\Controls\MapController.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
-    <ClCompile Include="Source\BattleScene.cpp">
-      <Filter>GameStateManagement</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Character\Armor.cpp">
       <Filter>Character</Filter>
     </ClCompile>
@@ -147,18 +144,18 @@
     <ClCompile Include="Source\Character\Weapon.cpp">
       <Filter>Character</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Character\RangedCharacter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Character\Character.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Character\RangedCharacter.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Character\FlyingCharacter.cpp">
       <Filter>Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\FPSCamera.h">
@@ -257,12 +254,6 @@
     <ClInclude Include="Source\Controls\MapController.h">
       <Filter>Controls</Filter>
     </ClInclude>
-    <ClInclude Include="Source\BattleScene.h">
-      <Filter>GameStateManagement</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PlayerInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Character\Armor.h">
       <Filter>Character</Filter>
     </ClInclude>
@@ -275,17 +266,14 @@
     <ClInclude Include="Source\Character\Weapon.h">
       <Filter>Character</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AI_FSM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AI_OffenceFSM.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AI_DefenceFSM.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Unit.h">
+      <Filter>Tilemap</Filter>
     </ClInclude>
     <ClInclude Include="Source\Character\RangedCharacter.h">
-      <Filter>Header Files</Filter>
+      <Filter>Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Character\FlyingCharacter.h">
+      <Filter>Character</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

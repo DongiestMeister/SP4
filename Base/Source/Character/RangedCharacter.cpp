@@ -2,10 +2,11 @@
 #include <iostream>
 RangedCharacter::RangedCharacter()
 {
-	i_STR = 10; // All melee characters have a base STR of 10
-	i_DEX = 3; // All melee characters have a base DEX of 3
-	i_LUK = 0; // All melee characters have a base LUK of 0
-	i_movementCost = 3; // All melee characters have a base movement cost of 3
+	i_STR = 3; // All ranged characters have a base STR of 10
+	i_DEX = 10; // All ranged characters have a base DEX of 3
+	i_LUK = 5; // All ranged characters have a base LUK of 0
+	i_movementCost = 6; // All ranged characters have a base movement cost of 3
+	i_attackRange = 2; // All ranged characters have a base attack range of 2
 
 	// Damage value of 0, so equivalent to not having a weapon at all
 	weapon = new Weapon(0, 100, true, "nothing");
@@ -36,7 +37,8 @@ RangedCharacter::~RangedCharacter()
 
 bool RangedCharacter::attack(Character* opponent)
 {
-	int hitRate = i_DEX + weapon->i_weaponAccuracy - opponent->getLUK();
+	float distanceToEnemy = (pos - opponent->getPos()).Length();
+	int hitRate = (i_DEX + weapon->i_weaponAccuracy - opponent->getLUK()) - (int)(distanceToEnemy);
 	int hitResult = Math::RandIntMinMax(0, 100);
 	if (hitRate >= hitResult)
 	{

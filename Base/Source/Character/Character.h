@@ -39,6 +39,7 @@ public:
 	int i_stepsTaken;
 	Mesh* characterMesh;
 	bool b_tookAction; // If the unit has already moved/attacked this turn
+	int i_attackRange; // Range of attack of this character
 protected:
 	Weapon* weapon;
 	Armor* armor;
