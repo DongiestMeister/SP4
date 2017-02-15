@@ -169,6 +169,7 @@ void Application::Init()
 	SceneManager::GetInstance()->AddScene("GameState", new GameplayScene());
 	SceneManager::GetInstance()->AddScene("OptionState", new COptionState());
 	SceneManager::GetInstance()->AddScene("ScoreState", new CScoreState());
+	SceneManager::GetInstance()->AddScene("BattleState", new BattleScene());
 	//
 	SceneManager::GetInstance()->SetActiveScene("IntroState");
 }
