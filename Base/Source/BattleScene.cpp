@@ -163,9 +163,9 @@ void BattleScene::Init()
 	enemy_posx = 120;
 	b_isClashed = true;
 	
-	player = new MeleeCharacter();
+	/*player = new MeleeCharacter();
 	Weapon* wtf = new Weapon(100, 50, false);
-	player->equipWeapon(wtf);
+	player->equipWeapon(wtf);*/
 }
 
 void BattleScene::Update(double dt)
@@ -235,7 +235,7 @@ void BattleScene::Update(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
 	{
 		//cout << "Left Mouse Button was released!" << endl;
-		player->attack();
+//		player->attack();
 	}
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
 	{
