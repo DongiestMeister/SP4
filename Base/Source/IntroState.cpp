@@ -36,7 +36,11 @@ void CIntroState::Init()
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
 
 	MeshBuilder::GetInstance()->GenerateQuad("INTROSTATE_BKGROUND", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("INTROSTATE_BKGROUND")->textureID = LoadTGA("Image//IntroState.tga");
+	MeshBuilder::GetInstance()->GetMesh("INTROSTATE_BKGROUND")->textureID = LoadTGA("Image//splashscreen.tga");
+
+	MeshBuilder::GetInstance()->GenerateQuad("sword", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("sword")->textureID = LoadTGA("Image//sword.tga");
+
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
 	IntroStateBackground = Create::Sprite2DObject("INTROSTATE_BKGROUND",
@@ -44,9 +48,12 @@ void CIntroState::Init()
 										Vector3(halfWindowWidth * 2, halfWindowHeight * 2, 0.0f));
 	cout << "CIntroState loaded\n" << endl;
 
-	timer = 3.f;
+	timer = 5.f;
 
-	Music::GetInstance()->playSound("Sounds//Tether_target.mp3");
+	f_swordTranslate[0] = -200.f;
+	f_swordTranslate[1] = -200.f;
+
+	Music::GetInstance()->playSound("Sounds//rageofblades.mp3");
 }
 
 void CIntroState::Update(double dt)
@@ -57,10 +64,22 @@ void CIntroState::Update(double dt)
 		SceneManager::GetInstance()->SetActiveScene("GameState");
 	//	SceneManager::GetInstance()->SetActiveScene("PartySelect");
 	}
+	float screenwidth = Application::GetInstance().GetWindowWidth();
+
+	if (f_swordTranslate[0] < screenwidth/2)
+	{
+		f_swordTranslate[0] += screenwidth/1.5f * dt;
+ 	}
+	else if (f_swordTranslate[1] < screenwidth/2)
+	{
+		f_swordTranslate[1] += screenwidth/1.5f * dt;
+	}
+
 }
 
 void CIntroState::Render()
 {
+	glDisable(GL_CULL_FACE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.f, 4.f / 3.f, 0.1f, 10000.f);
@@ -76,7 +95,15 @@ void CIntroState::Render()
 
 	GraphicsManager::GetInstance()->DetachCamera();
 
+	float screenwidth = Application::GetInstance().GetWindowWidth();
+	float screenheight = Application::GetInstance().GetWindowHeight();
+	for (int i = 0; i < 2; ++i)
+	{
+		RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("sword"), Vector3(f_swordTranslate[i],screenheight/2,1), Vector3(screenwidth/2, screenheight/2, 1), Vector3(0, i * 180, 0));
+	}
 	EntityManager::GetInstance()->RenderUI();
+
+	glEnable(GL_CULL_FACE);
 }
 
 void CIntroState::Exit()

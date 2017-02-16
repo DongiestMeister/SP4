@@ -34,6 +34,16 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 
 	characters = PlayerInfo::GetInstance()->party;
 	enemies = PlayerInfo::GetInstance()->enemies;
+
+	for (int i = 0; i < characters.size(); ++i)
+	{
+		theScreenMap[(int)characters[i]->getPos().y][(int)characters[i]->getPos().x] = 2;
+	}
+
+	for (int i = 0; i < enemies.size(); ++i)
+	{
+		theScreenMap[(int)enemies[i]->getPos().y][(int)enemies[i]->getPos().x] = 2;
+	}
 }
 
 bool TileMap::LoadMap(const string mapName)
@@ -59,7 +69,15 @@ bool TileMap::LoadMap(const string mapName)
 			istringstream iss(aLineOfText);
 			while (getline(iss, token, ',') && (theColumnCounter<numTilesWidth))
 			{
-				theScreenMap[theLineCounter][theColumnCounter++] = atoi(token.c_str()); // theScreenMap[y][x]
+				if (atoi(token.c_str()) == 3) // Forest tile
+				{
+					theScreenMap[theLineCounter][theColumnCounter++] = 0;
+				}
+				else
+				{
+					theScreenMap[theLineCounter][theColumnCounter++] = atoi(token.c_str()); // theScreenMap[y][x]
+				}
+				
 			}
 
 			theLineCounter--;

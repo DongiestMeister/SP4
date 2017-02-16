@@ -22,6 +22,8 @@ public:
 	virtual void Exit();
 
 	float timer;
+
+	float f_swordTranslate[2];
 private:
 	FPSCamera camera;
 	SpriteEntity* IntroStateBackground;

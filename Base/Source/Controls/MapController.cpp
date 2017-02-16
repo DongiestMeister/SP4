@@ -56,6 +56,7 @@ void MapController::Update(double dt)
 		{
 			unitPath = map->movePath;
 			selectedUnit->i_stepsTaken += unitPath.size();
+			map->theScreenMap[(int)selectedUnit->getPos().y][(int)selectedUnit->getPos().x] = 0;
 			b_movingUnit = true;
 			b_canPlace = false;
 		}
@@ -122,7 +123,7 @@ void MapController::GetUnitPath()
 {
 	if (selectedUnit)
 	{
-		if (!map->GetCharacter(selectedTile.x, selectedTile.y) && map->theScreenMap[selectedTile.y][selectedTile.x] == 0)
+		if (!map->GetCharacter(selectedTile.x, selectedTile.y) && !map->GetEnemy(selectedTile.x, selectedTile.y) && map->theScreenMap[selectedTile.y][selectedTile.x] == 0)
 		{
 			AStar search((int)selectedUnit->getPos().x, (int)selectedUnit->getPos().y, selectedTile.x, selectedTile.y, map);
 			if ((selectedUnit->getPos() - Vector2(selectedTile.x, selectedTile.y)).Length() > selectedUnit->i_movementCost)
@@ -179,6 +180,7 @@ void MapController::MoveUnit(float speed, double dt)
 			b_movingUnit = false;
 			map->movePath.clear();
 			OpenButtons();
+			map->theScreenMap[(int)selectedUnit->getPos().y][(int)selectedUnit->getPos().x] = 2;
 		}
 	}
 }
@@ -312,7 +314,7 @@ void MapController::OpenButtons()
 	}
 
 
-	if (selectedUnit->i_stepsTaken < selectedUnit->i_movementCost)
+	if (selectedUnit->i_stepsTaken == 0)
 	{
 		b_activeButtons[MOVE] = true;
 	}
@@ -490,5 +492,20 @@ void MapController::RenderUI()
 			}
 			modelStack.PopMatrix();
 		}
+	}
+
+	if (selectedUnit)
+	{
+		string textdisplay;
+		if (map->movePath.size() - 1 <= selectedUnit->i_movementCost && b_canPlace)
+		{
+			textdisplay = std::to_string(map->movePath.size() - 1) + "/" + std::to_string(selectedUnit->i_movementCost);
+		}
+		else
+		{
+			textdisplay = "Invalid point";
+		}
+
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), textdisplay, Vector3(-30, 50, 1), 7.f, Color(1, 1, 1));
 	}
 }
