@@ -17,11 +17,21 @@ void SceneManager::Update(double _dt)
 		if (activeScene)
 		{
 			// Scene is valid, need to call appropriate function to exit
-			activeScene->Exit();
+			if (!activeScene->b_isPaused)
+				activeScene->Exit();
+			else
+				activeScene->Pause();
 		}
 		
 		activeScene = nextScene;
-		activeScene->Init();
+		if (!activeScene->b_isPaused)
+			activeScene->Init();
+		else
+		{
+			activeScene->b_isPaused = false;
+			activeScene->Resume();
+		}
+			
 	}
 
 	if (activeScene)
@@ -82,7 +92,7 @@ void SceneManager::RemoveScene(const std::string& _name)
 	sceneMap.erase(_name);
 }
 
-void SceneManager::SetActiveScene(const std::string& _name)
+void SceneManager::SetActiveScene(const std::string& _name, bool pause)
 {
 	if (!CheckSceneExist(_name))
 	{
@@ -91,6 +101,10 @@ void SceneManager::SetActiveScene(const std::string& _name)
 	}
 
 	// Scene exist, set the next scene pointer to that scene
+	if (activeScene)
+	{
+		activeScene->b_isPaused = pause;
+	}	
 	nextScene = sceneMap[_name];
 }
 

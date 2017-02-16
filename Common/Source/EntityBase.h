@@ -2,6 +2,9 @@
 #define ENTITY_BASE_H
 
 #include "Vector3.h"
+#include <string>
+
+using std::string;
 
 class EntityBase
 {
@@ -33,10 +36,6 @@ public:
 	virtual void SetIsLaser(const bool bLaser);
 	// Get the flag, bLaser
 	virtual bool GetIsLaser(void) const;
-
-
-
-	
 protected:
 	Vector3 position;
 	Vector3 scale;

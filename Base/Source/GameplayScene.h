@@ -33,6 +33,8 @@ public:
 	virtual void Update(double dt);
 	virtual void Render();
 	virtual void Exit();
+	virtual void Pause();
+	virtual void Resume();
 
 private:
 	ShaderProgram* currProg;
@@ -41,14 +43,21 @@ private:
 	FPSCamera camera;
 	//TextEntity* textObj[6];
 	TextEntity* fps;
+	TextEntity* turnDisplay;
+
 	Light* lights[2];
 
 	MapController controller;
 
+	bool b_playerTurn;
+	int i_turn;
 
 	ISound* BGM;
 
 	TileMap gameMap;
+
+	void DisplayText(string text,Vector3 color);
+	bool b_textRunning;
 };
 
 #endif

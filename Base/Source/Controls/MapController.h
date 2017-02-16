@@ -29,10 +29,15 @@ private:
 
 	bool b_canPlace;
 	bool b_movingUnit;
+	bool b_attacking;
 	void MovementControls(double dt);
 
 	float f_upDebounce, f_downDebounce, f_leftDebounce, f_rightDebounce;
 	float f_movementDelay; // delay in between movement of tiles when holding down
+
+	vector<Unit*> attackableUnits; // units within range of enemy
+	Character *selectedEnemy; // the enemy that is selected to attack
+	int enemyIterator;
 
 	enum CTRLBUTTONS
 	{
@@ -44,6 +49,8 @@ private:
 
 	void OpenButtons();
 	void CloseButtons();
+	void ButtonControls();
+	void AttackControls();
 
 	bool b_activeButtons[CTRL_TOTAL];
 	CTRLBUTTONS currentButton;

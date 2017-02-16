@@ -19,8 +19,9 @@ public:
 	// User Interface
 	void AddScene(const std::string& _name, Scene* _scene);
 	void RemoveScene(const std::string& _name);
-	void SetActiveScene(const std::string& _name);
+	void SetActiveScene(const std::string& _name,bool pause = false);
 	bool CheckSceneExist(const std::string& _name);
+
 
 private:
 	SceneManager();

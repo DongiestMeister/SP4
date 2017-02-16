@@ -3,6 +3,8 @@
 #include "GraphicsManager.h"
 #include "MeshBuilder.h"
 #include "RenderHelper.h"
+#include "../PlayerInfo.h"
+#include "SceneManager.h"
 
 MapController::MapController()
 {
@@ -17,6 +19,9 @@ MapController::MapController()
 	b_activeButtons[2] = false;
 	currentButton = ATTACK;
 	selectedButton = CTRL_TOTAL;
+	b_attacking = false;
+	selectedEnemy = nullptr;
+	enemyIterator = 0;
 }
 
 MapController::~MapController()
@@ -42,6 +47,7 @@ void MapController::Update(double dt)
 				{
 					std::cout << "Unit found!" << std::endl;
 					selectedUnit = map->GetCharacter(selectedTile.x, selectedTile.y);
+					attackableUnits.clear();
 					OpenButtons();
 				}
 			}
@@ -58,6 +64,17 @@ void MapController::Update(double dt)
 			selectedButton = currentButton;
 			CloseButtons();
 		}
+		else if (b_attacking)
+		{
+			b_attacking = false;
+			selectedUnit->character->b_tookAction = true;
+			PlayerInfo::GetInstance()->enemy = selectedEnemy;
+			PlayerInfo::GetInstance()->player = selectedUnit->character;
+			selectedEnemy = nullptr;
+			selectedUnit = nullptr;
+			attackableUnits.clear();
+			SceneManager::GetInstance()->SetActiveScene("BattleState", true);
+		}
 	}
 
 	if (b_movingUnit)
@@ -65,63 +82,16 @@ void MapController::Update(double dt)
 		MoveUnit(5.f, dt);
 	}
 
-	if (!b_activeButtons[WAIT])
+	if (!b_activeButtons[WAIT] && !b_attacking)
 	{
 		MovementControls(dt);
 	}
 
-	if (b_activeButtons[WAIT]) // If buttons are active
+	ButtonControls();
+
+	if (b_attacking)
 	{
-		if (KeyboardController::GetInstance()->IsKeyPressed(VK_UP))
-		{
-			if (currentButton == ATTACK)
-			{
-				currentButton = WAIT;
-			}
-			else if (currentButton == MOVE)
-			{
-				if (b_activeButtons[ATTACK])
-				{
-					currentButton = ATTACK;
-				}
-				else
-				{
-					currentButton = WAIT;
-				}
-			}
-			else if (currentButton == WAIT)
-			{
-				if (b_activeButtons[MOVE])
-				{
-					currentButton = MOVE;
-				}
-				else if (b_activeButtons[ATTACK])
-				{
-					currentButton = ATTACK;
-				}
-			}
-		}
-		if (KeyboardController::GetInstance()->IsKeyPressed(VK_DOWN))
-		{
-			if (currentButton == WAIT)
-			{
-				if (b_activeButtons[ATTACK])
-					currentButton = ATTACK;
-				else if (b_activeButtons[MOVE])
-					currentButton = MOVE;
-			}
-			else if (currentButton == ATTACK)
-			{
-				if (b_activeButtons[MOVE])
-					currentButton = MOVE;
-				else
-					currentButton = WAIT;
-			}
-			else if (currentButton == MOVE)
-			{
-				currentButton = WAIT;
-			}
-		}
+		AttackControls();
 	}
 
 
@@ -316,15 +286,31 @@ void MapController::OpenButtons()
 {
 	selectedButton = CTRL_TOTAL;
 
-	const struct { int x, y; } succ[4] = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
-	for (int i = 0; i < 4; ++i)
+	attackableUnits.clear();
 	{
-		if (map->GetCharacter(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y))
+		const struct { int x, y; } succ[4] = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
+		for (int i = 0; i < 4; ++i)
 		{
-			b_activeButtons[ATTACK] = true;
-			break;
+			if (map->GetEnemy(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y))
+			{
+				attackableUnits.push_back(map->GetEnemy(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y));
+				b_activeButtons[ATTACK] = true;
+			}
 		}
 	}
+	if (selectedUnit->character->i_attackRange > 1)
+	{
+		const struct { int x, y; } succ[8] = { { -1, -1 }, { 1, 1 }, { 1, -1 }, { -1, 1 }, { -2, 0 }, { 2, 0 }, { 0, -2 }, { 0, 2 } };
+		for (int i = 0; i < 8; ++i)
+		{
+			if (map->GetEnemy(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y))
+			{
+				attackableUnits.push_back(map->GetEnemy(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y));
+				b_activeButtons[ATTACK] = true;
+			}
+		}
+	}
+
 
 	if (selectedUnit->i_stepsTaken < selectedUnit->i_movementCost)
 	{
@@ -353,10 +339,106 @@ void MapController::CloseButtons()
 	b_activeButtons[MOVE] = false;
 	b_activeButtons[WAIT] = false;
 
-	if (selectedButton == WAIT || selectedButton == ATTACK)
+	if (selectedButton == WAIT)
 	{
 		selectedUnit->b_tookAction = true;
 		selectedUnit = nullptr;
+	}
+	else if (selectedButton == ATTACK)
+	{
+		b_attacking = true;
+		selectedTile = attackableUnits[0]->character->getPos();
+		selectedEnemy = attackableUnits[0]->character;
+	}
+}
+
+void MapController::ButtonControls()
+{
+	if (b_activeButtons[WAIT]) // If buttons are active
+	{
+		if (KeyboardController::GetInstance()->IsKeyPressed(VK_UP))
+		{
+			if (currentButton == ATTACK)
+			{
+				currentButton = WAIT;
+			}
+			else if (currentButton == MOVE)
+			{
+				if (b_activeButtons[ATTACK])
+				{
+					currentButton = ATTACK;
+				}
+				else
+				{
+					currentButton = WAIT;
+				}
+			}
+			else if (currentButton == WAIT)
+			{
+				if (b_activeButtons[MOVE])
+				{
+					currentButton = MOVE;
+				}
+				else if (b_activeButtons[ATTACK])
+				{
+					currentButton = ATTACK;
+				}
+			}
+		}
+		if (KeyboardController::GetInstance()->IsKeyPressed(VK_DOWN))
+		{
+			if (currentButton == WAIT)
+			{
+				if (b_activeButtons[ATTACK])
+					currentButton = ATTACK;
+				else if (b_activeButtons[MOVE])
+					currentButton = MOVE;
+			}
+			else if (currentButton == ATTACK)
+			{
+				if (b_activeButtons[MOVE])
+					currentButton = MOVE;
+				else
+					currentButton = WAIT;
+			}
+			else if (currentButton == MOVE)
+			{
+				currentButton = WAIT;
+			}
+		}
+	}
+}
+
+void MapController::AttackControls()
+{
+	if (b_attacking) // If buttons are active
+	{
+		if (KeyboardController::GetInstance()->IsKeyPressed(VK_UP))
+		{
+			if (enemyIterator >= attackableUnits.size() - 1)
+			{
+				enemyIterator = 0;
+			}
+			else
+			{
+				enemyIterator++;
+			}
+			selectedTile = attackableUnits[enemyIterator]->character->getPos();
+			selectedEnemy = attackableUnits[enemyIterator]->character;
+		}
+		if (KeyboardController::GetInstance()->IsKeyPressed(VK_DOWN))
+		{
+			if (enemyIterator == 0)
+			{
+				enemyIterator = attackableUnits.size() - 1;
+			}
+			else
+			{
+				enemyIterator--;
+			}
+			selectedTile = attackableUnits[enemyIterator]->character->getPos();
+			selectedEnemy = attackableUnits[enemyIterator]->character;
+		}
 	}
 }
 

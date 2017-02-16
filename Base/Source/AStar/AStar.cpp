@@ -6,6 +6,7 @@ using std::endl;
 
 #define MIN_COST (float) 1.0		// Minimum Permissible Cost	For Heuristics	
 #define ALPHA    (float) 0.5		// Scaling Factor For Heuristics
+#define MAX_COST (float) 10.0
 
 // Declare Structure Representing Neighborhood Of A Node
 const struct { int x, y; } succ[4] = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
@@ -164,7 +165,7 @@ bool AStar::Search()
 					if (InList(openList, successor))						// If Proposed Succesor Exists In Open List..
 					{
 						temp = getFromOpenList(successor);				// Get The Node Concerned
-						if (temp->f > successor->f)						// Check If Successor's 'f' Value Is Lower
+						if (temp->f > successor->f && successor->g <= MAX_COST)						// Check If Successor's 'f' Value Is Lower
 						{
 							RemoveOpenList(temp);						// If lower, Remove Existing Node From Open List
 							AddOpenList(successor);						// Add Successor To Open List Instead
@@ -174,7 +175,7 @@ bool AStar::Search()
 					if (InList(closeList, successor))						// If Proposed Succesor Exists In Close List..
 					{
 						temp = getFromCloseList(successor);				// Get The Node Concerned
-						if (temp->f > successor->f)						// Check If Successor's 'f' Value Is Lower
+						if (temp->f > successor->f  && successor->g <= MAX_COST)						// Check If Successor's 'f' Value Is Lower
 						{
 							RemoveCloseList(temp);						// Remove From Close List
 							AddCloseList(successor);					// Add Successor To Close List

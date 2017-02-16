@@ -41,6 +41,9 @@ void GameplayScene::Init()
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
 	Music::GetInstance()->Init();
 
+	turnDisplay = nullptr;
+	b_textRunning = false;
+
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
@@ -276,6 +279,70 @@ void GameplayScene::Update(double dt)
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
 
+	if (!b_textRunning)
+	{
+		if (b_playerTurn)
+		{
+			bool b_done = true;
+			for (int i = 0; i < gameMap.characters.size(); ++i)
+			{
+				if (!gameMap.characters[i]->character->b_tookAction)
+				{
+					b_done = false;
+				}
+			}
+			if (b_done)
+			{
+				b_playerTurn = false;
+				if (!b_textRunning)
+					DisplayText("Enemy Turn", Vector3(1, 0, 0));
+				gameMap.ResetCharacters();
+				// For testing purposes
+				for (int i = 0; i < gameMap.enemies.size(); ++i)
+				{
+					gameMap.enemies[i]->character->b_tookAction = true;
+				}
+			}
+		}
+		else
+		{
+			bool b_done = true;
+			for (int i = 0; i < gameMap.enemies.size(); ++i)
+			{
+				if (!gameMap.enemies[i]->character->b_tookAction)
+				{
+					b_done = false;
+				}
+			}
+			if (b_done)
+			{
+				b_playerTurn = true;
+				gameMap.ResetEnemies();
+				i_turn++;
+				if (!b_textRunning)
+					DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
+			}
+		}
+	}
+
+	if (b_textRunning)
+	{	
+		if (turnDisplay->GetPosition().x > 0 - 50 && turnDisplay->GetPosition().x < 0 - 40)
+		{
+			turnDisplay->SetPosition(turnDisplay->GetPosition() + Vector3(5, 0, 0) * dt);
+		}
+		else
+		{
+			turnDisplay->SetPosition(turnDisplay->GetPosition() + Vector3(100, 0, 0) * dt);
+		}
+
+		if (turnDisplay->GetPosition().x > 100)
+		{
+			turnDisplay->SetIsDone(true);
+			b_textRunning = false;
+		}
+	}
+
 	controller.Update(dt);
 
 	GraphicsManager::GetInstance()->UpdateLights(dt);
@@ -348,7 +415,7 @@ void GameplayScene::Exit()
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
 	//playerInfo->DetachCamera();
-
+	fps->SetIsDone(true);
 //	if (playerInfo->DropInstance() == false)
 //	{
 //#if _DEBUGMODE==1
@@ -357,6 +424,34 @@ void GameplayScene::Exit()
 //	}
 
 	// Delete the lights
-	delete lights[0];
-	delete lights[1];
+	//delete lights[0];
+	//delete lights[1];
+}
+
+void GameplayScene::Pause()
+{
+	BGM->setIsPaused(true);
+	groundEntity->SetIsDone(true);
+	fps->SetIsDone(true);
+}
+
+void GameplayScene::Resume()
+{
+	BGM->setIsPaused(false);
+	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
+
+	// Customise the ground entity
+	groundEntity->SetPosition(Vector3(100, 0, 100));
+	groundEntity->SetScale(Vector3(750.0f, 750.0f, 750.0f));
+	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
+
+	float fontSize = 5.0f;
+
+	fps = Create::Text2DObject("text", Vector3(-100, -95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
+}
+
+void GameplayScene::DisplayText(string text,Vector3 color)
+{
+	b_textRunning = true;
+	turnDisplay = Create::Text2DObject("text", Vector3(-120, 0, 1.0f), text, Vector3(10, 10, 10), Color(color.x, color.y, color.z));
 }

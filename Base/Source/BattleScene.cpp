@@ -45,9 +45,6 @@ void BattleScene::Init()
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
-
-	srand(NULL);
-
 	// Tell the graphics manager to use the shader we just loaded
 	GraphicsManager::GetInstance()->SetActiveShader("default");
 
@@ -137,7 +134,7 @@ void BattleScene::Init()
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(100, 0, 100));
-	groundEntity->SetScale(Vector3(200.0f, 200.0f, 200.0f));
+	groundEntity->SetScale(Vector3(750.0f, 750.0f, 750.0f));
 	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
 	//playerInfo->SetTerrain(groundEntity);
 
@@ -221,6 +218,11 @@ void BattleScene::Update(double dt)
 
 		b_isClashed = false;
 
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
+	{
+		SceneManager::GetInstance()->SetActiveScene("GameState");
 	}
 
 	
@@ -438,8 +440,10 @@ void BattleScene::RenderProps()
 void BattleScene::Exit()
 {
 	// Detach camera from other entities
+	BGM->stop();
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
+	groundEntity->SetIsDone(true);
 	//playerInfo->DetachCamera();
 
 	//	if (playerInfo->DropInstance() == false)
@@ -450,6 +454,6 @@ void BattleScene::Exit()
 	//	}
 
 	// Delete the lights
-	delete lights[0];
-	delete lights[1];
+	//delete lights[0];
+	//delete lights[1];
 }
