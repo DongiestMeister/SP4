@@ -37,6 +37,12 @@ public:
 	void RunBattleAnimation(double dt, bool ranged);
 	void RenderProps();
 	void TakenHitAnimation(float& type_pos);
+	void RenderSkyBox();
+
+	void RenderTextStuff();
+
+
+
 
 private:
 	ShaderProgram* currProg;
@@ -50,6 +56,8 @@ private:
 	float player_posx;
 	float enemy_posx;
 	bool b_isClashed;
+
+	TextEntity* damageText;
 
 	ISound* BGM;
 };

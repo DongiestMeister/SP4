@@ -83,7 +83,7 @@ void BattleScene::Init()
 
 	// Create and attach the camera to the scene
 	//camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
-	camera.Init(Vector3(100, -20, -10), Vector3(100, 0, 100), Vector3(0, 0, 1));
+	camera.Init(Vector3(100, -20, -10), Vector3(100, -19, 100), Vector3(0, 0, 1));
 	//playerInfo->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
@@ -162,6 +162,8 @@ void BattleScene::Init()
 	player_posx = 80;
 	enemy_posx = 120;
 	b_isClashed = true;
+
+	damageText = Create::Text3DObject("ICE_KNIGHT", Vector3(100, 0, 100), "WERTY", Vector3(10, 10, 10), Color(1, 1, 1));
 	
 	/*player = new MeleeCharacter();
 	Weapon* wtf = new Weapon(100, 50, false);
@@ -228,7 +230,7 @@ void BattleScene::Update(double dt)
 	
 	RunBattleAnimation(dt, true);
 
-	//camera.Update(dt);
+	camera.Update(dt);
 
 
 	// if the left mouse button was released
@@ -414,8 +416,10 @@ void BattleScene::Render()
 
 	EntityManager::GetInstance()->Render();
 
-
+	RenderSkyBox();
 	RenderProps();
+	
+	RenderTextStuff();
 	
 
 	// Setup 2D pipeline then render 2D
@@ -426,6 +430,21 @@ void BattleScene::Render()
 	GraphicsManager::GetInstance()->DetachCamera();
 
 	EntityManager::GetInstance()->RenderUI();
+}
+
+void BattleScene::RenderSkyBox()
+{
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(100,-100,700);
+	modelStack.Scale(1000,1000,1000);
+	modelStack.Rotate(180,0,1,0);
+	modelStack.Rotate(180,0, 0, 1);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SKYBOX_FRONT"));
+	modelStack.PopMatrix();
+
+
 }
 
 void BattleScene::RenderProps()
@@ -493,6 +512,21 @@ void BattleScene::RenderProps()
 
 	EntityManager::GetInstance()->RenderUI();
 
+}
+
+void BattleScene::RenderTextStuff()
+{
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(100,0,100);
+	modelStack.Scale(10,10,10);
+	//modelStack.Rotate(Math::RadianToDegree(atan2(camera.GetCameraPos().x - (-1615), camera.GetCameraPos().z - 125)), 0, 1, 0);
+	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT"), "Test World", Color(0, 0, 0));
+	modelStack.PopMatrix();
+
+
+	//
 }
 
 void BattleScene::Exit()
