@@ -201,7 +201,7 @@ void GameplayScene::Init()
 	gameMap.AddCharacter(6, 5, knight3);
 	gameMap.AddCharacter(8, 11, knight4);*/
 
-	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight);
+	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 3), knight1);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);

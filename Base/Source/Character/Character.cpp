@@ -3,6 +3,8 @@
 Character::Character()
 {
 	i_HP = 100;
+	i_currentHP = 100;
+	i_idInParty = -1;
 	character3DMesh = nullptr;
 	character2DMesh = nullptr;
 	characterPortrait = nullptr;

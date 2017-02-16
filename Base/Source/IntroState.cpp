@@ -32,7 +32,7 @@ void CIntroState::Init()
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
-	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//calibri.tga");
+	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//grisaiaCustom.tga");
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
 
 	MeshBuilder::GetInstance()->GenerateQuad("INTROSTATE_BKGROUND", Color(1, 1, 1), 1.f);
@@ -61,8 +61,8 @@ void CIntroState::Update(double dt)
 	if ((timer -= dt) <= 0)
 	{
 		cout << "Loading Menustate" << endl;
-		SceneManager::GetInstance()->SetActiveScene("GameState");
-	//	SceneManager::GetInstance()->SetActiveScene("PartySelect");
+	//	SceneManager::GetInstance()->SetActiveScene("GameState");
+		SceneManager::GetInstance()->SetActiveScene("PartySelect");
 	}
 	float screenwidth = Application::GetInstance().GetWindowWidth();
 

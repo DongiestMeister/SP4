@@ -41,9 +41,13 @@ private:
 	FPSCamera camera;
 	//TextEntity* textObj[6];
 	Light* lights[2];
+
 	Vector3 selectedPos;
 	int i_selectedCounter;
+
 	bool b_showStatus;
+	bool b_statusCursor;
+	Vector3 statusCursorPos;
 	ISound* BGM;
 };
 

@@ -18,7 +18,6 @@ public:
 	virtual ~Character();
 	void takeDamage(int dmg);
 	virtual bool attack(Character* opponent) = 0; // returns true if the attack was successful
-	//virtual void moveCharacter() = 0;
 	virtual void equipWeapon(Weapon* newWeapon);
 	virtual void equipArmor(Armor* newArmor);
 	virtual void calculateStats();
@@ -48,13 +47,15 @@ public:
 
 	int i_movementCost;
 	int i_stepsTaken;
+	int i_idInParty;
 	bool b_inParty; // If this unit is in the party
 	int i_attackRange; // Range of attack of this character
 	bool b_tookAction; // If the unit has already moved/attacked this turn
 protected:
 	Weapon* weapon;
 	Armor* armor;
-	int i_HP;
+	int i_HP; // max HP
+	int i_currentHP;
 	int i_Damage;
 	Vector2 pos;
 	// Stats

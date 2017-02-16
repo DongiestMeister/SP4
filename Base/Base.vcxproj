@@ -38,6 +38,7 @@
     <ClCompile Include="Source\MenuState.cpp" />
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\OptionState.cpp" />
+    <ClCompile Include="Source\PartySelectScene.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneGraph.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneNode.cpp" />
     <ClCompile Include="Source\SceneGraph\Transform.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="Source\MenuState.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\OptionState.h" />
+    <ClInclude Include="Source\PartySelectScene.h" />
     <ClInclude Include="Source\PlayerInfo.h" />
     <ClInclude Include="Source\SceneGraph\SceneGraph.h" />
     <ClInclude Include="Source\SceneGraph\SceneNode.h" />
