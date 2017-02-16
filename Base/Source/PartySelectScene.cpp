@@ -78,59 +78,19 @@ void PartySelectScene::Init()
 	currProg->UpdateInt("numLights", 1);
 	currProg->UpdateInt("textEnabled", 0);
 
-	// Create the playerinfo instance, which manages all information about the player
-	//playerInfo = CPlayerInfo::GetInstance();
-	//playerInfo->Init();
-
-	//playerInfo->lives = 3;
-
 	// Create and attach the camera to the scene
-	//camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	camera.Init(Vector3(100, -10, 100), Vector3(100, 0, 100), Vector3(0, 0, 1));
-	//playerInfo->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	// Load all the meshes
-	MeshBuilder::GetInstance()->GenerateAxes("reference");
-	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
-	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("quad")->textureID = LoadTGA("Image//calibri.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
-	MeshBuilder::GetInstance()->GetMesh("Chair")->textureID = LoadTGA("Image//chair.tga");
-	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
-	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
-	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 0.5f);
-	MeshBuilder::GetInstance()->GenerateCone("cone", Color(0.5f, 1, 0.3f), 36, 10.f, 10.f);
-	MeshBuilder::GetInstance()->GenerateCube("cube", Color(1.0f, 1.0f, 0.0f), 1.0f);
-	MeshBuilder::GetInstance()->GetMesh("cone")->material.kDiffuse.Set(0.99f, 0.99f, 0.99f);
-	MeshBuilder::GetInstance()->GetMesh("cone")->material.kSpecular.Set(0.f, 0.f, 0.f);
-	MeshBuilder::GetInstance()->GenerateQuad("GRASS_DARKGREEN", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("GRASS_DARKGREEN")->textureID = LoadTGA("Image//Grassydirt.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("GEO_GRASS_LIGHTGREEN", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("GEO_GRASS_LIGHTGREEN")->textureID = LoadTGA("Image//grass_lightgreen.tga");
-	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.0f, 0.64f, 0.0f), 1.0f);
-
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_FRONT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BACK", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_LEFT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_RIGHT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_TOP", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BOTTOM", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_FRONT")->textureID = LoadTGA("Image//SkyBox//Sunset_Front.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BACK")->textureID = LoadTGA("Image//SkyBox//Sunset_Back.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_LEFT")->textureID = LoadTGA("Image//SkyBox//Sunset_Left.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_RIGHT")->textureID = LoadTGA("Image//SkyBox//Sunset_Right.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_TOP")->textureID = LoadTGA("Image//SkyBox//Sunset_Top.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BOTTOM")->textureID = LoadTGA("Image//SkyBox//Sunset_Bottom.tga");
-	MeshBuilder::GetInstance()->GenerateRay("laser", 10.0f);
-	MeshBuilder::GetInstance()->GenerateQuad("GRIDMESH", Color(1, 1, 1), 1.f);
-
 	MeshBuilder::GetInstance()->GenerateQuad("PartySelectBG", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("PartySelectBG")->textureID = LoadTGA("Image//PartySelectBackground.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("test", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("test")->textureID = LoadTGA("Image//test.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("selected", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("selected")->textureID = LoadTGA("Image//selectarrow.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("statusScreen", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("statusScreen")->textureID = LoadTGA("Image//statusScreen.tga");
 
 	groundEntity = Create::Ground("PartySelectBG", "GEO_GRASS_LIGHTGREEN");
 	// Setup the 2D entities
@@ -155,15 +115,17 @@ void PartySelectScene::Init()
 
 	for (int i = 0; i < 11; i++)
 	{
-		PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), (new MeleeCharacter("K" + i)));
+		PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), (new MeleeCharacter("K")));
 	}
 
 	Character* derp = new MeleeCharacter("K12");
 	derp->setDamage(696969);
+	derp->setPortrait(MeshBuilder::GetInstance()->GetMesh("selected"));
 	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), derp);
 
 	selectedPos = Vector3(-camera.f_OrthoSize + 40, - 10, 0);
-	selectedCounter = 0;
+	i_selectedCounter = 0;
+	b_showStatus = false;
 }
 
 void PartySelectScene::Update(double dt)
@@ -209,11 +171,11 @@ void PartySelectScene::Update(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
-		if (selectedCounter <= PlayerInfo::GetInstance()->availableUnits.size() - 1)
+		if (i_selectedCounter <= PlayerInfo::GetInstance()->availableUnits.size() - 1)
 		{
 			// Transit to show stats screen here
-			cout << PlayerInfo::GetInstance()->availableUnits.at(selectedCounter)->getDamage() << endl;
-
+			//cout << PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getName() << endl;
+			b_showStatus = true;
 		}
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_RIGHT))
@@ -222,13 +184,13 @@ void PartySelectScene::Update(double dt)
 		if (selectedPos.x >= -camera.f_OrthoSize + 190)
 			selectedPos.x = -camera.f_OrthoSize + 40;
 
-		selectedCounter += 1;
-		if (selectedCounter == 5)
-			selectedCounter = 0;
-		else if (selectedCounter == 10)
-			selectedCounter = 5;
-		else if (selectedCounter == 15)
-			selectedCounter = 10;
+		i_selectedCounter += 1;
+		if (i_selectedCounter == 5)
+			i_selectedCounter = 0;
+		else if (i_selectedCounter == 10)
+			i_selectedCounter = 5;
+		else if (i_selectedCounter == 15)
+			i_selectedCounter = 10;
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_LEFT))
 	{
@@ -236,13 +198,13 @@ void PartySelectScene::Update(double dt)
 		if (selectedPos.x <= -camera.f_OrthoSize + 10)
 			selectedPos.x = -camera.f_OrthoSize + 160;
 
-		selectedCounter -= 1;
-		if (selectedCounter == -1)
-			selectedCounter = 4;
-		else if (selectedCounter == 4)
-			selectedCounter = 9;
-		else if (selectedCounter == 9)
-			selectedCounter = 14;
+		i_selectedCounter -= 1;
+		if (i_selectedCounter == -1)
+			i_selectedCounter = 4;
+		else if (i_selectedCounter == 4)
+			i_selectedCounter = 9;
+		else if (i_selectedCounter == 9)
+			i_selectedCounter = 14;
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_DOWN))
 	{
@@ -250,17 +212,17 @@ void PartySelectScene::Update(double dt)
 		if (selectedPos.y <= -100)
 			selectedPos.y = -10;
 
-		selectedCounter += 5;
-		if (selectedCounter == 15)
-			selectedCounter = 0;
-		else if (selectedCounter == 16)
-			selectedCounter = 1;
-		else if (selectedCounter == 17)
-			selectedCounter = 2;
-		else if (selectedCounter == 18)
-			selectedCounter = 3;
-		else if (selectedCounter == 19)
-			selectedCounter = 4;
+		i_selectedCounter += 5;
+		if (i_selectedCounter == 15)
+			i_selectedCounter = 0;
+		else if (i_selectedCounter == 16)
+			i_selectedCounter = 1;
+		else if (i_selectedCounter == 17)
+			i_selectedCounter = 2;
+		else if (i_selectedCounter == 18)
+			i_selectedCounter = 3;
+		else if (i_selectedCounter == 19)
+			i_selectedCounter = 4;
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_UP))
 	{
@@ -268,17 +230,17 @@ void PartySelectScene::Update(double dt)
 		if (selectedPos.y >= 20)
 			selectedPos.y = -70;
 
-		selectedCounter -= 5;
-		if (selectedCounter == -5)
-			selectedCounter = 10;
-		else if (selectedCounter == -4)
-			selectedCounter = 11;
-		else if (selectedCounter == -3)
-			selectedCounter = 12;
-		else if (selectedCounter == -2)
-			selectedCounter = 13;
-		else if (selectedCounter == -1)
-			selectedCounter = 14;
+		i_selectedCounter -= 5;
+		if (i_selectedCounter == -5)
+			i_selectedCounter = 10;
+		else if (i_selectedCounter == -4)
+			i_selectedCounter = 11;
+		else if (i_selectedCounter == -3)
+			i_selectedCounter = 12;
+		else if (i_selectedCounter == -2)
+			i_selectedCounter = 13;
+		else if (i_selectedCounter == -1)
+			i_selectedCounter = 14;
 	}
 
 	// if the left mouse button was released
@@ -372,33 +334,50 @@ void PartySelectScene::Render()
 
 	EntityManager::GetInstance()->RenderUI();
 
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0, -1);
-	modelStack.Scale(2* camera.f_OrthoSize, 2* camera.f_OrthoSize,1);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("PartySelectBG"));
-	modelStack.PopMatrix();
-
-	modelStack.PushMatrix();
-	modelStack.Translate(selectedPos.x, selectedPos.y, 1);
-	modelStack.Scale(15, 15 * 16 / 9, 1);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
-	modelStack.PopMatrix();
-
-	for (int y = 0, counter = 0; y >= -3; y--)
+	if (!b_showStatus) // not in the status screen
 	{
-		for (unsigned x = 0; x < 5; x++)
+		modelStack.PushMatrix();
+		modelStack.Translate(0, 0, -1);
+		modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("PartySelectBG"));
+		modelStack.PopMatrix();
+
+		modelStack.PushMatrix();
+		modelStack.Translate(selectedPos.x, selectedPos.y, 1);
+		modelStack.Scale(15, 15 * 16 / 9, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
+		modelStack.PopMatrix();
+
+		for (int y = 0, counter = 0; y >= -3; y--)
 		{
-			modelStack.PushMatrix();
-			modelStack.Translate(-camera.f_OrthoSize + 40 + (x * 30), (y * 30) -10, 0);
-			modelStack.Scale(15, 15 * 16 / 9, 1);
-			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("test"));
-			modelStack.PopMatrix();
-			counter++;
+			for (unsigned x = 0; x < 5; x++)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(-camera.f_OrthoSize + 40 + (x * 30), (y * 30) - 10, 0);
+				modelStack.Scale(15, 15 * 16 / 9, 1);
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("test"));
+				modelStack.PopMatrix();
+				counter++;
+				if (counter >= PlayerInfo::GetInstance()->availableUnits.size())
+					break;
+			}
 			if (counter >= PlayerInfo::GetInstance()->availableUnits.size())
 				break;
 		}
-		if (counter >= PlayerInfo::GetInstance()->availableUnits.size())
-			break;
+	}
+	else
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(0, 0, -1);
+		modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("statusScreen"));
+		modelStack.PopMatrix();
+
+		modelStack.PushMatrix();
+		modelStack.Translate(-camera.f_OrthoSize + 37.5f, 0, 1);
+		modelStack.Scale(50, 50 * 16/9, 1);
+		RenderHelper::RenderMesh(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getPortrait());
+		modelStack.PopMatrix();
 	}
 }
 

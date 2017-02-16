@@ -20,21 +20,6 @@ MeleeCharacter::MeleeCharacter(string name)
 
 MeleeCharacter::~MeleeCharacter()
 {
-	if (weapon)
-	{
-		delete weapon;
-		weapon = nullptr;
-	}
-	if (armor)
-	{
-		delete armor;
-		armor = nullptr;
-	}
-	if (characterMesh)
-	{
-		delete characterMesh;
-		characterMesh = nullptr;
-	}
 }
 
 bool MeleeCharacter::attack(Character* opponent)

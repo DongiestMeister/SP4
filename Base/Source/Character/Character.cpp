@@ -3,7 +3,9 @@
 Character::Character()
 {
 	i_HP = 100;
-	characterMesh = nullptr;
+	character3DMesh = nullptr;
+	character2DMesh = nullptr;
+	characterPortrait = nullptr;
 	weapon = nullptr;
 	armor = nullptr;
 
@@ -11,6 +13,35 @@ Character::Character()
 	i_stepsTaken = 0;
 	b_inParty = false;
 	s_Name = "";
+}
+
+Character::~Character()
+{
+	if (weapon)
+	{
+		delete weapon;
+		weapon = nullptr;
+	}
+	if (armor)
+	{
+		delete armor;
+		armor = nullptr;
+	}
+	if (character3DMesh)
+	{
+		delete character3DMesh;
+		character3DMesh = nullptr;
+	}
+	if (character2DMesh)
+	{
+		delete character2DMesh;
+		character2DMesh = nullptr;
+	}
+	if (characterPortrait)
+	{
+		delete characterPortrait;
+		characterPortrait = nullptr;
+	}
 }
 
 int Character::getSTR()
@@ -43,9 +74,44 @@ Vector2 Character::getPos()
 	return pos;
 }
 
-Mesh* Character::getMesh()
+Mesh* Character::get3DMesh()
 {
-	return characterMesh;
+	if (character3DMesh)
+		return character3DMesh;
+	return nullptr;
+}
+
+Mesh* Character::get2DMesh()
+{
+	if (character2DMesh)
+		return character2DMesh;
+	return nullptr;
+}
+
+Mesh* Character::getPortrait()
+{
+	if (characterPortrait)
+		return characterPortrait;
+	return nullptr;
+}
+
+Weapon* Character::getWeapon()
+{
+	if (weapon)
+		return weapon;
+	return nullptr;
+}
+
+Armor* Character::getArmor()
+{
+	if (armor)
+		return armor;
+	return nullptr;
+}
+
+string Character::getName()
+{
+	return s_Name;
 }
 
 void Character::setSTR(int newSTR)
@@ -78,9 +144,19 @@ void Character::setPos(Vector2 newPos)
 	pos = newPos;
 }
 
-void Character::setMesh(Mesh* newMesh)
+void Character::set3DMesh(Mesh* newMesh)
 {
-	characterMesh = newMesh;
+	character3DMesh = newMesh;
+}
+
+void Character::set2DMesh(Mesh* newMesh)
+{
+	character2DMesh = newMesh;
+}
+
+void Character::setPortrait(Mesh* newMesh)
+{
+	characterPortrait = newMesh;
 }
 
 void Character::takeDamage(int dmg)

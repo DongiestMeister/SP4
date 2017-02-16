@@ -42,7 +42,8 @@ private:
 	//TextEntity* textObj[6];
 	Light* lights[2];
 	Vector3 selectedPos;
-	int selectedCounter;
+	int i_selectedCounter;
+	bool b_showStatus;
 	ISound* BGM;
 };
 

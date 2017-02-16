@@ -19,21 +19,6 @@ RangedCharacter::RangedCharacter(string name)
 
 RangedCharacter::~RangedCharacter()
 {
-	if (weapon)
-	{
-		delete weapon;
-		weapon = nullptr;
-	}
-	if (armor)
-	{
-		delete armor;
-		armor = nullptr;
-	}
-	if (characterMesh)
-	{
-		delete characterMesh;
-		characterMesh = nullptr;
-	}
 }
 
 bool RangedCharacter::attack(Character* opponent)
