@@ -12,25 +12,27 @@ public:
 	{
 		//HEAL_MEMBER,
 		//DEFEND_POINT,
-		//RETREAT
+		RETREAT,
 		IDLE,
 		CHASE,
-		ATTACK
+		ATTACK,
+
 	};
 
 	Defence_Strategy state;
 
-	Unit *target;
+	
 
-	void Idle();
-	void Chase();
+	void Idle();	//Detect closest player
+	void Chase(double dt);
 	void Attack();
+	void Retreat();	//Retreats to closest ally
 
-	vector<Vector2> unitPath;
+	
 
 	void Update(double dt);
 
-	bool SearchPath();
+	
 };
 
 

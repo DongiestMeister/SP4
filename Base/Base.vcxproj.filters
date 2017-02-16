@@ -46,6 +46,9 @@
     <Filter Include="Character">
       <UniqueIdentifier>{3306ee31-dde1-472f-b721-282c0ccfd29a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{07dbec7f-af31-4fa6-b260-9040bf381596}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -147,12 +150,27 @@
     <ClCompile Include="Source\Character\Weapon.cpp">
       <Filter>Character</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Character\RangedCharacter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Character\Character.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Character\FlyingCharacter.cpp">
+      <Filter>Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AI\AI_DefenceFSM.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AI\AI_OffenceFSM.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AI\AI_FSM.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\FPSCamera.h">
@@ -269,13 +287,22 @@
     <ClInclude Include="Source\Character\Weapon.h">
       <Filter>Character</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AI_FSM.h">
+    <ClInclude Include="Source\Character\RangedCharacter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AI_OffenceFSM.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Source\Character\FlyingCharacter.h">
+      <Filter>Character</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AI_DefenceFSM.h">
+    <ClInclude Include="Source\AI\AI_DefenceFSM.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AI\AI_FSM.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AI\AI_OffenceFSM.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Unit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

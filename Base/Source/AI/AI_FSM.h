@@ -5,12 +5,29 @@
 class AI_FSM
 {
 public:
-	AI_FSM() { character = nullptr; }
-	virtual ~AI_FSM() { if (character) delete character; character = nullptr; }
+	AI_FSM();
+	virtual ~AI_FSM() {  }
 
 	TileMap *map;
 	Character *character;
 	virtual void Update(double dt) { ; }
+
+	bool SearchPath();
+	bool SearchPathWithTerrain();
+
+	/*Search_funts sets :
+		- target
+		- nearestdistance	*/
+	/*void SearchNearest();
+	void SearchLowestHP();*/
+	
+	void SearchNearestWithHP();
+
+
+	Unit *target;
+	vector<Vector2> unitPath;
+
+	float f_speed;
 };
 
 
