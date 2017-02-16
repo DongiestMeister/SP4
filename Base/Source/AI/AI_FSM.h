@@ -24,7 +24,7 @@ public:
 	void SearchNearestWithHP();
 
 
-	Unit *target;
+	Character *target;
 	vector<Vector2> unitPath;
 
 	float f_speed;

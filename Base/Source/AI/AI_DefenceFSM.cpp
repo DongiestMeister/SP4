@@ -59,7 +59,7 @@ void AI_DefenceFSM::Chase(double dt)
 	if (!character->b_tookAction)
 	{
 		//DEFENCE CHASE = if target is out of reach, return to IDLE state
-		if ((character->getPos() - target->character->getPos()).Length() <= character->i_movementCost)
+		if ((character->getPos() - target->getPos()).Length() <= character->i_movementCost)
 		{
 			//search through paths from unitpath
 			for (int i = 0; i < unitPath.size(); ++i)
@@ -101,17 +101,17 @@ void AI_DefenceFSM::Retreat()
 {
 	float nearestdist = FLT_MAX;
 	
-	for (vector<Unit*>::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
+	for (CharactersList::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
 	{
-		Unit* enemy = *it;
-		Unit* ally = *it;
+		Character* enemy = *it;
+		Character* ally = *it;
 
 		//Only move when own unit is within range of the player attack = retreat
-		if ((character->getPos() - enemy->character->getPos()).Length() <= enemy->character->i_movementCost)
+		if ((character->getPos() - enemy->getPos()).Length() <= enemy->i_movementCost)
 		{
-			if (((character->getPos() - ally->character->getPos()).Length()) < nearestdist)
+			if (((character->getPos() - ally->getPos()).Length()) < nearestdist)
 			{
-				nearestdist = ((character->getPos() - ally->character->getPos()).Length());
+				nearestdist = ((character->getPos() - ally->getPos()).Length());
 				target = ally;
 			}
 		}

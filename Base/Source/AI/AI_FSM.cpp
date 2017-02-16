@@ -59,21 +59,21 @@ AI_FSM::~AI_FSM()
 
 void AI_FSM::SearchNearestWithHP()
 {
-	vector<Unit*> targetVector;
+	vector<Character*> targetVector;
 	//run list of units
-	for (vector<Unit*>::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
+	for (CharactersList::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
 	{
 		float nearestDistance = FLT_MAX;
 
-		Unit* enemy = *it;
+		Character* enemy = *it;
 		//Check nearest target
-		if ((character->getPos() - enemy->character->getPos()).Length() < character->i_movementCost
-			&& (character->getPos() - enemy->character->getPos()).Length() <= nearestDistance)
+		if ((character->getPos() - enemy->getPos()).Length() < character->i_movementCost
+			&& (character->getPos() - enemy->getPos()).Length() <= nearestDistance)
 		{
 			targetVector.clear();
 			targetVector.push_back(enemy);
 			
-			nearestDistance = (character->getPos() - enemy->character->getPos()).Length();
+			nearestDistance = (character->getPos() - enemy->getPos()).Length();
 		}
 		//if both target is same distance
 		/*else if ((character->getPos() - enemy->character->getPos()).Length() < character->i_movementCost
@@ -86,9 +86,9 @@ void AI_FSM::SearchNearestWithHP()
 	for (int i = 0; i < targetVector.size(); ++i)
 	{
 		float maxHP = INT_MAX;
-		if (targetVector[i]->character->getHP() < maxHP)
+		if (targetVector[i]->getHP() < maxHP)
 		{
-			maxHP = targetVector[i]->character->getHP();
+			maxHP = targetVector[i]->getHP();
 			target = targetVector[i];
 		}
 	}
@@ -101,7 +101,7 @@ bool AI_FSM::SearchPath()
 	if (target) // != null
 	{
 		// Astar Search(curr pos , desired dist ,  )
-		AStar search((int)character->getPos().x, (int)character->getPos().y, (int)target->character->getPos().x, (int)target->character->getPos().y, map);
+		AStar search((int)character->getPos().x, (int)character->getPos().y, (int)target->getPos().x, (int)target->getPos().y, map);
 		if (search.Search())//search.Search() = Finds the nearest path between parameters
 		{
 			for (int i = 0; i < character->i_movementCost + 1; ++i)
