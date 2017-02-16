@@ -6,7 +6,7 @@
 class MeleeCharacter : public Character
 {
 public:
-	MeleeCharacter();
+	MeleeCharacter(string name);
 	virtual ~MeleeCharacter();
 	virtual bool attack(Character* opponent);
 };

@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "Vector3.h"
-#include "Unit.h"
+#include "PlayerInfo.h"
 
 using std::vector;
 using std::string;
@@ -22,16 +22,16 @@ public:
 	float tileSizeX, tileSizeY;
 	vector<vector<int> > theScreenMap;
 
-	vector<Unit*> characters;
-	vector<Unit*> enemies;
+	CharactersList characters;
+	CharactersList enemies;
 	
 	vector<Vector2> movePath;
 
 	bool LoadMap(const string mapName);
 	void Render();
 
-	void AddCharacter(int x, int y,Unit *unit);
-	Unit *GetCharacter(int x, int y);
+	void AddCharacter(int x, int y, Character* unit);
+	Character *GetCharacter(int x, int y);
 private:
 	void ClearCharacters();
 };

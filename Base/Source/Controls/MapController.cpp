@@ -38,7 +38,7 @@ void MapController::Update(double dt)
 		{
 			if (map->GetCharacter(selectedTile.x, selectedTile.y))
 			{
-				if (!map->GetCharacter(selectedTile.x, selectedTile.y)->character->b_tookAction)
+				if (!map->GetCharacter(selectedTile.x, selectedTile.y)->b_tookAction)
 				{
 					std::cout << "Unit found!" << std::endl;
 					selectedUnit = map->GetCharacter(selectedTile.x, selectedTile.y);
@@ -49,7 +49,7 @@ void MapController::Update(double dt)
 		else if (b_canPlace) // Moving the unit
 		{
 			unitPath = map->movePath;
-			selectedUnit->character->i_stepsTaken += unitPath.size();
+			selectedUnit->i_stepsTaken += unitPath.size();
 			b_movingUnit = true;
 			b_canPlace = false;
 		}
@@ -154,14 +154,14 @@ void MapController::GetUnitPath()
 	{
 		if (!map->GetCharacter(selectedTile.x, selectedTile.y) && map->theScreenMap[selectedTile.y][selectedTile.x] == 0)
 		{
-			AStar search((int)selectedUnit->character->getPos().x, (int)selectedUnit->character->getPos().y, selectedTile.x, selectedTile.y, map);
-			if ((selectedUnit->character->getPos() - Vector2(selectedTile.x, selectedTile.y)).Length() > selectedUnit->character->i_movementCost)
+			AStar search((int)selectedUnit->getPos().x, (int)selectedUnit->getPos().y, selectedTile.x, selectedTile.y, map);
+			if ((selectedUnit->getPos() - Vector2(selectedTile.x, selectedTile.y)).Length() > selectedUnit->i_movementCost)
 			{
 				b_canPlace = false;
 			}
 			else if (search.Search())
 			{
-				if (search.bestPath.size() <= (selectedUnit->character->i_movementCost - selectedUnit->character->i_stepsTaken + 1))
+				if (search.bestPath.size() <= (selectedUnit->i_movementCost - selectedUnit->i_stepsTaken + 1))
 				{
 					map->movePath = search.bestPath;
 					b_canPlace = true;
@@ -191,16 +191,16 @@ void MapController::MoveUnit(float speed, double dt)
 	{
 		if (unitPath.size() > 0)
 		{
-			if (!(unitPath[0] - selectedUnit->character->getPos()).IsZero())
+			if (!(unitPath[0] - selectedUnit->getPos()).IsZero())
 			{
-				Vector2 vel = (unitPath[0] - selectedUnit->character->getPos()).Normalized() * speed * dt;
-				selectedUnit->character->setPos(selectedUnit->character->getPos() + vel);
-				selectedTile = selectedUnit->character->getPos();
+				Vector2 vel = (unitPath[0] - selectedUnit->getPos()).Normalized() * speed * dt;
+				selectedUnit->setPos(selectedUnit->getPos() + vel);
+				selectedTile = selectedUnit->getPos();
 			}
-			if ((unitPath[0] - selectedUnit->character->getPos()).Length() < 0.1f)
+			if ((unitPath[0] - selectedUnit->getPos()).Length() < 0.1f)
 			{
-				selectedUnit->character->setPos(unitPath[0]);
-				selectedTile = selectedUnit->character->getPos();
+				selectedUnit->setPos(unitPath[0]);
+				selectedTile = selectedUnit->getPos();
 				unitPath.erase(unitPath.begin());
 			}
 		}
@@ -319,14 +319,14 @@ void MapController::OpenButtons()
 	const struct { int x, y; } succ[4] = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
 	for (int i = 0; i < 4; ++i)
 	{
-		if (map->GetCharacter(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y))
+		if (map->GetCharacter(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y))
 		{
 			b_activeButtons[ATTACK] = true;
 			break;
 		}
 	}
 
-	if (selectedUnit->character->i_stepsTaken < selectedUnit->character->i_movementCost)
+	if (selectedUnit->i_stepsTaken < selectedUnit->i_movementCost)
 	{
 		b_activeButtons[MOVE] = true;
 	}
@@ -355,7 +355,7 @@ void MapController::CloseButtons()
 
 	if (selectedButton == WAIT || selectedButton == ATTACK)
 	{
-		selectedUnit->character->b_tookAction = true;
+		selectedUnit->b_tookAction = true;
 		selectedUnit = nullptr;
 	}
 }

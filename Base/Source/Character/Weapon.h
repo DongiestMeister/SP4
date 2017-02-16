@@ -15,7 +15,7 @@ struct Weapon
 	int i_damageValue;
 	int i_weaponAccuracy;
 
-	string name;
+	string s_Name;
 };
 #endif WEAPON_H
 

@@ -4,7 +4,7 @@
 #include "Character.h"
 class FlyingCharacter : public Character
 {
-	FlyingCharacter();
+	FlyingCharacter(string name);
 	virtual ~FlyingCharacter();
 	virtual bool attack(Character* opponent);
 };

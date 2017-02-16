@@ -31,6 +31,8 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 	theScreenMap.resize(numTilesHeight);
 	for (int i = 0; i < numTilesHeight; ++i)
 		theScreenMap[i].resize(numTilesWidth);
+
+	characters = PlayerInfo::GetInstance()->party;
 }
 
 bool TileMap::LoadMap(const string mapName)
@@ -87,12 +89,12 @@ void TileMap::Render()
 		}
 	}
 
-	for (vector<Unit*>::iterator it = characters.begin(); it != characters.end(); ++it)
+	for (CharactersList::iterator it = characters.begin(); it != characters.end(); ++it)
 	{
-		Unit *unit = (*it);
+		Character *unit = (*it);
 		
 		modelStack.PushMatrix();
-		modelStack.Translate(unit->character->getPos().x * tileSizeX + tileSizeX / 2, -0.2, unit->character->getPos().y * tileSizeY + tileSizeY / 2);
+		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.2, unit->getPos().y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
@@ -113,18 +115,18 @@ void TileMap::Render()
 	}
 }
 
-void TileMap::AddCharacter(int x, int y,Unit *unit)
+void TileMap::AddCharacter(int x, int y, Character* unit)
 {
-	unit->character->setPos(Vector2(x, y));
+	unit->setPos(Vector2(x, y));
 	characters.push_back(unit);
 }
 
-Unit* TileMap::GetCharacter(int x, int y)
+Character* TileMap::GetCharacter(int x, int y)
 {
-	for (vector<Unit*>::iterator it = characters.begin(); it != characters.end(); ++it)
+	for (CharactersList::iterator it = characters.begin(); it != characters.end(); ++it)
 	{
-		Unit *unit = *it;
-		if ((int)unit->character->getPos().x == x && (int)unit->character->getPos().y == y)
+		Character *unit = *it;
+		if ((int)unit->getPos().x == x && (int)unit->getPos().y == y)
 		{
 			return unit;
 		}
@@ -135,13 +137,13 @@ Unit* TileMap::GetCharacter(int x, int y)
 
 void TileMap::ClearCharacters()
 {
-	for (vector<Unit*>::iterator it = characters.begin(); it != characters.end();)
+	for (CharactersList::iterator it = characters.begin(); it != characters.end();)
 	{
 		delete *it;
 		it = characters.erase(it);
 	}
 
-	for (vector<Unit*>::iterator it = enemies.begin(); it != enemies.end();)
+	for (CharactersList::iterator it = enemies.begin(); it != enemies.end();)
 	{
 		delete *it;
 		it = characters.erase(it);

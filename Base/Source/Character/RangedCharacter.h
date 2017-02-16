@@ -5,7 +5,7 @@
 class RangedCharacter : public Character
 {
 public:
-	RangedCharacter();
+	RangedCharacter(string name);
 	virtual ~RangedCharacter();
 	virtual bool attack(Character* opponent);
 };

@@ -9,6 +9,7 @@
 #include "GameplayScene.h"
 #include "EmptyScene.h"
 #include "BattleScene.h"
+#include "PartySelectScene.h"
 
 class ShaderProgram;
 struct GLFWwindow;

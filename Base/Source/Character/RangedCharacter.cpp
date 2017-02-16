@@ -1,7 +1,8 @@
 #include "RangedCharacter.h"
 #include <iostream>
-RangedCharacter::RangedCharacter()
+RangedCharacter::RangedCharacter(string name)
 {
+	s_Name = name;
 	i_STR = 3; // All ranged characters have a base STR of 10
 	i_DEX = 10; // All ranged characters have a base DEX of 3
 	i_LUK = 5; // All ranged characters have a base LUK of 0
@@ -9,10 +10,10 @@ RangedCharacter::RangedCharacter()
 	i_attackRange = 2; // All ranged characters have a base attack range of 2
 
 	// Damage value of 0, so equivalent to not having a weapon at all
-	weapon = new Weapon(0, 100, true, "nothing");
+	weapon = new Weapon(0, 100, true, "Nothing");
 
 	// All stats boosts of 0, equivalent to not having an armor
-	armor = new Armor(0, 0, 0, 0, true);
+	armor = new Armor(0, 0, 0, 0, true, "Nothing");
 	calculateStats();
 }
 

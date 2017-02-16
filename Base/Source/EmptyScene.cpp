@@ -152,11 +152,6 @@ void EmptyScene::Init()
 
 	//textObj[5]->SetPosition(Vector3(-halfWindowWidth * 0.9 - fontSize * 2, -halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
 	//textObj[5]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
-	player = new MeleeCharacter();
-	Weapon* wtf = new Weapon(100,50, false,"Sword");
-	player->equipWeapon(wtf);
-	Armor* kek = new Armor(10, 5, 0, 200, false);
-	player->equipArmor(kek);
 }
 
 void EmptyScene::Update(double dt)

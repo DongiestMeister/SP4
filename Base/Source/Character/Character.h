@@ -6,6 +6,10 @@
 #include "MyMath.h"
 #include "Mesh.h"
 #include "Vector2.h"
+#include <string>
+#include <vector>
+
+using std::string;
 
 class Character
 {
@@ -39,6 +43,7 @@ public:
 	int i_stepsTaken;
 	Mesh* characterMesh;
 	bool b_tookAction; // If the unit has already moved/attacked this turn
+	bool b_inParty; // If this unit is in the party
 	int i_attackRange; // Range of attack of this character
 protected:
 	Weapon* weapon;
@@ -50,6 +55,9 @@ protected:
 	int i_STR; // Determines the unit's attack power
 	int i_DEX; // Determines the accuracy of the attacks of this unit
 	int i_LUK; // Determines the avoidability of this unit
+	string s_Name;
 };
+
+typedef std::vector<Character*> CharactersList;
 
 #endif CHARACTER_H

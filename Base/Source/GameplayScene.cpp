@@ -44,8 +44,6 @@ void GameplayScene::Init()
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
-	gameMap.Init(200, 200, 10, 10);
-
 	if (gameMap.LoadMap("Image//MapDesign.csv"))
 	{
 		cout << "Succesfully loaded map!" << endl;
@@ -189,17 +187,21 @@ void GameplayScene::Init()
 		cout << "Search failed" << endl;
 	}
 
-	Unit *knight = new Unit(new MeleeCharacter());
-	Unit *knight1 = new Unit(new MeleeCharacter());
-	Unit *knight2 = new Unit(new MeleeCharacter());
-	Unit *knight3 = new Unit(new MeleeCharacter());
-	Unit *knight4 = new Unit(new MeleeCharacter());
+	Character *knight = new MeleeCharacter("K1");
+	Character *knight1 = new MeleeCharacter("K2");
+	Character *knight2 = new MeleeCharacter("K3");
+	Character *knight3 = new MeleeCharacter("K4");
+	//Unit *knight4 = new Unit(new MeleeCharacter());
 
-	gameMap.AddCharacter(1, 1, knight);
+	/*gameMap.AddCharacter(1, 1, knight);
 	gameMap.AddCharacter(10, 15, knight1);
 	gameMap.AddCharacter(4, 7, knight2);
 	gameMap.AddCharacter(6, 5, knight3);
-	gameMap.AddCharacter(8, 11, knight4);
+	gameMap.AddCharacter(8, 11, knight4);*/
+
+	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight);
+
+	gameMap.Init(200, 200, 10, 10); // Must be last line
 }
 
 void GameplayScene::Update(double dt)

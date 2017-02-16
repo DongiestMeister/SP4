@@ -17,7 +17,7 @@ public:
 	void RenderUI();
 
 	Vector2 selectedTile;
-	Unit *selectedUnit;
+	Character *selectedUnit;
 private:
 	TileMap *map;
 	FPSCamera *camera;

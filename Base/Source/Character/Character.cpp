@@ -8,6 +8,8 @@ Character::Character()
 	armor = nullptr;
 	b_tookAction = false;
 	i_stepsTaken = 0;
+	b_inParty = false;
+	s_Name = "";
 }
 
 int Character::getSTR()
