@@ -443,6 +443,8 @@ void GameplayScene::Pause()
 	BGM->setIsPaused(true);
 	groundEntity->SetIsDone(true);
 	fps->SetIsDone(true);
+	turnDisplay->SetIsDone(true);
+	b_textRunning = false;
 }
 
 void GameplayScene::Resume()

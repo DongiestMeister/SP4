@@ -517,6 +517,7 @@ void PartySelectScene::Exit()
 	// Detach camera from other entities
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
+	groundEntity->SetIsDone(true);
 	//playerInfo->DetachCamera();
 
 	//	if (playerInfo->DropInstance() == false)
