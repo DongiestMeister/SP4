@@ -43,6 +43,7 @@ void GameplayScene::Init()
 
 	turnDisplay = nullptr;
 	b_textRunning = false;
+	i_turn = 1;
 
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
@@ -203,8 +204,13 @@ void GameplayScene::Init()
 	gameMap.AddCharacter(8, 11, knight4);*/
 
 	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight);
+	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 3), knight1);
+	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
+	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);
 
 	gameMap.Init(200, 200, 10, 10); // Must be last line
+
+	DisplayText("Turn" + to_string(i_turn), Vector3(0, 1, 0));
 }
 
 void GameplayScene::Update(double dt)
@@ -286,7 +292,7 @@ void GameplayScene::Update(double dt)
 			bool b_done = true;
 			for (int i = 0; i < gameMap.characters.size(); ++i)
 			{
-				if (!gameMap.characters[i]->character->b_tookAction)
+				if (!gameMap.characters[i]->b_tookAction)
 				{
 					b_done = false;
 				}
@@ -300,7 +306,7 @@ void GameplayScene::Update(double dt)
 				// For testing purposes
 				for (int i = 0; i < gameMap.enemies.size(); ++i)
 				{
-					gameMap.enemies[i]->character->b_tookAction = true;
+					gameMap.enemies[i]->b_tookAction = true;
 				}
 			}
 		}
@@ -309,7 +315,7 @@ void GameplayScene::Update(double dt)
 			bool b_done = true;
 			for (int i = 0; i < gameMap.enemies.size(); ++i)
 			{
-				if (!gameMap.enemies[i]->character->b_tookAction)
+				if (!gameMap.enemies[i]->b_tookAction)
 				{
 					b_done = false;
 				}

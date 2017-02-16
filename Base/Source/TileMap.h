@@ -32,6 +32,12 @@ public:
 
 	void AddCharacter(int x, int y, Character* unit);
 	Character *GetCharacter(int x, int y);
+
+	void AddEnemy(int x, int y, Character* unit);
+	Character *GetEnemy(int x, int y);
+
+	void ResetCharacters();
+	void ResetEnemies();
 private:
 	void ClearCharacters();
 };

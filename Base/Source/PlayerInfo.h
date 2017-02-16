@@ -23,6 +23,7 @@ public:
 	bool b_attacking = true;
 	CharactersList party; // Party to be used on the map, should only be capped at 4 units
 	CharactersList availableUnits; // All of the available units
+	CharactersList enemies; // All of the available units
 
 	void addCharacterToParty(Vector2 pos, Character* newUnit)
 	{
@@ -34,6 +35,12 @@ public:
 	{
 		newUnit->setPos(pos);
 		availableUnits.push_back(newUnit);
+	}
+
+	void addCharacterToEnemies(Vector2 pos, Character* newUnit)
+	{
+		newUnit->setPos(pos);
+		enemies.push_back(newUnit);
 	}
 protected:
 

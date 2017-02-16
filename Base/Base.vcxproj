@@ -34,6 +34,7 @@
     <ClCompile Include="Source\MenuState.cpp" />
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\OptionState.cpp" />
+    <ClCompile Include="Source\PartySelectScene.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneGraph.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneNode.cpp" />
     <ClCompile Include="Source\SceneGraph\Transform.cpp" />
@@ -78,6 +79,7 @@
     <ClInclude Include="Source\MenuState.h" />
     <ClInclude Include="Source\OBJMesh.h" />
     <ClInclude Include="Source\OptionState.h" />
+    <ClInclude Include="Source\PartySelectScene.h" />
     <ClInclude Include="Source\PlayerInfo.h" />
     <ClInclude Include="Source\SceneGraph\SceneGraph.h" />
     <ClInclude Include="Source\SceneGraph\SceneNode.h" />
@@ -91,7 +93,6 @@
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\TextEntity.h" />
     <ClInclude Include="Source\TileMap.h" />
-    <ClInclude Include="Source\Unit.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9B172635-4E2B-46F1-A403-08F4194D00F5}</ProjectGuid>

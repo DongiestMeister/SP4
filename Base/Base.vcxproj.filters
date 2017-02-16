@@ -153,6 +153,9 @@
     <ClCompile Include="Source\Character\Character.cpp">
       <Filter>Character</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PartySelectScene.cpp">
+      <Filter>GameStateManagement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -284,8 +287,8 @@
     <ClInclude Include="Source\Character\RangedCharacter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Unit.h">
-      <Filter>Tilemap</Filter>
+    <ClInclude Include="Source\PartySelectScene.h">
+      <Filter>GameStateManagement</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -67,9 +67,9 @@ void MapController::Update(double dt)
 		else if (b_attacking)
 		{
 			b_attacking = false;
-			selectedUnit->character->b_tookAction = true;
+			selectedUnit->b_tookAction = true;
 			PlayerInfo::GetInstance()->enemy = selectedEnemy;
-			PlayerInfo::GetInstance()->player = selectedUnit->character;
+			PlayerInfo::GetInstance()->player = selectedUnit;
 			selectedEnemy = nullptr;
 			selectedUnit = nullptr;
 			attackableUnits.clear();
@@ -291,21 +291,21 @@ void MapController::OpenButtons()
 		const struct { int x, y; } succ[4] = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
 		for (int i = 0; i < 4; ++i)
 		{
-			if (map->GetEnemy(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y))
+			if (map->GetEnemy(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y))
 			{
-				attackableUnits.push_back(map->GetEnemy(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y));
+				attackableUnits.push_back(map->GetEnemy(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y));
 				b_activeButtons[ATTACK] = true;
 			}
 		}
 	}
-	if (selectedUnit->character->i_attackRange > 1)
+	if (selectedUnit->i_attackRange > 1)
 	{
 		const struct { int x, y; } succ[8] = { { -1, -1 }, { 1, 1 }, { 1, -1 }, { -1, 1 }, { -2, 0 }, { 2, 0 }, { 0, -2 }, { 0, 2 } };
 		for (int i = 0; i < 8; ++i)
 		{
-			if (map->GetEnemy(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y))
+			if (map->GetEnemy(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y))
 			{
-				attackableUnits.push_back(map->GetEnemy(selectedUnit->character->getPos().x + succ[i].x, selectedUnit->character->getPos().y + succ[i].y));
+				attackableUnits.push_back(map->GetEnemy(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y));
 				b_activeButtons[ATTACK] = true;
 			}
 		}
@@ -347,8 +347,8 @@ void MapController::CloseButtons()
 	else if (selectedButton == ATTACK)
 	{
 		b_attacking = true;
-		selectedTile = attackableUnits[0]->character->getPos();
-		selectedEnemy = attackableUnits[0]->character;
+		selectedTile = attackableUnits[0]->getPos();
+		selectedEnemy = attackableUnits[0];
 	}
 }
 
@@ -423,8 +423,8 @@ void MapController::AttackControls()
 			{
 				enemyIterator++;
 			}
-			selectedTile = attackableUnits[enemyIterator]->character->getPos();
-			selectedEnemy = attackableUnits[enemyIterator]->character;
+			selectedTile = attackableUnits[enemyIterator]->getPos();
+			selectedEnemy = attackableUnits[enemyIterator];
 		}
 		if (KeyboardController::GetInstance()->IsKeyPressed(VK_DOWN))
 		{
@@ -436,8 +436,8 @@ void MapController::AttackControls()
 			{
 				enemyIterator--;
 			}
-			selectedTile = attackableUnits[enemyIterator]->character->getPos();
-			selectedEnemy = attackableUnits[enemyIterator]->character;
+			selectedTile = attackableUnits[enemyIterator]->getPos();
+			selectedEnemy = attackableUnits[enemyIterator];
 		}
 	}
 }

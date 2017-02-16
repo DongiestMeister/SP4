@@ -35,7 +35,7 @@ private:
 	float f_upDebounce, f_downDebounce, f_leftDebounce, f_rightDebounce;
 	float f_movementDelay; // delay in between movement of tiles when holding down
 
-	vector<Unit*> attackableUnits; // units within range of enemy
+	vector<Character*> attackableUnits; // units within range of enemy
 	Character *selectedEnemy; // the enemy that is selected to attack
 	int enemyIterator;
 

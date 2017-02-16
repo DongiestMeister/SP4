@@ -33,6 +33,7 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 		theScreenMap[i].resize(numTilesWidth);
 
 	characters = PlayerInfo::GetInstance()->party;
+	enemies = PlayerInfo::GetInstance()->enemies;
 }
 
 bool TileMap::LoadMap(const string mapName)
@@ -101,12 +102,12 @@ void TileMap::Render()
 		modelStack.PopMatrix();
 	}
 
-	for (vector<Unit*>::iterator it = enemies.begin(); it != enemies.end(); ++it)
+	for (vector<Character*>::iterator it = enemies.begin(); it != enemies.end(); ++it)
 	{
-		Unit *unit = (*it);
+		Character *unit = (*it);
 
 		modelStack.PushMatrix();
-		modelStack.Translate(unit->character->getPos().x * tileSizeX + tileSizeX / 2, -0.2, unit->character->getPos().y * tileSizeY + tileSizeY / 2);
+		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.2, unit->getPos().y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
@@ -147,18 +148,18 @@ Character* TileMap::GetCharacter(int x, int y)
 	return nullptr;
 }
 
-void TileMap::AddEnemy(int x, int y, Unit *unit)
+void TileMap::AddEnemy(int x, int y, Character *unit)
 {
-	unit->character->setPos(Vector2(x, y));
+	unit->setPos(Vector2(x, y));
 	enemies.push_back(unit);
 }
 
-Unit* TileMap::GetEnemy(int x, int y)
+Character* TileMap::GetEnemy(int x, int y)
 {
-	for (vector<Unit*>::iterator it = enemies.begin(); it != enemies.end(); ++it)
+	for (vector<Character*>::iterator it = enemies.begin(); it != enemies.end(); ++it)
 	{
-		Unit *unit = *it;
-		if ((int)unit->character->getPos().x == x && (int)unit->character->getPos().y == y)
+		Character *unit = *it;
+		if ((int)unit->getPos().x == x && (int)unit->getPos().y == y)
 		{
 			return unit;
 		}
@@ -186,8 +187,8 @@ void TileMap::ResetCharacters()
 {
 	for (int i = 0; i < characters.size(); ++i)
 	{
-		characters[i]->character->b_tookAction = false;
-		characters[i]->character->i_stepsTaken = 0;
+		characters[i]->b_tookAction = false;
+		characters[i]->i_stepsTaken = 0;
 	}
 }
 
@@ -195,7 +196,7 @@ void TileMap::ResetEnemies()
 {
 	for (int i = 0; i < enemies.size(); ++i)
 	{
-		enemies[i]->character->b_tookAction = false;
-		enemies[i]->character->i_stepsTaken = 0;
+		enemies[i]->b_tookAction = false;
+		enemies[i]->i_stepsTaken = 0;
 	}
 }
