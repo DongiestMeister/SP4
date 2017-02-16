@@ -59,7 +59,7 @@ void AI_OffenceFSM::Chase(double dt)
 				//find difference btwm unitPath and unitPos and store as temp
 				Vector2 tempStep = (unitPath[0] - character->getPos()).Normalized();
 				//add temp to curr unit pos for new pos
-				character->setPos(character->getPos + (tempStep *dt*f_speed));
+				character->setPos(character->getPos() + (tempStep *dt*f_speed));
 			}
 			//if value too low, snap character to "perfect" pos of unitPath
 			if ((unitPath[0] - character->getPos()).Length() < 0.1f)

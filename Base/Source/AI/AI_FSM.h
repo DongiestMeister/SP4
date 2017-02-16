@@ -6,7 +6,7 @@ class AI_FSM
 {
 public:
 	AI_FSM();
-	virtual ~AI_FSM() {  }
+	virtual ~AI_FSM();
 
 	TileMap *map;
 	Character *character;

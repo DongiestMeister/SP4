@@ -41,7 +41,7 @@ void AI_DefenceFSM::Idle()
 
 	if (target != nullptr)
 	{
-		if (character->getHP <= 20)
+		if (character->getHP() <= 20)
 		{
 			state = RETREAT;
 		}
@@ -70,7 +70,7 @@ void AI_DefenceFSM::Chase(double dt)
 					//find difference btwm unitPath and unitPos and store as temp
 					Vector2 tempStep = (unitPath[0] - character->getPos()).Normalized();
 					//add temp to curr unit pos for new pos
-					character->setPos(character->getPos + (tempStep *dt*f_speed));
+					character->setPos(character->getPos() + (tempStep *dt*f_speed));
 				}
 				//if value too low, snap character to "perfect" pos of unitPath
 				if ((unitPath[0] - character->getPos()).Length() < 0.1f)
@@ -109,9 +109,9 @@ void AI_DefenceFSM::Retreat()
 		//Only move when own unit is within range of the player attack = retreat
 		if ((character->getPos() - enemy->character->getPos()).Length() <= enemy->character->i_movementCost)
 		{
-			if ((character->getPos() - ally->character->getPos()).Length < nearestdist)
+			if (((character->getPos() - ally->character->getPos()).Length()) < nearestdist)
 			{
-				nearestdist = ((character->getPos() - ally->character->getPos()).Length);
+				nearestdist = ((character->getPos() - ally->character->getPos()).Length());
 				target = ally;
 			}
 		}
