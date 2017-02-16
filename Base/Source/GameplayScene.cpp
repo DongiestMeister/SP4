@@ -48,11 +48,6 @@ void GameplayScene::Init()
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
-	if (gameMap.LoadMap("Image//MapDesign.csv"))
-	{
-		cout << "Succesfully loaded map!" << endl;
-	}
-	
 	srand(NULL);
 	
 	// Tell the graphics manager to use the shader we just loaded
@@ -149,6 +144,9 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Wait", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Wait")->textureID = LoadTGA("Image//wait.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Forest", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Forest")->textureID = LoadTGA("Image//forest.tga");
+
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
@@ -208,7 +206,12 @@ void GameplayScene::Init()
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);
 
-	gameMap.Init(200, 200, 10, 10); // Must be last line
+	gameMap.Init(200, 200, 30, 30); // Must be last line
+
+	if (gameMap.LoadMap("Image//MapDesign.csv"))
+	{
+		cout << "Succesfully loaded map!" << endl;
+	}
 
 	DisplayText("Turn" + to_string(i_turn), Vector3(0, 1, 0));
 }

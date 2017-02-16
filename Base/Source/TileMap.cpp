@@ -72,8 +72,9 @@ bool TileMap::LoadMap(const string mapName)
 				if (atoi(token.c_str()) == 3) // Forest tile
 				{
 					theScreenMap[theLineCounter][theColumnCounter++] = 0;
+					AddObstacle(theColumnCounter, theLineCounter, 3, 1);
 				}
-				else
+				else if (theScreenMap[theLineCounter][theColumnCounter] != 2)
 				{
 					theScreenMap[theLineCounter][theColumnCounter++] = atoi(token.c_str()); // theScreenMap[y][x]
 				}
@@ -143,6 +144,19 @@ void TileMap::Render()
 			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Selected"));
 			modelStack.PopMatrix();
 		}
+	}
+
+	for (int i = 0; i < obstacleList.size(); ++i)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(obstacleList[i].pos.x * tileSizeX + tileSizeX / 2, -0.3, obstacleList[i].pos.y * tileSizeY + tileSizeY / 2);
+		modelStack.Rotate(90, 1, 0, 0);
+		modelStack.Scale(tileSizeX, tileSizeY, 1);
+		if (obstacleList[i].type == 3)
+		{
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Forest"));
+		}
+		modelStack.PopMatrix();
 	}
 }
 
@@ -217,4 +231,24 @@ void TileMap::ResetEnemies()
 		enemies[i]->b_tookAction = false;
 		enemies[i]->i_stepsTaken = 0;
 	}
+}
+
+void TileMap::AddObstacle(int x, int y, int type, int cost)
+{
+	Obstacle temp(type, cost);
+	temp.pos = Vector2(x, y);
+	obstacleList.push_back(temp);
+}
+
+Obstacle TileMap::GetObstacle(int x, int y)
+{
+	for (int i = 0; i < obstacleList.size(); ++i)
+	{
+		if ((int)obstacleList[i].pos.x == x && (int)obstacleList[i].pos.y == y)
+		{
+			return obstacleList[i];
+		}
+	}
+
+	return Obstacle(x, y, 0, 0);
 }

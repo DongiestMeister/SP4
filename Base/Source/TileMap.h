@@ -10,6 +10,16 @@ using std::vector;
 using std::string;
 
 
+struct Obstacle
+{
+	Obstacle(int type, int cost) { this->type = type; this->cost = cost; }
+	Obstacle(int x, int y, int type, int cost) { pos.x = x; pos.y = y; this->type = type; this->cost = cost; }
+	~Obstacle() {}
+	int type;
+	int cost;
+	Vector2 pos;
+};
+
 class TileMap
 {
 public:
@@ -25,6 +35,7 @@ public:
 	CharactersList characters;
 	CharactersList enemies;
 	
+	vector<Obstacle> obstacleList;
 	vector<Vector2> movePath;
 
 	bool LoadMap(const string mapName);
@@ -38,6 +49,9 @@ public:
 
 	void ResetCharacters();
 	void ResetEnemies();
+
+	void AddObstacle(int x, int y, int type, int cost);
+	Obstacle GetObstacle(int x, int y);
 private:
 	void ClearCharacters();
 };

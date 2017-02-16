@@ -168,6 +168,9 @@
     <ClCompile Include="Source\AI\AI_FSM.cpp">
       <Filter>AI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PartySelectScene.cpp">
+      <Filter>GameStateManagement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -304,6 +307,9 @@
     </ClInclude>
     <ClInclude Include="Source\Unit.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PartySelectScene.h">
+      <Filter>GameStateManagement</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

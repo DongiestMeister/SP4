@@ -55,7 +55,6 @@ void MapController::Update(double dt)
 		else if (b_canPlace) // Moving the unit
 		{
 			unitPath = map->movePath;
-			selectedUnit->i_stepsTaken += unitPath.size();
 			map->theScreenMap[(int)selectedUnit->getPos().y][(int)selectedUnit->getPos().x] = 0;
 			b_movingUnit = true;
 			b_canPlace = false;
@@ -132,10 +131,24 @@ void MapController::GetUnitPath()
 			}
 			else if (search.Search())
 			{
-				if (search.bestPath.size() <= (selectedUnit->i_movementCost - selectedUnit->i_stepsTaken + 1))
+				if (search.bestPath.size() <= (selectedUnit->i_movementCost + 1))
 				{
-					map->movePath = search.bestPath;
-					b_canPlace = true;
+					int tempcost = 0;
+					for (int i = 0; i < search.bestPath.size(); ++i)
+					{
+						if (i != 0)
+							tempcost += map->GetObstacle(search.bestPath[i].x, search.bestPath[i].y).cost + 1;
+					}
+					if (tempcost <= selectedUnit->i_movementCost)
+					{
+						selectedUnit->i_stepsTaken = tempcost;
+						map->movePath = search.bestPath;
+						b_canPlace = true;
+					}
+					else
+					{
+						b_canPlace = false;
+					}
 				}
 				else
 				{
@@ -494,12 +507,12 @@ void MapController::RenderUI()
 		}
 	}
 
-	if (selectedUnit)
+	if (selectedUnit && currentButton == MOVE)
 	{
 		string textdisplay;
 		if (map->movePath.size() - 1 <= selectedUnit->i_movementCost && b_canPlace)
 		{
-			textdisplay = std::to_string(map->movePath.size() - 1) + "/" + std::to_string(selectedUnit->i_movementCost);
+			textdisplay = "Movement cost:" + std::to_string(selectedUnit->i_stepsTaken) + "/" + std::to_string(selectedUnit->i_movementCost);
 		}
 		else
 		{
