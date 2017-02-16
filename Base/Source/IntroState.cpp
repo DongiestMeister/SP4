@@ -99,7 +99,7 @@ void CIntroState::Render()
 	float screenheight = Application::GetInstance().GetWindowHeight();
 	for (int i = 0; i < 2; ++i)
 	{
-		RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("sword"), Vector3(f_swordTranslate[i],screenheight/2,1), Vector3(screenwidth/2, screenheight/2, 1), Vector3(0, i * 180, 0));
+		RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("sword"), Vector3(f_swordTranslate[i],screenheight/2,1 + i * 1), Vector3(screenwidth/2, screenheight/2, 1), Vector3(0, i * 180, 0));
 	}
 	EntityManager::GetInstance()->RenderUI();
 

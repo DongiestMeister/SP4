@@ -18,6 +18,9 @@ public:
 
 	Vector2 selectedTile;
 	Character *selectedUnit;
+
+	bool b_cameraTransition;
+	float tempOrtho;
 private:
 	TileMap *map;
 	FPSCamera *camera;

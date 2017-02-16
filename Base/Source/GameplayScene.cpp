@@ -362,6 +362,7 @@ void GameplayScene::Update(double dt)
 	ss.precision(5);
 	float fps2 = (float)(1.f / dt);
 	ss << "FPS: " << fps2;
+	//ss << "FPS: " << camera.GetCameraPos();
 	fps->SetText(ss.str());
 
 	//std::ostringstream ss1;
@@ -447,8 +448,11 @@ void GameplayScene::Pause()
 void GameplayScene::Resume()
 {
 	BGM->setIsPaused(false);
-	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
+	controller.b_cameraTransition = false;
+	camera.f_OrthoSize = controller.tempOrtho;
+
+	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(100, 0, 100));
 	groundEntity->SetScale(Vector3(750.0f, 750.0f, 750.0f));

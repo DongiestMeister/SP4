@@ -22,6 +22,7 @@ MapController::MapController()
 	b_attacking = false;
 	selectedEnemy = nullptr;
 	enemyIterator = 0;
+	b_cameraTransition = false;
 }
 
 MapController::~MapController()
@@ -73,6 +74,17 @@ void MapController::Update(double dt)
 			selectedEnemy = nullptr;
 			selectedUnit = nullptr;
 			attackableUnits.clear();
+			tempOrtho = camera->f_OrthoSize;
+			b_cameraTransition = true;
+			//SceneManager::GetInstance()->SetActiveScene("BattleState", true);
+		}
+	}
+
+	if (b_cameraTransition)
+	{
+		camera->f_OrthoSize -= 100 * dt;
+		if (camera->f_OrthoSize < 10)
+		{
 			SceneManager::GetInstance()->SetActiveScene("BattleState", true);
 		}
 	}
@@ -96,17 +108,20 @@ void MapController::Update(double dt)
 
 
 	// Moving the camera to the selected tile
-	Vector2 currentPos(camera->GetCameraPos().x, camera->GetCameraPos().z);
-	Vector2 targetPos(selectedTile.x * map->tileSizeX + map->tileSizeX / 2, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
-	float Length = (currentPos - targetPos).Length();
-	if (Length > 3)
+	if (!b_cameraTransition)
 	{
-		PanTo(camera->f_OrthoSize, targetPos, dt);
-	}
-	else
-	{
-		camera->SetCameraPos(Vector3(targetPos.x, camera->GetCameraPos().y, targetPos.y)); // Snapping the camera to the grid
-		camera->SetCameraTarget(Vector3(targetPos.x, camera->GetCameraTarget().y, targetPos.y)); // Snapping the camera to the grid
+		Vector2 currentPos(camera->GetCameraPos().x, camera->GetCameraPos().z);
+		Vector2 targetPos(selectedTile.x * map->tileSizeX + map->tileSizeX / 2, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
+		float Length = (currentPos - targetPos).Length();
+		if (Length > 3)
+		{
+			PanTo(camera->f_OrthoSize, targetPos, dt);
+		}
+		else
+		{
+			camera->SetCameraPos(Vector3(targetPos.x, camera->GetCameraPos().y, targetPos.y)); // Snapping the camera to the grid
+			camera->SetCameraTarget(Vector3(targetPos.x, camera->GetCameraTarget().y, targetPos.y)); // Snapping the camera to the grid
+		}
 	}
 }
 
@@ -476,7 +491,6 @@ void MapController::Render()
 void MapController::RenderUI()
 {
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-
 
 	float f_yOffset = 0.f;
 	for (int i = 0; i < CTRL_TOTAL; ++i)
