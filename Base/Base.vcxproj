@@ -24,6 +24,7 @@
     <ClCompile Include="Source\Character\RangedCharacter.cpp" />
     <ClCompile Include="Source\Character\Weapon.cpp" />
     <ClCompile Include="Source\Controls\MapController.cpp" />
+    <ClCompile Include="Source\DamageText.cpp" />
     <ClCompile Include="Source\EmptyScene.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
     <ClCompile Include="Source\FPSCamera.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="Source\Character\RangedCharacter.h" />
     <ClInclude Include="Source\Character\Weapon.h" />
     <ClInclude Include="Source\Controls\MapController.h" />
+    <ClInclude Include="Source\DamageText.h" />
     <ClInclude Include="Source\EmptyScene.h" />
     <ClInclude Include="Source\EntityManager.h" />
     <ClInclude Include="Source\FPSCamera.h" />
