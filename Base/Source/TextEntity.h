@@ -31,6 +31,12 @@ public:
 	inline void SetScale(const Vector3& _value){ scale = _value; };
 	inline Vector3 GetScale(){ return scale; };
 
+	inline void SetRotation(const Vector3& _value){ rotate = _value; };
+	inline Vector3 GetRotation(){ return rotate; };
+
+	inline void SetRotationDegree(const float& _value) { rot_deg = _value; }
+	inline float GetRotationDegree() { return rot_deg; }
+
 	inline void SetText(const std::string& _text){ text = _text; };
 	inline std::string GetText(){ return text; };
 
@@ -40,6 +46,9 @@ public:
 private:
 	Vector3 position;
 	Vector3 scale;
+	Vector3 rotate;
+	float rot_deg;
+
 	Mesh* modelMesh;
 	std::string text;
 	TEXT_RENDERMODE mode;
@@ -49,7 +58,7 @@ private:
 namespace Create
 {
 	TextEntity* Text2DObject(const std::string& _meshName, const Vector3& _position, const std::string& _text, const Vector3& _scale, const Color& _color);
-	TextEntity* Text3DObject(const std::string& _meshName, const Vector3& _position, const std::string& _text, const Vector3& _scale, const Color& _color);
+	TextEntity* Text3DObject(const std::string& _meshName, const Vector3& _position, const std::string& _text, const Vector3& _scale, const Vector3& _rotation, const float& _rotatedeg, const Color& _color);
 };
 
 #endif // TEXT_ENTITY_H

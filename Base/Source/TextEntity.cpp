@@ -8,6 +8,8 @@ TextEntity::TextEntity(Mesh* _modelMesh, const std::string& _text, const Color& 
 modelMesh(_modelMesh),
 position(0.0f, 0.0f, 0.0f),
 scale(1.0f, 1.0f, 1.0f),
+rotate(0.0f, 1.0f, 0.0f),
+rot_deg(0.0f),
 text(_text),
 mode(MODE_2D),
 color(_color)
@@ -32,6 +34,7 @@ void TextEntity::Render()
 	modelStack.PushMatrix();
 	modelStack.Translate(position.x, position.y, position.z);
 	modelStack.Scale(scale.x, scale.y, scale.z);
+	modelStack.Rotate(rot_deg, rotate.x, rotate.y, rotate.z);
 	RenderHelper::RenderText(modelMesh, text, color);
 	modelStack.PopMatrix();
 }
@@ -45,6 +48,7 @@ void TextEntity::RenderUI()
 	modelStack.PushMatrix();
 	modelStack.Translate(position.x, position.y, position.z);
 	modelStack.Scale(scale.x, scale.y, scale.z);
+	modelStack.Rotate(rot_deg, rotate.x, rotate.y, rotate.z);
 	RenderHelper::RenderText(modelMesh, text, color);
 	modelStack.PopMatrix();
 }
@@ -63,7 +67,8 @@ TextEntity* Create::Text2DObject(const std::string& _meshName, const Vector3& _p
 	return result;
 }
 
-TextEntity* Create::Text3DObject(const std::string& _meshName, const Vector3& _position, const std::string& _text, const Vector3& _scale, const Color& _color)
+TextEntity* Create::Text3DObject(const std::string& _meshName, const Vector3& _position, const std::string& _text, 
+	const Vector3& _scale, const Vector3& _rotation, const float& _rotateDegree, const Color& _color)
 {
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)
@@ -72,6 +77,8 @@ TextEntity* Create::Text3DObject(const std::string& _meshName, const Vector3& _p
 	TextEntity* result = new TextEntity(modelMesh, _text, _color);
 	result->SetPosition(_position);
 	result->SetScale(_scale);
+	result->SetRotation(_rotation);
+	result->SetRotationDegree(_rotateDegree);
 	result->SetTextRenderMode(TextEntity::MODE_3D);
 	EntityManager::GetInstance()->AddEntity(result);
 	return result;

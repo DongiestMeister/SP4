@@ -25,6 +25,8 @@ public:
 	inline void SetRotation(const Vector3& _value){ rotate = _value; };
 	inline Vector3 GetRotation(){ return rotate; };
 
+	
+
 	bool IsDone();
 	void SetIsDone(const bool _value);
 

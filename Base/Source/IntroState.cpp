@@ -61,7 +61,7 @@ void CIntroState::Update(double dt)
 	if ((timer -= dt) <= 0)
 	{
 		cout << "Loading Menustate" << endl;
-		SceneManager::GetInstance()->SetActiveScene("GameState");
+		SceneManager::GetInstance()->SetActiveScene("BattleState");
 	//	SceneManager::GetInstance()->SetActiveScene("PartySelect");
 	}
 	float screenwidth = Application::GetInstance().GetWindowWidth();
@@ -102,6 +102,8 @@ void CIntroState::Render()
 		RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("sword"), Vector3(f_swordTranslate[i],screenheight/2,1 + i * 1), Vector3(screenwidth/2, screenheight/2, 1), Vector3(0, i * 180, 0));
 	}
 	EntityManager::GetInstance()->RenderUI();
+
+	
 
 	glEnable(GL_CULL_FACE);
 }

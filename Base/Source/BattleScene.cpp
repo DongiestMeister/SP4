@@ -34,6 +34,7 @@ BattleScene::BattleScene()
 
 BattleScene::~BattleScene()
 {
+	
 }
 
 void BattleScene::Init()
@@ -92,6 +93,11 @@ void BattleScene::Init()
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("quad")->textureID = LoadTGA("Image//calibri.tga");
+
+	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
+	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//calibri.tga");
+	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
+
 	MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
 	MeshBuilder::GetInstance()->GetMesh("Chair")->textureID = LoadTGA("Image//chair.tga");
 	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
@@ -161,9 +167,14 @@ void BattleScene::Init()
 	//Init Position of models;
 	player_posx = 80;
 	enemy_posx = 120;
-	b_isClashed = true;
+	f_textDelayOnScreen = 0;
 
-	damageText = Create::Text3DObject("ICE_KNIGHT", Vector3(100, 0, 100), "WERTY", Vector3(10, 10, 10), Color(1, 1, 1));
+	b_isClashed = true;	//on start clash is true (clashed)
+
+	i_totaldmg_txt = 0;
+	TotalDamage = Create::Text2DObject(("text"), Vector3(-180, 160, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
+	TotalDmgCheer = Create::Text2DObject(("text"), Vector3(-180, 140, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
+	fps = 0.f;
 	
 	/*player = new MeleeCharacter();
 	Weapon* wtf = new Weapon(100, 50, false);
@@ -215,10 +226,8 @@ void BattleScene::Update(double dt)
 	{
 		//Feel free to Remove/Edit.
 
-		/*cout << "Camera Pos : " << camera.GetCameraPos().x << " , " << camera.GetCameraPos().y << " , " << camera.GetCameraPos().z << endl;
-		cout << "Camera tar : " << camera.GetCameraTarget().x << " , " << camera.GetCameraTarget().y << " , " << camera.GetCameraTarget().z << endl;*/
 
-		b_isClashed = false;
+		b_isClashed = false;	//when m = no clash, start clashing
 
 	}
 
@@ -227,8 +236,12 @@ void BattleScene::Update(double dt)
 		SceneManager::GetInstance()->SetActiveScene("GameState");
 	}
 
+	fps = 1 / dt;
 	
-	RunBattleAnimation(dt, true);
+	//animation always running
+	RunBattleAnimation(dt, false, -9999);
+
+	
 
 	camera.Update(dt);
 
@@ -301,7 +314,7 @@ void BattleScene::Update(double dt)
 	//textObj[5]->SetText(ss1.str());
 }
 
-void BattleScene::RunBattleAnimation(double dt, bool ranged)
+void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 {
 
 	float maxdist_forward = 0;
@@ -319,6 +332,23 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged)
 	}
 
 
+	RenderTextStuff(dt);
+
+	//damageText->SetPosition(Vector3(dmgtxt_pos, dmgtxt_height, 60));
+	//damageText->SetText(std::to_string(dmgvalue));
+
+	for (vector<DamageText*>::iterator it = storeDmgTxt.begin(); it != storeDmgTxt.end();)
+	{
+		if ((*it)->Update(dt))
+		{
+			delete *it;
+			it = storeDmgTxt.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
 
 	if (PlayerInfo::GetInstance()->b_attacking)
 	{
@@ -328,19 +358,33 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged)
 			{
 				player_posx += dt * 50;
 			}
-			else
+			else	//reached right
 			{
-				b_isClashed = true;
+				b_isClashed = true;	//clash true
+
+				f_textDelayOnScreen = 5;
+
+				DamageText* tempdmg = new DamageText();
+				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx-6, -20, 60), std::to_string(dmgvalue), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
+				storeDmgTxt.push_back(tempdmg);
+				
+				i_totaldmg_txt += dmgvalue;
+				TotalDamage->SetText("TOTAL DAMAGE:"+std::to_string(i_totaldmg_txt));
+				TotalDamage->SetScale(Vector3(23, 35, 20));
+
+				
 				//PlayerInfo::GetInstance()->player->attack();
 				//TakenHitAnimation(enemy_posx);
 			}
 		}
 		else
 		{
+			//if clash is true
+
 			if (player_posx > 80)		//Return to left from right(original position)
 			{
 				player_posx -= dt * 50;
-
+				
 			}
 		}
 	}
@@ -356,16 +400,22 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged)
 			else
 			{
 				b_isClashed = true;
+
+				DamageText* tempdmg = new DamageText();
+				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx-3, -20, 60), std::to_string(dmgvalue), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
+				storeDmgTxt.push_back(tempdmg);
 				//PlayerInfo::GetInstance()->enemy->attack();
 				//TakenHitAnimation(player_posx);
 			}
 		}
 		else
 		{
+			
 			if (enemy_posx < 120)		//Return to right from left(original position)
 			{
 				enemy_posx += dt * 50;
 
+				
 			}
 		}
 	}
@@ -393,11 +443,7 @@ void BattleScene::TakenHitAnimation(float& type_pos)
 		{
 
 		}
-	}*/
-
-
-
-			
+	}*/	
 	
 }
 
@@ -419,7 +465,6 @@ void BattleScene::Render()
 	RenderSkyBox();
 	RenderProps();
 	
-	RenderTextStuff();
 	
 
 	// Setup 2D pipeline then render 2D
@@ -429,7 +474,10 @@ void BattleScene::Render()
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-200, 200, -200, 200, -2000, 2000);
 	GraphicsManager::GetInstance()->DetachCamera();
 
+
 	EntityManager::GetInstance()->RenderUI();
+
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(fps), Vector3(-200, 180, 10),  10, Color(1, 1, 1));
 }
 
 void BattleScene::RenderSkyBox()
@@ -514,19 +562,59 @@ void BattleScene::RenderProps()
 
 }
 
-void BattleScene::RenderTextStuff()
+void BattleScene::RenderTextStuff(double dt)
 {
-	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+	
+	if (TotalDamage->GetScale().y > 20)
+	{
+		TotalDamage->SetScale(Vector3(TotalDamage->GetScale().x, TotalDamage->GetScale().y, TotalDamage->GetScale().z) - Vector3(0, dt * 50, 0));
+	}
+	if (TotalDamage->GetScale().x > 20)
+	{
+		TotalDamage->SetScale(Vector3(TotalDamage->GetScale().x, TotalDamage->GetScale().y, TotalDamage->GetScale().z) - Vector3(dt * 50, 0, 0));
+	}
 
-	modelStack.PushMatrix();
-	modelStack.Translate(100,0,100);
-	modelStack.Scale(10,10,10);
-	//modelStack.Rotate(Math::RadianToDegree(atan2(camera.GetCameraPos().x - (-1615), camera.GetCameraPos().z - 125)), 0, 1, 0);
-	RenderHelper::RenderText(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT"), "Test World", Color(0, 0, 0));
-	modelStack.PopMatrix();
+	if (TotalDmgCheer->GetScale().y > 20)
+	{
+		TotalDmgCheer->SetScale(Vector3(TotalDmgCheer->GetScale().x, TotalDmgCheer->GetScale().y, TotalDmgCheer->GetScale().z) - Vector3(0, dt * 50, 0));
+	}
+	if (TotalDmgCheer->GetScale().x > 20)
+	{
+		TotalDmgCheer->SetScale(Vector3(TotalDmgCheer->GetScale().x, TotalDmgCheer->GetScale().y, TotalDmgCheer->GetScale().z) - Vector3(dt * 50, 0, 0));
+	}
+	if (f_textDelayOnScreen > 0)
+	{
+		f_textDelayOnScreen -= dt * 1;
+	}
+	else
+	{
+		TotalDamage->SetScale(Vector3(TotalDamage->GetScale().x, TotalDamage->GetScale().y, TotalDamage->GetScale().z) - Vector3(0, dt * 50, 0));
+		TotalDamage->SetColor(Color(0, 0, 0));
+		i_totaldmg_txt = 0;
+		TotalDmgCheer->SetScale(Vector3(TotalDmgCheer->GetScale().x, TotalDmgCheer->GetScale().y, TotalDmgCheer->GetScale().z) - Vector3(0, dt * 50, 0));
+		TotalDmgCheer->SetText(" ");
+	}
+	
+
+	if (i_totaldmg_txt <= -500000)
+	{
+
+		TotalDamage->SetColor(Color(1, 0, 0));
+		TotalDmgCheer->SetColor(Color(1, 0, 0));
+		TotalDmgCheer->SetScale(TotalDamage->GetScale());
+		TotalDmgCheer->SetText("GOOD");
+		if (i_totaldmg_txt <= -1000000)
+		{
+
+			TotalDamage->SetColor(Color(1, 1, 0));
+			TotalDmgCheer->SetColor(Color(1, 1, 0));
+			TotalDmgCheer->SetScale(TotalDamage->GetScale());
+			TotalDmgCheer->SetText("EXCELLENT");
+		}
+	}
 
 
-	//
+	//modelStack.Rotate(Math::RadianToDegree(atan2(camera.position.x - (-1615), camera.position.z - 125)), 0, 1, 0);
 }
 
 void BattleScene::Exit()
@@ -535,6 +623,7 @@ void BattleScene::Exit()
 	BGM->stop();
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
+
 	groundEntity->SetIsDone(true);
 	//playerInfo->DetachCamera();
 

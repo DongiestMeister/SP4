@@ -15,6 +15,7 @@
 #include "Character/MeleeCharacter.h"
 #include "Character/Weapon.h"
 #include "PlayerInfo.h"
+#include "DamageText.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -34,12 +35,12 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
-	void RunBattleAnimation(double dt, bool ranged);
+	void RunBattleAnimation(double dt, bool ranged, int dmgvalue);
 	void RenderProps();
 	void TakenHitAnimation(float& type_pos);
 	void RenderSkyBox();
 
-	void RenderTextStuff();
+	void RenderTextStuff(double dt);
 
 
 
@@ -55,9 +56,18 @@ private:
 
 	float player_posx;
 	float enemy_posx;
+
+
+	vector<DamageText*> storeDmgTxt;
+	TextEntity* TotalDamage;
+	TextEntity* TotalDmgCheer;
+	int i_totaldmg_txt;
+	float f_textDelayOnScreen;
+
 	bool b_isClashed;
 
-	TextEntity* damageText;
+
+	float fps;
 
 	ISound* BGM;
 };
