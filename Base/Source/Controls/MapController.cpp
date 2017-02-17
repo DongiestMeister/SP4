@@ -118,7 +118,7 @@ void MapController::Update(double dt)
 		MoveUnit(5.f, dt);
 	}
 
-	if (!b_activeButtons[WAIT] && !b_attacking)
+	if (!b_activeButtons[WAIT] && !b_attacking && (*b_playerTurn))
 	{
 		MovementControls(dt);
 	}

@@ -60,6 +60,15 @@ private:
 	bool b_textRunning;
 
 	int i_enemyIterator;
+
+	enum VICTORY_CONDITION
+	{
+		KILL,
+		SURVIVE,
+		CAPTURE
+	};
+
+	VICTORY_CONDITION condition;
 };
 
 #endif

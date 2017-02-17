@@ -362,28 +362,35 @@ void GameplayScene::Update(double dt)
 	{
 		// Enemies movement
 
+		static float timeDelay = 1.f;
+
 		if (!b_playerTurn)
 		{
 			controller.selectedTile = gameMap.enemies[i_enemyIterator]->getPos();
-			if (gameMap.enemies[i_enemyIterator]->FSM && !gameMap.enemies[i_enemyIterator]->b_tookAction)
+			if ((timeDelay -= dt) < 0)
 			{
-				if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
+				if (gameMap.enemies[i_enemyIterator]->FSM && !gameMap.enemies[i_enemyIterator]->b_tookAction)
+				{
+					if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
+					{
+						gameMap.enemies[i_enemyIterator]->b_tookAction = true;
+						i_enemyIterator++;
+						timeDelay = 1.f;
+						if (i_enemyIterator == gameMap.enemies.size())
+						{
+							i_enemyIterator = 0;
+						}
+					}
+				}
+				else
 				{
 					gameMap.enemies[i_enemyIterator]->b_tookAction = true;
 					i_enemyIterator++;
+					timeDelay = 1.f;
 					if (i_enemyIterator == gameMap.enemies.size())
 					{
 						i_enemyIterator = 0;
 					}
-				}
-			}
-			else
-			{
-				gameMap.enemies[i_enemyIterator]->b_tookAction = true;
-				i_enemyIterator++;
-				if (i_enemyIterator == gameMap.enemies.size())
-				{
-					i_enemyIterator = 0;
 				}
 			}
 		}
@@ -461,6 +468,8 @@ void GameplayScene::Exit()
 	// Detach camera from other entities
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
+	turnDisplay->SetIsDone(true);
+	groundEntity->SetIsDone(true);
 	//playerInfo->DetachCamera();
 	fps->SetIsDone(true);
 //	if (playerInfo->DropInstance() == false)
