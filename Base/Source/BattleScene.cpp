@@ -168,8 +168,11 @@ void BattleScene::Init()
 	player_posx = 80;
 	enemy_posx = 120;
 	f_textDelayOnScreen = 0;
+	f_SceneIntroDelay = 1;
 
 	b_isClashed = true;	//on start clash is true (clashed)
+	b_bonusRush = true;
+	b_spamLock = false;
 
 	i_totaldmg_txt = 0;
 	TotalDamage = Create::Text2DObject(("text"), Vector3(-180, 160, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
@@ -225,11 +228,14 @@ void BattleScene::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
 	{
 		//Feel free to Remove/Edit.
-
-
-		b_isClashed = false;	//when m = no clash, start clashing
+		
+		if (!b_spamLock)
+			b_isClashed = false;	//when m = no clash, start clashing
+		
 
 	}
+
+	
 
 	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
 	{
@@ -238,12 +244,22 @@ void BattleScene::Update(double dt)
 
 	fps = 1 / dt;
 	
+	if (f_SceneIntroDelay > 0)
+		f_SceneIntroDelay -= dt;
+	else
+	{
+		if (!b_bonusRush && !b_spamLock)
+		{
+			b_isClashed = false;
+		}
+	}
+
 	//animation always running
-	RunBattleAnimation(dt, false, -9999);
+	RunBattleAnimation(dt, false, 123);
 
 	
 
-	camera.Update(dt);
+	//camera.Update(dt);
 
 
 	// if the left mouse button was released
@@ -331,25 +347,12 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 		ene_maxdist_forward = 85;
 	}
 
+	
+	
+	RenderTextStuff(dt, dmgvalue);
 
-	RenderTextStuff(dt);
 
-	//damageText->SetPosition(Vector3(dmgtxt_pos, dmgtxt_height, 60));
-	//damageText->SetText(std::to_string(dmgvalue));
-
-	for (vector<DamageText*>::iterator it = storeDmgTxt.begin(); it != storeDmgTxt.end();)
-	{
-		if ((*it)->Update(dt))
-		{
-			delete *it;
-			it = storeDmgTxt.erase(it);
-		}
-		else
-		{
-			it++;
-		}
-	}
-
+	//if player attacking
 	if (PlayerInfo::GetInstance()->b_attacking)
 	{
 		if (!b_isClashed)
@@ -360,6 +363,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			}
 			else	//reached right
 			{
+
 				b_isClashed = true;	//clash true
 
 				f_textDelayOnScreen = 5;
@@ -368,11 +372,13 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx-6, -20, 60), std::to_string(dmgvalue), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
 				storeDmgTxt.push_back(tempdmg);
 				
+
 				i_totaldmg_txt += dmgvalue;
 				TotalDamage->SetText("TOTAL DAMAGE:"+std::to_string(i_totaldmg_txt));
 				TotalDamage->SetScale(Vector3(23, 35, 20));
 
-				
+				if (!b_bonusRush)
+					b_spamLock = true;
 				//PlayerInfo::GetInstance()->player->attack();
 				//TakenHitAnimation(enemy_posx);
 			}
@@ -385,6 +391,13 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			{
 				player_posx -= dt * 50;
 				
+			}
+			else
+			{
+				if (!b_bonusRush && b_spamLock)
+				{
+					SceneManager::GetInstance()->SetActiveScene("GameState");
+				}
 			}
 		}
 	}
@@ -562,8 +575,24 @@ void BattleScene::RenderProps()
 
 }
 
-void BattleScene::RenderTextStuff(double dt)
+void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 {
+	//run all damageTexts entities list
+	for (vector<DamageText*>::iterator it = storeDmgTxt.begin(); it != storeDmgTxt.end();)
+	{
+		//Update is bool, return true = max height reached
+		if ((*it)->Update(dt))
+		{
+			delete *it;
+			it = storeDmgTxt.erase(it);
+		}
+		else
+		{
+			// only continue to next damageEntity when max height reached
+			it++;
+		}
+	}
+
 	
 	if (TotalDamage->GetScale().y > 20)
 	{
@@ -596,14 +625,14 @@ void BattleScene::RenderTextStuff(double dt)
 	}
 	
 
-	if (i_totaldmg_txt <= -500000)
+	if (i_totaldmg_txt <= (dmgvalue*50))
 	{
 
 		TotalDamage->SetColor(Color(1, 0, 0));
 		TotalDmgCheer->SetColor(Color(1, 0, 0));
 		TotalDmgCheer->SetScale(TotalDamage->GetScale());
 		TotalDmgCheer->SetText("GOOD");
-		if (i_totaldmg_txt <= -1000000)
+		if (i_totaldmg_txt <= (dmgvalue*100))
 		{
 
 			TotalDamage->SetColor(Color(1, 1, 0));

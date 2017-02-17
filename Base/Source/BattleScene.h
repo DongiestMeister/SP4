@@ -40,9 +40,13 @@ public:
 	void TakenHitAnimation(float& type_pos);
 	void RenderSkyBox();
 
-	void RenderTextStuff(double dt);
+	/*RenderTextStuff 
+	- runs animation and appearance of Totaldamage Counter and Effects
+	- Removes completed damage text through list*/
+	void RenderTextStuff(double dt, int dmgvalue);
 
-
+	void SetBattleBonus(bool _isBonus) { b_bonusRush = _isBonus; }
+	bool GetBattleBonus() { return b_bonusRush; }
 
 
 private:
@@ -65,7 +69,10 @@ private:
 	float f_textDelayOnScreen;
 
 	bool b_isClashed;
+	bool b_bonusRush;
+	bool b_spamLock;
 
+	float f_SceneIntroDelay;
 
 	float fps;
 
