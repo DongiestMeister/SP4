@@ -625,6 +625,15 @@ void BattleScene::Exit()
 	GraphicsManager::GetInstance()->DetachCamera();
 
 	groundEntity->SetIsDone(true);
+	TotalDmgCheer->SetIsDone(true);
+	TotalDamage->SetIsDone(true);
+
+	for (vector<DamageText*>::iterator it = storeDmgTxt.begin(); it != storeDmgTxt.end();)
+	{
+		(*it)->dmgTxt->SetIsDone(true);
+		delete *it;
+		it = storeDmgTxt.erase(it);
+	}
 	//playerInfo->DetachCamera();
 
 	//	if (playerInfo->DropInstance() == false)
