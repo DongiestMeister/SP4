@@ -1,9 +1,12 @@
 #include "AI_DefenceFSM.h"
 #include "../AStar/AStar.h"
 
-AI_DefenceFSM::AI_DefenceFSM()
+AI_DefenceFSM::AI_DefenceFSM(Character *character)
 {
+	this->character = character;
 	target = nullptr;
+	b_foundEnemyPath = false;
+	state = IDLE;
 }
 
 AI_DefenceFSM::~AI_DefenceFSM()
@@ -11,7 +14,7 @@ AI_DefenceFSM::~AI_DefenceFSM()
 
 }
 
-void AI_DefenceFSM::Update(double dt)
+bool AI_DefenceFSM::Update(double dt)
 {
 	if (!character->b_tookAction)
 	{
@@ -30,6 +33,13 @@ void AI_DefenceFSM::Update(double dt)
 			break;
 		}
 	}
+
+	if (target == nullptr || b_isDone)
+	{
+		b_isDone = false;
+		return true;
+	}
+	return false;
 }
 
 void AI_DefenceFSM::Idle()
@@ -41,28 +51,37 @@ void AI_DefenceFSM::Idle()
 
 	if (target != nullptr)
 	{
-		if (character->getHP() <= 20)
-		{
-			state = RETREAT;
-		}
-		else
+		//if (character->getHP() <= 20)
+		//{
+		//	state = RETREAT;
+		//}
+		//else
 		{
 			state = CHASE;
 		}
+	}
+	else
+	{
+		b_isDone = true;
 	}
 }
 
 void AI_DefenceFSM::Chase(double dt)
 {
+	if (!b_foundEnemyPath)
+	{
+		b_foundEnemyPath = SearchPath();
+		map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+		map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+	}
 
 	//if unit != took action, = current unit to move
-	if (!character->b_tookAction)
+	if (b_foundEnemyPath)
 	{
-		//DEFENCE CHASE = if target is out of reach, return to IDLE state
-		if ((character->getPos() - target->getPos()).Length() <= character->i_movementCost)
+		if (!character->b_tookAction)
 		{
-			//search through paths from unitpath
-			for (int i = 0; i < unitPath.size(); ++i)
+			//DEFENCE CHASE = if target is out of reach, return to IDLE state
+			if ((character->getPos() - target->getPos()).Length() <= character->i_movementCost)
 			{
 				// if dist btwn 1st pos & unit pos != 0, 
 				if (!(unitPath[0] - character->getPos()).IsZero())
@@ -81,13 +100,15 @@ void AI_DefenceFSM::Chase(double dt)
 				}
 				if ((unitPath.size() <= 0))
 				{
-					state = ATTACK;
+					b_foundEnemyPath = false;
+					b_isDone = true;
+					//state = ATTACK;
 				}
 			}
-		}
-		else
-		{
-			state = IDLE;
+			else
+			{
+				state = IDLE;
+			}
 		}
 	}
 }

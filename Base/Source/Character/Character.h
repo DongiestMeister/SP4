@@ -11,6 +11,8 @@
 
 using std::string;
 
+class AI_FSM;
+
 class Character
 {
 public:
@@ -51,6 +53,7 @@ public:
 	bool b_inParty; // If this unit is in the party
 	int i_attackRange; // Range of attack of this character
 	bool b_tookAction; // If the unit has already moved/attacked this turn
+	AI_FSM *FSM;
 protected:
 	Weapon* weapon;
 	Armor* armor;

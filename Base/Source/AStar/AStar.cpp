@@ -42,14 +42,14 @@ Node* AStar::GetBest()
 }
 
 // Get Neighborhood Nodes ( By Index ) Of Current Node
-Node* AStar::GetSuccessor(Node *current, int i)
+Node* AStar::GetSuccessor(Node *current, int i, Node *goal)
 {
 	Node *n = NULL;										// Null Initialisation
 	int x = current->x + succ[i].x;						// Get x,y Position By Index
 	int y = current->y + succ[i].y;
 	if (x >= 0 && x < COLS && y >= 0 && y < ROWS)
 	{
-		if (grid[y][x] == 0) {								// If Grid Element Contains Empty Space
+		if (grid[y][x] == 0 || (grid[y][x] == 2 && x == goal->x && y == goal->y)) {								// If Grid Element Contains Empty Space
 			n = new Node;									// Create A Node Object
 			n->x = x;										// Initialise To x-y Value Of Successor
 			n->y = y;
@@ -154,7 +154,7 @@ bool AStar::Search()
 			Node *successor;							// Define Successor Node
 			// Define Temporary Node
 			for (int i = 0; i < 4; i++) {				// Loop Through 4 Neighborhood Nodes By Their Index
-				successor = GetSuccessor(n, i);			// Get Successor Node By Index
+				successor = GetSuccessor(n, i, goal);			// Get Successor Node By Index
 				if (successor != NULL)						// If A Valid Space For A Successor Node
 				{
 					successor->parent = n;						// Link Back To Parent/Current Node

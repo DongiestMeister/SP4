@@ -37,7 +37,7 @@ public:
 	void RemoveCloseList(Node *n);			// Remove Node From Close List
 	void ShowList(vector <Node*> list);		// Show List Either Open Or Close
 	Node* GetBest();						// Get Best Node (Minimum f) In Open List
-	Node* GetSuccessor(Node *current, int i);// Get Neighborhood Nodes( Empty Space) Of Current Node Given A Neighborhood Index 
+	Node* GetSuccessor(Node *current, int i, Node *goal);// Get Neighborhood Nodes( Empty Space) Of Current Node Given A Neighborhood Index 
 	float Compute_g(Node* n);				// Calculate 'g' Cost
 	float Compute_h(Node* n);				// Calculate 'h' Cost
 	bool InList(vector <Node*> list, Node *n); // Check If Node 'n' Is In List

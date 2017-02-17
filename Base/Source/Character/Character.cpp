@@ -15,6 +15,8 @@ Character::Character()
 	i_stepsTaken = 0;
 	b_inParty = false;
 	s_Name = "";
+
+	FSM = nullptr;
 }
 
 Character::~Character()

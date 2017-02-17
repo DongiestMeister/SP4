@@ -58,6 +58,8 @@ private:
 
 	void DisplayText(string text,Vector3 color);
 	bool b_textRunning;
+
+	int i_enemyIterator;
 };
 
 #endif

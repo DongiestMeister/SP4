@@ -10,7 +10,7 @@ public:
 
 	TileMap *map;
 	Character *character;
-	virtual void Update(double dt) { ; }
+	virtual bool Update(double dt) { return false; }
 
 	bool SearchPath();
 	bool SearchPathWithTerrain();
@@ -28,6 +28,9 @@ public:
 	vector<Vector2> unitPath;
 
 	float f_speed;
+
+	// Stuff for in-loop movement
+	bool b_isDone;
 };
 
 

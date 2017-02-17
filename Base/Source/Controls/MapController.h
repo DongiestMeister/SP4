@@ -11,7 +11,7 @@ public:
 	MapController();
 	~MapController();
 
-	void Init(TileMap *map,FPSCamera *camera);
+	void Init(TileMap *map,FPSCamera *camera, bool *b_playerTurn);
 	void Update(double dt);
 	void Render();
 	void RenderUI();
@@ -21,6 +21,8 @@ public:
 
 	bool b_cameraTransition;
 	float tempOrtho;
+
+	bool *b_playerTurn;
 private:
 	TileMap *map;
 	FPSCamera *camera;

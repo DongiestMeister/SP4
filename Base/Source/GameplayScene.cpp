@@ -21,6 +21,10 @@
 #include "Light.h"
 #include "RenderHelper.h"
 
+#include "AI\AI_FSM.h"
+#include "AI\AI_DefenceFSM.h"
+#include "AI\AI_OffenceFSM.h"
+
 
 
 #include <iostream>
@@ -44,6 +48,7 @@ void GameplayScene::Init()
 	turnDisplay = nullptr;
 	b_textRunning = false;
 	i_turn = 1;
+	i_enemyIterator = 0;
 
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
@@ -177,7 +182,7 @@ void GameplayScene::Init()
 	//textObj[5]->SetPosition(Vector3(-halfWindowWidth * 0.9 - fontSize * 2, -halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
 	//textObj[5]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
 
-	controller.Init(&gameMap, &camera);
+	controller.Init(&gameMap, &camera,&b_playerTurn);
 
 	AStar search(0, 0, 9, 9, &gameMap);
 	if (search.Search())
@@ -191,8 +196,14 @@ void GameplayScene::Init()
 
 	Character *knight = new MeleeCharacter("K1");
 	Character *knight1 = new MeleeCharacter("K2");
+	knight1->FSM = new AI_DefenceFSM(knight1);
+	knight1->FSM->map = &gameMap;
 	Character *knight2 = new MeleeCharacter("K3");
+	knight2->FSM = new AI_DefenceFSM(knight2);
+	knight2->FSM->map = &gameMap;
 	Character *knight3 = new MeleeCharacter("K4");
+	knight3->FSM = new AI_DefenceFSM(knight3);
+	knight3->FSM->map = &gameMap;
 	//Unit *knight4 = new Unit(new MeleeCharacter());
 
 	/*gameMap.AddCharacter(1, 1, knight);
@@ -206,7 +217,7 @@ void GameplayScene::Init()
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);
 
-	gameMap.Init(200, 200, 30, 30); // Must be last line
+	gameMap.Init(200, 200, 10, 10); // Must be last line
 
 	if (gameMap.LoadMap("Image//MapDesign.csv"))
 	{
@@ -303,14 +314,9 @@ void GameplayScene::Update(double dt)
 			if (b_done)
 			{
 				b_playerTurn = false;
+				gameMap.ResetCharacters();
 				if (!b_textRunning)
 					DisplayText("Enemy Turn", Vector3(1, 0, 0));
-				gameMap.ResetCharacters();
-				// For testing purposes
-				for (int i = 0; i < gameMap.enemies.size(); ++i)
-				{
-					gameMap.enemies[i]->b_tookAction = true;
-				}
 			}
 		}
 		else
@@ -328,6 +334,7 @@ void GameplayScene::Update(double dt)
 				b_playerTurn = true;
 				gameMap.ResetEnemies();
 				i_turn++;
+				controller.selectedTile = gameMap.characters[0]->getPos();
 				if (!b_textRunning)
 					DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
 			}
@@ -349,6 +356,36 @@ void GameplayScene::Update(double dt)
 		{
 			turnDisplay->SetIsDone(true);
 			b_textRunning = false;
+		}
+	}
+	else
+	{
+		// Enemies movement
+
+		if (!b_playerTurn)
+		{
+			controller.selectedTile = gameMap.enemies[i_enemyIterator]->getPos();
+			if (gameMap.enemies[i_enemyIterator]->FSM && !gameMap.enemies[i_enemyIterator]->b_tookAction)
+			{
+				if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
+				{
+					gameMap.enemies[i_enemyIterator]->b_tookAction = true;
+					i_enemyIterator++;
+					if (i_enemyIterator == gameMap.enemies.size())
+					{
+						i_enemyIterator = 0;
+					}
+				}
+			}
+			else
+			{
+				gameMap.enemies[i_enemyIterator]->b_tookAction = true;
+				i_enemyIterator++;
+				if (i_enemyIterator == gameMap.enemies.size())
+				{
+					i_enemyIterator = 0;
+				}
+			}
 		}
 	}
 

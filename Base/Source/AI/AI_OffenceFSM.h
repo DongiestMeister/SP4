@@ -8,11 +8,11 @@
 class AI_OffenceFSM : public AI_FSM
 {
 public:
-	AI_OffenceFSM();
+	AI_OffenceFSM(Character *character);
 	~AI_OffenceFSM();
 
 
-	void Update(double dt);
+	bool Update(double dt);
 
 	enum Offence_Strategy
 	{

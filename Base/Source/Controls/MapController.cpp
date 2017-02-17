@@ -30,17 +30,18 @@ MapController::~MapController()
 
 }
 
-void MapController::Init(TileMap *map, FPSCamera *camera)
+void MapController::Init(TileMap *map, FPSCamera *camera,bool *b_playerTurn)
 {
 	this->map = map;
 	this->camera = camera;
+	this->b_playerTurn = b_playerTurn;
 }
 
 void MapController::Update(double dt)
 {
 	if (KeyboardController::GetInstance()->IsKeyPressed('Z'))
 	{
-		if (!selectedUnit) // Selected a unit on the map
+		if (!selectedUnit && (*b_playerTurn)) // Selected a unit on the map
 		{
 			if (map->GetCharacter(selectedTile.x, selectedTile.y))
 			{
@@ -77,6 +78,29 @@ void MapController::Update(double dt)
 			tempOrtho = camera->f_OrthoSize;
 			b_cameraTransition = true;
 			//SceneManager::GetInstance()->SetActiveScene("BattleState", true);
+		}
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyPressed('X'))
+	{
+		if (b_attacking)
+		{
+			b_attacking = false;
+			selectedTile = selectedUnit->getPos();
+			OpenButtons();
+		}
+		else if (selectedUnit && selectedButton == MOVE && !b_movingUnit)
+		{
+			selectedTile = selectedUnit->getPos();
+			selectedUnit->i_stepsTaken = 0;
+			map->movePath.clear();
+			b_canPlace = false;
+			OpenButtons();
+		}
+		else if (b_activeButtons[WAIT])
+		{
+			selectedUnit = nullptr;
+			CloseButtons();
 		}
 	}
 
@@ -521,7 +545,7 @@ void MapController::RenderUI()
 		}
 	}
 
-	if (selectedUnit && currentButton == MOVE)
+	if (selectedUnit && selectedButton == MOVE)
 	{
 		string textdisplay;
 		if (map->movePath.size() - 1 <= selectedUnit->i_movementCost && b_canPlace)

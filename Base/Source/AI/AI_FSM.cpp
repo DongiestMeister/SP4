@@ -9,12 +9,13 @@ AI_FSM::AI_FSM()
 {
 	character = nullptr;
 	f_speed = 5;
+	b_isDone = false;
 }
 AI_FSM::~AI_FSM()
 {
 	if (character)
 	{
-		delete character; 
+		//delete character; 
 		character = nullptr;
 	}
 }
@@ -82,10 +83,9 @@ void AI_FSM::SearchNearestWithHP()
 			targetVector.push_back(enemy);
 		}*/
 	}
-
+	float maxHP = INT_MAX;
 	for (int i = 0; i < targetVector.size(); ++i)
 	{
-		float maxHP = INT_MAX;
 		if (targetVector[i]->getHP() < maxHP)
 		{
 			maxHP = targetVector[i]->getHP();
@@ -100,16 +100,14 @@ bool AI_FSM::SearchPath()
 {
 	if (target) // != null
 	{
+		unitPath.clear();
 		// Astar Search(curr pos , desired dist ,  )
 		AStar search((int)character->getPos().x, (int)character->getPos().y, (int)target->getPos().x, (int)target->getPos().y, map);
 		if (search.Search())//search.Search() = Finds the nearest path between parameters
 		{
-			for (int i = 0; i < character->i_movementCost + 1; ++i)
+			for (int i = 0; i < character->i_movementCost && i < search.bestPath.size() - 1; ++i)
 			{
-				if (search.bestPath.size() < i)
-				{
-					unitPath.push_back(search.bestPath[i]);
-				}
+				unitPath.push_back(search.bestPath[i]);
 			}
 			return true;
 		}
