@@ -177,6 +177,8 @@ void BattleScene::Init()
 	i_totaldmg_txt = 0;
 	TotalDamage = Create::Text2DObject(("text"), Vector3(-180, 160, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
 	TotalDmgCheer = Create::Text2DObject(("text"), Vector3(-180, 140, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
+
+
 	fps = 0.f;
 	
 	/*player = new MeleeCharacter();
@@ -369,7 +371,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				f_textDelayOnScreen = 5;
 
 				DamageText* tempdmg = new DamageText();
-				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx-6, -20, 60), std::to_string(dmgvalue), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
+				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx-6, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
 				storeDmgTxt.push_back(tempdmg);
 				
 
@@ -415,7 +417,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				b_isClashed = true;
 
 				DamageText* tempdmg = new DamageText();
-				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx-3, -20, 60), std::to_string(dmgvalue), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
+				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
 				storeDmgTxt.push_back(tempdmg);
 				//PlayerInfo::GetInstance()->enemy->attack();
 				//TakenHitAnimation(player_posx);
@@ -625,14 +627,14 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 	}
 	
 
-	if (i_totaldmg_txt <= (dmgvalue*50))
+	if (i_totaldmg_txt >= (dmgvalue*50))
 	{
 
 		TotalDamage->SetColor(Color(1, 0, 0));
 		TotalDmgCheer->SetColor(Color(1, 0, 0));
 		TotalDmgCheer->SetScale(TotalDamage->GetScale());
 		TotalDmgCheer->SetText("GOOD");
-		if (i_totaldmg_txt <= (dmgvalue*100))
+		if (i_totaldmg_txt >= (dmgvalue*100))
 		{
 
 			TotalDamage->SetColor(Color(1, 1, 0));
