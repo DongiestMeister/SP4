@@ -93,6 +93,10 @@ void PartySelectScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("statusScreen")->textureID = LoadTGA("Image//statusScreen.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("rightFacingArrow", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("rightFacingArrow")->textureID = LoadTGA("Image//rightFacingArrow.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("selectOption", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("selectOption")->textureID = LoadTGA("Image//selectOption.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("changeWhoseEQ", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("changeWhoseEQ")->textureID = LoadTGA("Image//changeWhoseEQ.tga");
 
 	groundEntity = Create::Ground("PartySelectBG", "GEO_GRASS_LIGHTGREEN");
 	// Setup the 2D entities
@@ -138,11 +142,35 @@ void PartySelectScene::Init()
 	d->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
 	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), d);
 
+	Character* dik = new MeleeCharacter("deek");
+	dik->setDamage(696969);
+	dik->setPortrait(MeshBuilder::GetInstance()->GetMesh("test"));
+	dik->equipWeapon(new Weapon(6969, 100, false, "69 swordz"));
+	dik->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
+	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), dik);
 
-	selectedPos.Set(-camera.f_OrthoSize + 40, - 10, 0);
-	i_selectedCounter = 0;
-	b_showStatus = false;
+	Character* a = new MeleeCharacter("derpina");
+	a->setDamage(696969);
+	a->setPortrait(MeshBuilder::GetInstance()->GetMesh("selected"));
+	a->equipWeapon(new Weapon(6969, 100, false, "69 swordz"));
+	a->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
+	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), a);
 
+	for (int i = 0; i < 10; i++)
+	{
+		Character* a = new MeleeCharacter("derpina");
+		a->setDamage(696969);
+		a->setPortrait(MeshBuilder::GetInstance()->GetMesh("test"));
+		a->equipWeapon(new Weapon(6969, 100, false, "69 swordz"));
+		a->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
+		PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), a);
+	}
+
+	selectedPos.Set(-47, 52.5f, 0);
+	currentScreen = CURR_SCREEN_SELECT_OPTION;
+	i_selectedOptionCounter = 0;
+
+	i_selectedUnitsCounter = 0;
 	b_statusCursor = 0;
 	statusCursorPos.Set(-10, -40, 0);
 }
@@ -190,97 +218,214 @@ void PartySelectScene::Update(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
-		if (b_showStatus == false)
+		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
 		{
-			if (i_selectedCounter <= PlayerInfo::GetInstance()->availableUnits.size() - 1)
+			if (i_selectedOptionCounter == 0) // Change party
 			{
-				// Transit to show stats screen here
-				//cout << PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getName() << endl;
-				b_showStatus = true;
+				currentScreen = CURR_SCREEN_SELECT_UNITS;
+				selectedPos.Set(-60, -10, 0);
+				i_selectedUnitsCounter = 0;
+			}
+			else if (i_selectedOptionCounter == 1) // Change equipment
+			{
+				currentScreen = CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER;
+				selectedPos.Set(-60, 40, 0);
+				i_selectedUnitsCounter = 0;
 			}
 		}
-		else
+		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
+		{
+			if (i_selectedUnitsCounter <= PlayerInfo::GetInstance()->availableUnits.size() - 1)
+				currentScreen = CURR_SCREEN_VIEW_STATUS;
+		}
+		else if (currentScreen == CURR_SCREEN_VIEW_STATUS)
 		{
 			if (b_statusCursor == 0)
 			{
-				if (PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->b_inParty == false)
+				if (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->b_inParty == false)
 				{
 					for (int i = 0; i < 4; i++)
 					{
-						if (PlayerInfo::GetInstance()->addCharacterToParty(Vector2(0, 0), PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter), i))
+						if (PlayerInfo::GetInstance()->addCharacterToParty(Vector2(0, 0), PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter), i))
 							break;
-						if (i == 3 && !PlayerInfo::GetInstance()->addCharacterToParty(Vector2(0, 0), PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter), i))
-						{
-							cout << "party is full" << endl;
-						}
 					}
 				}
 				else
-				{
-					PlayerInfo::GetInstance()->removeCharacterFromParty(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->i_idInParty);
-				}
+					PlayerInfo::GetInstance()->removeCharacterFromParty(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_idInParty);
 			}
 			else
-			{
-				b_showStatus = false;
-			}
+				currentScreen = CURR_SCREEN_SELECT_UNITS;
+		}
+		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
+		{
+			if (i_selectedUnitsCounter <= PlayerInfo::GetInstance()->availableUnits.size() - 1)
+				currentScreen = CURR_SCREEN_VIEW_STATUS;
+		}
+	}
+	if (KeyboardController::GetInstance()->IsKeyReleased('X'))
+	{
+		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
+		{
+			// go back to level select
+		}
+		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
+		{
+			// return to pre-battle preparations
+			currentScreen = CURR_SCREEN_SELECT_OPTION;
+			selectedPos.Set(-47, 52.5f, 0);
+			i_selectedOptionCounter = 0;
+		}
+		else if (currentScreen == CURR_SCREEN_VIEW_STATUS)
+		{
+			// return to party select
+			currentScreen = CURR_SCREEN_SELECT_UNITS;
+		}
+		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
+		{
+			// return to pre-battle preparations
+			currentScreen = CURR_SCREEN_SELECT_OPTION;
+			selectedPos.Set(-47, 52.5f, 0);
+			i_selectedOptionCounter = 0;
 		}
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_RIGHT))
 	{
-		if (b_showStatus == false)
+		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
+		{
+			selectedPos.x += 94;
+			if (selectedPos.x > 47)
+				selectedPos.x = -47;
+
+			i_selectedOptionCounter += 1;
+			if (i_selectedOptionCounter == 2)
+				i_selectedOptionCounter = 0;
+			else if (i_selectedOptionCounter == 4)
+				i_selectedOptionCounter = 2;
+		}
+		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
 		{
 			selectedPos.x += 30;
-			if (selectedPos.x >= -camera.f_OrthoSize + 190)
-				selectedPos.x = -camera.f_OrthoSize + 40;
+			if (selectedPos.x > 60)
+				selectedPos.x = -60;
 
-			i_selectedCounter += 1;
-			if (i_selectedCounter == 5)
-				i_selectedCounter = 0;
-			else if (i_selectedCounter == 10)
-				i_selectedCounter = 5;
-			else if (i_selectedCounter == 15)
-				i_selectedCounter = 10;
+			i_selectedUnitsCounter += 1;
+			if (i_selectedUnitsCounter == 5)
+				i_selectedUnitsCounter = 0;
+			else if (i_selectedUnitsCounter == 10)
+				i_selectedUnitsCounter = 5;
+			else if (i_selectedUnitsCounter == 15)
+				i_selectedUnitsCounter = 10;
+		}
+		else if (currentScreen == CURR_SCREEN_VIEW_STATUS)
+		{
+			i_selectedUnitsCounter+=1;
+			if (i_selectedUnitsCounter >= PlayerInfo::GetInstance()->availableUnits.size())
+				i_selectedUnitsCounter = 0;
+			selectedPos.x += 30;
+			if (selectedPos.x > 60)
+				selectedPos.x = -60;
+		}
+		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
+		{
+			selectedPos.x += 30;
+			if (selectedPos.x > 60)
+				selectedPos.x = -60;
+
+			i_selectedUnitsCounter += 1;
+			if (i_selectedUnitsCounter == 5)
+				i_selectedUnitsCounter = 0;
+			else if (i_selectedUnitsCounter == 10)
+				i_selectedUnitsCounter = 5;
+			else if (i_selectedUnitsCounter == 15)
+				i_selectedUnitsCounter = 10;
 		}
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_LEFT))
 	{
-		if (b_showStatus == false)
+		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
+		{
+			selectedPos.x -= 94;
+			if (selectedPos.x < -47)
+				selectedPos.x = 47;
+
+			i_selectedOptionCounter -= 1;
+			if (i_selectedOptionCounter == -1)
+				i_selectedOptionCounter = 1;
+			else if (i_selectedOptionCounter == 1)
+				i_selectedOptionCounter = 3;
+		}
+		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
 		{
 			selectedPos.x -= 30;
-			if (selectedPos.x <= -camera.f_OrthoSize + 10)
-				selectedPos.x = -camera.f_OrthoSize + 160;
+			if (selectedPos.x < -60)
+				selectedPos.x = 60;
 
-			i_selectedCounter -= 1;
-			if (i_selectedCounter == -1)
-				i_selectedCounter = 4;
-			else if (i_selectedCounter == 4)
-				i_selectedCounter = 9;
-			else if (i_selectedCounter == 9)
-				i_selectedCounter = 14;
+			i_selectedUnitsCounter -= 1;
+			if (i_selectedUnitsCounter == -1)
+				i_selectedUnitsCounter = 4;
+			else if (i_selectedUnitsCounter == 4)
+				i_selectedUnitsCounter = 9;
+			else if (i_selectedUnitsCounter == 9)
+				i_selectedUnitsCounter = 14;
+		}
+		else if (currentScreen == CURR_SCREEN_VIEW_STATUS)
+		{
+			i_selectedUnitsCounter -= 1;
+			if (i_selectedUnitsCounter < 0)
+				i_selectedUnitsCounter = PlayerInfo::GetInstance()->availableUnits.size() - 1;
+
+			selectedPos.x -= 30;
+			if (selectedPos.x < -60)
+				selectedPos.x = 60;
+		}
+		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
+		{
+			selectedPos.x -= 30;
+			if (selectedPos.x < -60)
+				selectedPos.x = 60;
+
+			i_selectedUnitsCounter -= 1;
+			if (i_selectedUnitsCounter == -1)
+				i_selectedUnitsCounter = 4;
+			else if (i_selectedUnitsCounter == 4)
+				i_selectedUnitsCounter = 9;
+			else if (i_selectedUnitsCounter == 9)
+				i_selectedUnitsCounter = 14;
 		}
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_DOWN))
 	{
-		if (b_showStatus == false)
+		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
+		{
+			selectedPos.y -= 74.5f;
+			if (selectedPos.y < -22.f)
+				selectedPos.y = 52.5f;
+
+			i_selectedOptionCounter += 2;
+			if (i_selectedOptionCounter == 4)
+				i_selectedOptionCounter = 0;
+			else if (i_selectedOptionCounter == 5)
+				i_selectedOptionCounter = 1;
+		}
+		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
 		{
 			selectedPos.y -= 30;
-			if (selectedPos.y <= -100)
+			if (selectedPos.y < -70)
 				selectedPos.y = -10;
 
-			i_selectedCounter += 5;
-			if (i_selectedCounter == 15)
-				i_selectedCounter = 0;
-			else if (i_selectedCounter == 16)
-				i_selectedCounter = 1;
-			else if (i_selectedCounter == 17)
-				i_selectedCounter = 2;
-			else if (i_selectedCounter == 18)
-				i_selectedCounter = 3;
-			else if (i_selectedCounter == 19)
-				i_selectedCounter = 4;
+			i_selectedUnitsCounter += 5;
+			if (i_selectedUnitsCounter == 15)
+				i_selectedUnitsCounter = 0;
+			else if (i_selectedUnitsCounter == 16)
+				i_selectedUnitsCounter = 1;
+			else if (i_selectedUnitsCounter == 17)
+				i_selectedUnitsCounter = 2;
+			else if (i_selectedUnitsCounter == 18)
+				i_selectedUnitsCounter = 3;
+			else if (i_selectedUnitsCounter == 19)
+				i_selectedUnitsCounter = 4;
 		}
-		else
+		else if (currentScreen == CURR_SCREEN_VIEW_STATUS)
 		{
 			if (b_statusCursor == 0)
 				b_statusCursor = 1;
@@ -288,33 +433,61 @@ void PartySelectScene::Update(double dt)
 				b_statusCursor = 0;
 
 			statusCursorPos.y -= 30;
-
 			if (statusCursorPos.y < -70)
 				statusCursorPos.y = -40;
 		}
-		
+		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
+		{
+			selectedPos.y -= 40;
+			if (selectedPos.y < -40)
+				selectedPos.y = 40;
+
+			i_selectedUnitsCounter += 5;
+			if (i_selectedUnitsCounter == 15)
+				i_selectedUnitsCounter = 0;
+			else if (i_selectedUnitsCounter == 16)
+				i_selectedUnitsCounter = 1;
+			else if (i_selectedUnitsCounter == 17)
+				i_selectedUnitsCounter = 2;
+			else if (i_selectedUnitsCounter == 18)
+				i_selectedUnitsCounter = 3;
+			else if (i_selectedUnitsCounter == 19)
+				i_selectedUnitsCounter = 4;
+		}
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_UP))
 	{
-		if (b_showStatus == false)
+		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
+		{
+			selectedPos.y += 74.5f;
+			if (selectedPos.y > 52.5f)
+				selectedPos.y = -22.f;
+
+			i_selectedOptionCounter -= 2;
+			if (i_selectedOptionCounter == -2)
+				i_selectedOptionCounter = 2;
+			else if (i_selectedOptionCounter == -1)
+				i_selectedOptionCounter = 3;
+		}
+		if (currentScreen == CURR_SCREEN_SELECT_UNITS)
 		{
 			selectedPos.y += 30;
-			if (selectedPos.y >= 20)
+			if (selectedPos.y > -10)
 				selectedPos.y = -70;
 
-			i_selectedCounter -= 5;
-			if (i_selectedCounter == -5)
-				i_selectedCounter = 10;
-			else if (i_selectedCounter == -4)
-				i_selectedCounter = 11;
-			else if (i_selectedCounter == -3)
-				i_selectedCounter = 12;
-			else if (i_selectedCounter == -2)
-				i_selectedCounter = 13;
-			else if (i_selectedCounter == -1)
-				i_selectedCounter = 14;
+			i_selectedUnitsCounter -= 5;
+			if (i_selectedUnitsCounter == -5)
+				i_selectedUnitsCounter = 10;
+			else if (i_selectedUnitsCounter == -4)
+				i_selectedUnitsCounter = 11;
+			else if (i_selectedUnitsCounter == -3)
+				i_selectedUnitsCounter = 12;
+			else if (i_selectedUnitsCounter == -2)
+				i_selectedUnitsCounter = 13;
+			else if (i_selectedUnitsCounter == -1)
+				i_selectedUnitsCounter = 14;
 		}
-		else
+		else if (currentScreen == CURR_SCREEN_VIEW_STATUS)
 		{
 			if (b_statusCursor == 0)
 				b_statusCursor = 1;
@@ -324,6 +497,24 @@ void PartySelectScene::Update(double dt)
 			statusCursorPos.y += 30;
 			if (statusCursorPos.y > -40)
 				statusCursorPos.y = -70;
+		}
+		if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
+		{
+			selectedPos.y += 40;
+			if (selectedPos.y > 40)
+				selectedPos.y = -40;
+
+			i_selectedUnitsCounter -= 5;
+			if (i_selectedUnitsCounter == -5)
+				i_selectedUnitsCounter = 10;
+			else if (i_selectedUnitsCounter == -4)
+				i_selectedUnitsCounter = 11;
+			else if (i_selectedUnitsCounter == -3)
+				i_selectedUnitsCounter = 12;
+			else if (i_selectedUnitsCounter == -2)
+				i_selectedUnitsCounter = 13;
+			else if (i_selectedUnitsCounter == -1)
+				i_selectedUnitsCounter = 14;
 		}
 	}
 
@@ -418,7 +609,21 @@ void PartySelectScene::Render()
 
 	EntityManager::GetInstance()->RenderUI();
 
-	if (!b_showStatus) // not in the status screen
+	if (currentScreen == CURR_SCREEN_SELECT_OPTION)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(0, 0, -1);
+		modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selectOption"));
+		modelStack.PopMatrix();
+
+		modelStack.PushMatrix();
+		modelStack.Translate(selectedPos.x, selectedPos.y, 1);
+		modelStack.Scale(87, 40 * 16 / 9, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
+		modelStack.PopMatrix();
+	}
+	else if (currentScreen == CURR_SCREEN_SELECT_UNITS) // In the select units screen
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(0, 0, -1);
@@ -434,10 +639,10 @@ void PartySelectScene::Render()
 
 		for (int y = 0, counter = 0; y >= -3; y--)
 		{
-			for (unsigned x = 0; x < 5; x++)
+			for (int x = 0; x < 5; x++)
 			{
 				modelStack.PushMatrix();
-				modelStack.Translate(-camera.f_OrthoSize + 40 + (x * 30), (y * 30) - 10, 0);
+				modelStack.Translate(-60 + (x * 30), (y * 30) - 10, 0);
 				modelStack.Scale(15, 15 * 16 / 9, 1);
 				RenderHelper::RenderMesh(PlayerInfo::GetInstance()->availableUnits.at(counter)->getPortrait());
 				modelStack.PopMatrix();
@@ -450,21 +655,19 @@ void PartySelectScene::Render()
 		}
 
 		
-		for (unsigned x = 0,counter = 0; x < 5; x++)
+		for (int i = 0,counter = 0; i < 5; i++)
 		{
 			if (counter >= PlayerInfo::GetInstance()->party.size())
 				break;
 			modelStack.PushMatrix();
-			modelStack.Translate(0 + (x * 30), 50, 0);
+			modelStack.Translate(-70.3f + (i * 47), 50, 2);
 			modelStack.Scale(15, 15 * 16 / 9, 1);
-			RenderHelper::RenderMesh(PlayerInfo::GetInstance()->party.at(x)->getPortrait());
+			RenderHelper::RenderMesh(PlayerInfo::GetInstance()->party.at(i)->getPortrait());
 			modelStack.PopMatrix();
 			counter++;
-			
 		}
-			
 	}
-	else
+	else if (currentScreen == CURR_SCREEN_VIEW_STATUS) // Viewing status screen
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(0, 0, -1);
@@ -478,37 +681,78 @@ void PartySelectScene::Render()
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
 		modelStack.PopMatrix();
 
-		if (PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->b_inParty == false)
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Add to Party", Vector3(-5.f, -40.f, 1.f), 17.f, Color(1, 1, 1));
+		if (PlayerInfo::GetInstance()->party.size() >= 4 && PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->b_inParty == false)
+		{
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Party is full!", Vector3(-5.f, -40.f, 1.f), 17.f, Color(1, 1, 1));
+		}
 		else
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Remove from Party", Vector3(-5.f, -40.f, 1.f), 17.f, Color(1, 1, 1));
+		{
+			if (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->b_inParty == false)
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Add to Party", Vector3(-5.f, -40.f, 1.f), 17.f, Color(1, 1, 1));
+			else
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Remove from Party", Vector3(-5.f, -40.f, 1.f), 17.f, Color(1, 1, 1));
+		}
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Back", Vector3(-5.f, -70.f, 1.f), 17.f, Color(1, 1, 1));
 		// This character's portrait
 		modelStack.PushMatrix();
 		modelStack.Translate(-camera.f_OrthoSize + 37.5f, 0, 1);
 		modelStack.Scale(50, 50 * 16/9, 1);
-		RenderHelper::RenderMesh(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getPortrait());
+		RenderHelper::RenderMesh(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getPortrait());
 		modelStack.PopMatrix();
 
 		// This character's STR
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getSTR()), Vector3(-7.5f, 54, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getSTR()), Vector3(-7.5f, 54, 1), 10.f, Color(1, 1, 1));
 		// This character's DEX
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getDEX()), Vector3(-7.5f, 37, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getDEX()), Vector3(-7.5f, 37, 1), 10.f, Color(1, 1, 1));
 		// This character's LUK
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getLUK()), Vector3(-7.5f, 20, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getLUK()), Vector3(-7.5f, 20, 1), 10.f, Color(1, 1, 1));
 		// This character's HP
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getHP()), Vector3(-7.5f, 3, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getHP()), Vector3(-7.5f, 3, 1), 10.f, Color(1, 1, 1));
 
 		// This character's Attack Range
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->i_attackRange), Vector3(55.5f, 54, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_attackRange), Vector3(55.5f, 54, 1), 10.f, Color(1, 1, 1));
 		// This character's Movement Range
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->i_movementCost), Vector3(55.5f, 37, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_movementCost), Vector3(55.5f, 37, 1), 10.f, Color(1, 1, 1));
 		// This character's weapon's name
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getWeapon()->s_Name), Vector3(55.5f, 20, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getWeapon()->s_Name), Vector3(55.5f, 20, 1), 10.f, Color(1, 1, 1));
 		// This character's armor's name
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getArmor()->s_Name), Vector3(55.5f, 3, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getArmor()->s_Name), Vector3(55.5f, 3, 1), 10.f, Color(1, 1, 1));
 		// This character's name
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedCounter)->getName()), Vector3(-89, 69, 1), 15.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getName()), Vector3(-89, 69, 1), 15.f, Color(1, 1, 1));
+	}
+	else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(0, 0, -1);
+		modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("changeWhoseEQ"));
+		modelStack.PopMatrix();
+
+		modelStack.PushMatrix();
+		modelStack.Translate(selectedPos.x, selectedPos.y, 1);
+		modelStack.Scale(15, 15 * 16 / 9, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
+		modelStack.PopMatrix();
+
+		for (int y = 1, counter = 0; y >= -32; y--)
+		{
+			for (int x = 0; x < 5; x++)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(-60 + (x * 30), (y * 40), 0);
+				modelStack.PushMatrix();
+				modelStack.Scale(15, 15 * 16 / 9, 1);
+				RenderHelper::RenderMesh(PlayerInfo::GetInstance()->availableUnits.at(counter)->getPortrait());
+				modelStack.PopMatrix();
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->availableUnits.at(counter)->getName(), Vector3(-11, -17, 0), 7.f, Color(1, 1, 1));
+				modelStack.PopMatrix();
+				counter++;
+				if (counter >= PlayerInfo::GetInstance()->availableUnits.size())
+					break;
+			}
+			if (counter >= PlayerInfo::GetInstance()->availableUnits.size())
+				break;
+		}
 	}
 }
 

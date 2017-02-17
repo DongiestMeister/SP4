@@ -1,8 +1,10 @@
 #include "Weapon.h"
 
 
-Weapon::Weapon() : i_damageValue(0), b_isEquippedToSomeone(false), s_Name("")
+Weapon::Weapon() : i_damageValue(0)
 {
+	b_isEquippedToSomeone = false;
+	s_Name = "";
 }
 
 // Takes in an int value to use as the weapon's damage

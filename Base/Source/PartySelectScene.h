@@ -42,10 +42,20 @@ private:
 	//TextEntity* textObj[6];
 	Light* lights[2];
 
-	Vector3 selectedPos;
-	int i_selectedCounter;
+	enum CURRENT_SCREEN
+	{
+		CURR_SCREEN_SELECT_OPTION,
+		CURR_SCREEN_SELECT_UNITS,
+		CURR_SCREEN_VIEW_STATUS,
+		CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER,
+		CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ,
+	};
+	CURRENT_SCREEN currentScreen;
 
-	bool b_showStatus;
+	Vector3 selectedPos;
+
+	int i_selectedUnitsCounter; // for units
+	int i_selectedOptionCounter; // for going into screens (select characters/change equipment etc)
 	bool b_statusCursor;
 	Vector3 statusCursorPos;
 	ISound* BGM;

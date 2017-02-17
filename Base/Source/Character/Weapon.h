@@ -1,21 +1,16 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
-#include <string>
+#include "Item.h"
 
-using std::string;
-
-struct Weapon
+struct Weapon : public Item
 {
 	Weapon();
 	Weapon(int damage,int weaponAcc, bool equip,string name);
 	~Weapon();
 
-	bool b_isEquippedToSomeone;
 	int i_damageValue;
 	int i_weaponAccuracy;
-
-	string s_Name;
 };
 #endif WEAPON_H
 

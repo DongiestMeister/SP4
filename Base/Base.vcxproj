@@ -40,6 +40,7 @@
     <ClCompile Include="Source\OBJMesh.cpp" />
     <ClCompile Include="Source\OptionState.cpp" />
     <ClCompile Include="Source\PartySelectScene.cpp" />
+    <ClCompile Include="Source\PlayerInfo.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneGraph.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneNode.cpp" />
     <ClCompile Include="Source\SceneGraph\Transform.cpp" />
@@ -63,6 +64,7 @@
     <ClInclude Include="Source\Character\Armor.h" />
     <ClInclude Include="Source\Character\Character.h" />
     <ClInclude Include="Source\Character\FlyingCharacter.h" />
+    <ClInclude Include="Source\Character\Item.h" />
     <ClInclude Include="Source\Character\MeleeCharacter.h" />
     <ClInclude Include="Source\Character\RangedCharacter.h" />
     <ClInclude Include="Source\Character\Weapon.h" />

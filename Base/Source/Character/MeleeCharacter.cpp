@@ -14,7 +14,7 @@ MeleeCharacter::MeleeCharacter(string name)
 	weapon = new Weapon(0, 100, true, "Nothing");
 	// All stats boosts of 0, equivalent to not having an armor
 	armor = new Armor(0, 0, 0, 0, true,"Nothing");
-
+	
 	calculateStats();
 }
 

@@ -17,6 +17,11 @@ Character::Character()
 	s_Name = "";
 
 	FSM = nullptr;
+
+	i_strBoostFromTerrain = 0;
+	i_dexBoostFromTerrain = 0;
+	i_lukBoostFromTerrain = 0;
+
 }
 
 Character::~Character()
@@ -171,9 +176,9 @@ void Character::takeDamage(int dmg)
 void Character::calculateStats()
 {
 	i_HP += armor->i_hpBoost;
-	i_STR += armor->i_strBoost;
-	i_DEX += armor->i_dexBoost;
-	i_LUK += armor->i_lukBoost;
+	i_STR += armor->i_strBoost + i_strBoostFromTerrain;
+	i_DEX += armor->i_dexBoost + i_dexBoostFromTerrain;
+	i_LUK += armor->i_lukBoost + i_lukBoostFromTerrain;
 	i_Damage = ((0.2 * i_STR) + (0.3 * (weapon->i_damageValue))) + 2;
 }
 
@@ -181,8 +186,10 @@ void Character::equipWeapon(Weapon* newWeapon)
 {
 	if (newWeapon->b_isEquippedToSomeone == false)
 	{
+		weapon->s_ownerName = "";
 		weapon->b_isEquippedToSomeone = false;
 		weapon = newWeapon;
+		weapon->s_ownerName = s_Name;
 		weapon->b_isEquippedToSomeone = true;
 		calculateStats();
 	}
@@ -192,8 +199,10 @@ void Character::equipArmor(Armor* newArmor)
 {
 	if (newArmor->b_isEquippedToSomeone == false)
 	{
+		armor->s_ownerName = "";
 		armor->b_isEquippedToSomeone = false;
 		armor = newArmor;
+		armor->s_ownerName = s_Name;
 		armor->b_isEquippedToSomeone = true;
 		calculateStats();
 	}

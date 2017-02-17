@@ -22,7 +22,7 @@ public:
 	virtual bool attack(Character* opponent) = 0; // returns true if the attack was successful
 	virtual void equipWeapon(Weapon* newWeapon);
 	virtual void equipArmor(Armor* newArmor);
-	virtual void calculateStats();
+	virtual void calculateStats(); // Calculates all of this character's stats. Including total str/dex/luk/hp (includes terrain boosts), attack power.
 
 	int getSTR();
 	int getDEX();
@@ -50,10 +50,16 @@ public:
 	int i_movementCost;
 	int i_stepsTaken;
 	int i_idInParty;
-	bool b_inParty; // If this unit is in the party
 	int i_attackRange; // Range of attack of this character
+	bool b_inParty; // If this unit is in the party
 	bool b_tookAction; // If the unit has already moved/attacked this turn
 	AI_FSM *FSM;
+
+	// terrain boosts
+	int i_strBoostFromTerrain;
+	int i_dexBoostFromTerrain;
+	int i_lukBoostFromTerrain;
+
 protected:
 	Weapon* weapon;
 	Armor* armor;
