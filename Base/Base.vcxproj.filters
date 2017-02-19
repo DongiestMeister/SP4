@@ -51,9 +51,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -173,6 +170,12 @@
     </ClCompile>
     <ClCompile Include="Source\GameplayScene.cpp">
       <Filter>GameStateManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Application.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +319,9 @@
     </ClInclude>
     <ClInclude Include="Source\GameplayScene.h">
       <Filter>GameStateManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Character\Item.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

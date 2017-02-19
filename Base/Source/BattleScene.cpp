@@ -41,7 +41,6 @@ void BattleScene::Init()
 {
 	Math::InitRNG();
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
-	Music::GetInstance()->Init();
 
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
@@ -677,4 +676,6 @@ void BattleScene::Exit()
 	// Delete the lights
 	//delete lights[0];
 	//delete lights[1];
+	GraphicsManager::GetInstance()->RemoveLight("lights[0]");
+	GraphicsManager::GetInstance()->RemoveLight("lights[1]");
 }

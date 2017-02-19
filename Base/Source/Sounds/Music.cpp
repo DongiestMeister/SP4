@@ -8,10 +8,7 @@ Music::Music()
 
 Music::~Music()
 {
-	if (theSoundEngine != NULL)
-	{
-		theSoundEngine->drop();
-	}
+	Exit();
 }
 
 void Music::Init()
@@ -34,3 +31,11 @@ ISound* Music::play3DSound(string fileName, float x, float y, float z,bool loop,
 	return theSoundEngine->play3D(fileName.c_str(), vec3df(x, y, z), loop, startPaused,track);
 }
 
+void Music::Exit()
+{
+	if (theSoundEngine != NULL)
+	{
+		theSoundEngine->drop();
+		theSoundEngine = nullptr;
+	}
+}

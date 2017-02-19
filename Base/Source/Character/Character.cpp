@@ -51,6 +51,11 @@ Character::~Character()
 		delete characterPortrait;
 		characterPortrait = nullptr;
 	}
+	if (FSM)
+	{
+		delete FSM;
+		FSM = nullptr;
+	}
 }
 
 int Character::getSTR()

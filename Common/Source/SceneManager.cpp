@@ -7,6 +7,7 @@ SceneManager::SceneManager() : activeScene(nullptr), nextScene(nullptr)
 
 SceneManager::~SceneManager()
 {
+	Exit();
 }
 
 void SceneManager::Update(double _dt)
@@ -30,8 +31,7 @@ void SceneManager::Update(double _dt)
 		{
 			activeScene->b_isPaused = false;
 			activeScene->Resume();
-		}
-			
+		}		
 	}
 
 	if (activeScene)
@@ -53,6 +53,11 @@ void SceneManager::Exit()
 	end = sceneMap.end();
 	for (it = sceneMap.begin(); it != end; ++it)
 	{
+		if ((*it).second->b_isPaused)
+		{
+			(*it).second->Resume();
+			(*it).second->Exit();
+		}
 		delete it->second;
 	}
 	sceneMap.clear();

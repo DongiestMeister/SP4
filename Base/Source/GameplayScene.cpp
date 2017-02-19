@@ -38,12 +38,12 @@ GameplayScene::GameplayScene()
 
 GameplayScene::~GameplayScene()
 {
+
 }
 
 void GameplayScene::Init()
 {
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
-	Music::GetInstance()->Init();
 
 	turnDisplay = nullptr;
 	b_textRunning = false;
@@ -152,6 +152,9 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Forest", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Forest")->textureID = LoadTGA("Image//forest.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Win", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Win")->textureID = LoadTGA("Image//youwin.tga");
+
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
@@ -184,16 +187,6 @@ void GameplayScene::Init()
 
 	controller.Init(&gameMap, &camera,&b_playerTurn);
 
-	AStar search(0, 0, 9, 9, &gameMap);
-	if (search.Search())
-	{
-		cout << "Search success" << endl;
-	}
-	else
-	{
-		cout << "Search failed" << endl;
-	}
-
 	Character *knight = new MeleeCharacter("K1");
 	Character *knight1 = new MeleeCharacter("K2");
 	knight1->FSM = new AI_DefenceFSM(knight1);
@@ -225,6 +218,7 @@ void GameplayScene::Init()
 	}
 
 	DisplayText("Turn" + to_string(i_turn), Vector3(0, 1, 0));
+	b_renderWin = false;
 }
 
 void GameplayScene::Update(double dt)
@@ -285,6 +279,7 @@ void GameplayScene::Update(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
 	{
 		//cout << "Middle Mouse Button was released!" << endl;
+		DisplayWin();
 	}
 	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
 	{
@@ -298,7 +293,6 @@ void GameplayScene::Update(double dt)
 
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
-
 	if (!b_textRunning)
 	{
 		if (b_playerTurn)
@@ -396,6 +390,45 @@ void GameplayScene::Update(double dt)
 		}
 	}
 
+	if (b_renderWin)
+	{
+		if (winPos.y > 0)
+		{
+			winPos.y -= 50 * dt;
+		}
+	}
+
+	if (condition == KILL)
+	{
+		if (gameMap.enemies.size() == 0)
+		{
+			// WIN
+			DisplayWin();
+		}
+	}
+	else if (condition == SURVIVE)
+	{
+		if (i_turn == 20)// for testing
+		{
+			// WIN
+			DisplayWin();
+		}
+	}
+	else if (condition == CAPTURE)
+	{
+		if (false) // havn't written
+		{
+			// WIN
+			DisplayWin();
+		}
+	}
+
+	if (gameMap.characters.size() == 0)
+	{
+		// LOSE
+
+	}
+
 	controller.Update(dt);
 
 	GraphicsManager::GetInstance()->UpdateLights(dt);
@@ -439,7 +472,7 @@ void GameplayScene::Update(double dt)
 void GameplayScene::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	// Setup 3D pipeline then render 3D
 	//GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-camera.f_OrthoSize * camera.f_aspectRatio, camera.f_OrthoSize * camera.f_aspectRatio, -camera.f_OrthoSize, camera.f_OrthoSize, -2000, 2000);
@@ -459,6 +492,15 @@ void GameplayScene::Render()
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
 	GraphicsManager::GetInstance()->DetachCamera();
 	
+	if (b_renderWin)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(winPos.x, winPos.y, 3);
+		modelStack.Scale(100, 70, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Win"));
+		modelStack.PopMatrix();
+	}
+
 	controller.RenderUI();
 	EntityManager::GetInstance()->RenderUI();
 }
@@ -466,10 +508,14 @@ void GameplayScene::Render()
 void GameplayScene::Exit()
 {
 	// Detach camera from other entities
+	BGM->stop();
 	BGM->drop();
+	BGM = nullptr;
 	GraphicsManager::GetInstance()->DetachCamera();
 	turnDisplay->SetIsDone(true);
 	groundEntity->SetIsDone(true);
+	turnDisplay = nullptr;
+	groundEntity = nullptr;
 	//playerInfo->DetachCamera();
 	fps->SetIsDone(true);
 //	if (playerInfo->DropInstance() == false)
@@ -482,6 +528,8 @@ void GameplayScene::Exit()
 	// Delete the lights
 	//delete lights[0];
 	//delete lights[1];
+	GraphicsManager::GetInstance()->RemoveLight("lights[0]");
+	GraphicsManager::GetInstance()->RemoveLight("lights[1]");
 }
 
 void GameplayScene::Pause()
@@ -515,4 +563,10 @@ void GameplayScene::DisplayText(string text,Vector3 color)
 {
 	b_textRunning = true;
 	turnDisplay = Create::Text2DObject("text", Vector3(-120, 0, 1.0f), text, Vector3(10, 10, 10), Color(color.x, color.y, color.z));
+}
+
+void GameplayScene::DisplayWin()
+{
+	b_renderWin = true;
+	winPos = Vector2(0, 100);
 }

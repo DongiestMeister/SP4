@@ -618,3 +618,12 @@ void MeshBuilder::RemoveMesh(const std::string& _meshName)
 		meshMap.erase(_meshName);
 	}
 }
+
+MeshBuilder::~MeshBuilder()
+{
+	for (std::map<std::string, Mesh*>::iterator it = meshMap.begin(); it != meshMap.end();)
+	{
+		delete it->second;
+		it = meshMap.erase(it);
+	}
+}

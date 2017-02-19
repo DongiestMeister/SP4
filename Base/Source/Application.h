@@ -1,6 +1,10 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "timer.h"
 #include "IntroState.h"
 #include "MenuState.h"

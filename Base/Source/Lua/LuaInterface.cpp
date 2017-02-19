@@ -10,7 +10,7 @@ CLuaInterface::CLuaInterface()
 
 CLuaInterface::~CLuaInterface()
 {
-
+	Drop();
 }
 
 bool CLuaInterface::Init()
@@ -95,6 +95,22 @@ void CLuaInterface::Drop()
 	if (theLuaState)
 	{
 		lua_close(theLuaState);
+	}
+	if (theErrorState)
+	{
+		lua_close(theErrorState);
+	}
+	if (theScoreState)
+	{
+		lua_close(theScoreState);
+	}
+	if (theOptionState)
+	{
+		lua_close(theOptionState);
+	}
+	if (theOBJState)
+	{
+		lua_close(theOBJState);
 	}
 }
 

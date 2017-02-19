@@ -57,6 +57,11 @@ private:
 	TileMap gameMap;
 
 	void DisplayText(string text,Vector3 color);
+
+	void DisplayWin();
+	bool b_renderWin;
+	Vector2 winPos;
+
 	bool b_textRunning;
 
 	int i_enemyIterator;

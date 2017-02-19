@@ -16,6 +16,11 @@ activeCamera(nullptr)
 
 GraphicsManager::~GraphicsManager()
 {
+	for (std::map<std::string, LightBase*>::iterator it = lightMap.begin(); it != lightMap.end();)
+	{
+		delete it->second;
+		it = lightMap.erase(it);
+	}
 }
 
 void GraphicsManager::Init()

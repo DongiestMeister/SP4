@@ -156,6 +156,14 @@ EntityManager::~EntityManager()
 
 	// Clear out the Scene Graph
 	CSceneGraph::GetInstance()->Destroy();
+
+	std::list<EntityBase*>::iterator it, end;
+	end = entityList.end();
+	for (it = entityList.begin(); it != end;)
+	{
+		delete *it;
+		it = entityList.erase(it);
+	}
 }
 
 // Check for overlap

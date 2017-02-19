@@ -772,6 +772,6 @@ void PartySelectScene::Exit()
 	//	}
 
 	// Delete the lights
-	delete lights[0];
-	delete lights[1];
+	GraphicsManager::GetInstance()->RemoveLight("lights[0]");
+	GraphicsManager::GetInstance()->RemoveLight("lights[1]");
 }

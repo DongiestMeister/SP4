@@ -4,6 +4,9 @@
 #include "SceneManager.h"
 #include "GraphicsManager.h"
 #include "ShaderProgram.h"
+#include "Sounds\Music.h"
+#include "EntityManager.h"
+#include "MeshBuilder.h"
 
 //Include GLEW
 #include <GL/glew.h>
@@ -42,12 +45,12 @@ void resize_callback(GLFWwindow* window, int w, int h)
 
 bool Application::IsKeyPressed(unsigned short key)
 {
-    return ((GetAsyncKeyState(key) & 0x8001) != 0);
+	return ((GetAsyncKeyState(key) & 0x8001) != 0);
 }
 
 Application::Application()
-	: m_window_width(1024)
-	, m_window_height(800)
+: m_window_width(1024)
+, m_window_height(800)
 {
 }
 
@@ -133,7 +136,7 @@ void Application::Init()
 	//If the window couldn't be created
 	if (!m_window)
 	{
-		fprintf( stderr, "Failed to open GLFW window.\n" );
+		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -150,14 +153,14 @@ void Application::Init()
 	GLenum err = glewInit();
 
 	//If GLEW hasn't initialized
-	if (err != GLEW_OK) 
+	if (err != GLEW_OK)
 	{
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		//return -1;
 	}
 
 	// Hide the cursor
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	//glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	glfwSetMouseButtonCallback(m_window, &Application::MouseButtonCallbacks);
 	glfwSetScrollCallback(m_window, &Application::MouseScrollCallbacks);
 
@@ -186,7 +189,7 @@ void Application::Run()
 	{
 		glfwPollEvents();
 		UpdateInput();
-		
+
 		SceneManager::GetInstance()->Update(m_timer.getElapsedTime());
 		SceneManager::GetInstance()->Render();
 
@@ -194,12 +197,10 @@ void Application::Run()
 		glfwSwapBuffers(m_window);
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
 
-        m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
-		
+		m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
+
 		PostInputUpdate();
 	}
-	SceneManager::GetInstance()->Exit();
-	CLuaInterface::GetInstance()->Drop();
 }
 
 void Application::Exit()
@@ -208,6 +209,15 @@ void Application::Exit()
 	glfwDestroyWindow(m_window);
 	//Finalize and clean up GLFW
 	glfwTerminate();
+	CLuaInterface::GetInstance()->Destroy();
+	SceneManager::GetInstance()->Destroy();
+	PlayerInfo::GetInstance()->Destroy();
+
+	EntityManager::GetInstance()->Destroy();
+	MeshBuilder::GetInstance()->Destroy();
+	GraphicsManager::GetInstance()->Destroy();
+	Music::GetInstance()->Destroy();
+	_CrtDumpMemoryLeaks();
 }
 
 void Application::UpdateInput()
@@ -229,18 +239,18 @@ void Application::PostInputUpdate()
 	{
 		double mouse_currX, mouse_currY;
 		MouseController::GetInstance()->GetMousePosition(mouse_currX, mouse_currY);
-		if (mouse_currX > m_window_width * 3/4 || mouse_currX < m_window_width/4)
-		{
-			mouse_currX = m_window_width >> 1;
-			glfwSetCursorPos(m_window, mouse_currX, mouse_currY);
-			MouseController::GetInstance()->DefaultMousePositions(mouse_currX, mouse_currY);
-		}
-		if (mouse_currY > m_window_height * 3 / 4 || mouse_currY < m_window_height / 4)
-		{
-			mouse_currY = m_window_height >> 1;
-			glfwSetCursorPos(m_window, mouse_currX, mouse_currY);
-			MouseController::GetInstance()->DefaultMousePositions(mouse_currX, mouse_currY);
-		}
+		//if (mouse_currX > m_window_width * 3/4 || mouse_currX < m_window_width/4)
+		//{
+		//	mouse_currX = m_window_width >> 1;
+		//	glfwSetCursorPos(m_window, mouse_currX, mouse_currY);
+		//	MouseController::GetInstance()->DefaultMousePositions(mouse_currX, mouse_currY);
+		//}
+		//if (mouse_currY > m_window_height * 3 / 4 || mouse_currY < m_window_height / 4)
+		//{
+		//	mouse_currY = m_window_height >> 1;
+		//	glfwSetCursorPos(m_window, mouse_currX, mouse_currY);
+		//	MouseController::GetInstance()->DefaultMousePositions(mouse_currX, mouse_currY);
+		//}
 	}
 
 	// Call input systems to update at end of frame

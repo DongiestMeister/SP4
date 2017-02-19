@@ -16,7 +16,7 @@ TileMap::TileMap()
 
 TileMap::~TileMap()
 {
-	ClearCharacters();
+	//ClearCharacters();
 }
 
 void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int numTilesWidth)
