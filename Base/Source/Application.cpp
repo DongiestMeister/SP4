@@ -175,7 +175,7 @@ void Application::Init()
 	SceneManager::GetInstance()->AddScene("BattleState", new BattleScene());
 	SceneManager::GetInstance()->AddScene("PartySelect", new PartySelectScene());
 	//
-	SceneManager::GetInstance()->SetActiveScene("IntroState");
+	SceneManager::GetInstance()->SetActiveScene("MenuState");
 }
 
 

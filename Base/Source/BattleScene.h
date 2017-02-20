@@ -65,10 +65,14 @@ private:
 	float player_posx;
 	float enemy_posx;
 
+	float f_bonus_time;
+	bool b_bonus_start;
 
 	vector<DamageText*> storeDmgTxt;
 	TextEntity* TotalDamage;
 	TextEntity* TotalDmgCheer;
+	TextEntity* TimerText;
+
 	int i_totaldmg_txt;
 	float f_textDelayOnScreen;
 

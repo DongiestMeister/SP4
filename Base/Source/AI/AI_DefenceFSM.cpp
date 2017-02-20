@@ -52,13 +52,21 @@ void AI_DefenceFSM::Idle()
 	
 	if (target != nullptr)
 	{
-		//if (character->getHP() <= 20)
-		//{
-		//	state = RETREAT;
-		//}
-		//else
+		if (character->getHP() <= 20)
 		{
-			state = CHASE;
+			state = RETREAT;
+		}
+		else
+		{
+			//Check if player is within range
+			if ((character->i_movementCost + target->i_movementCost) < 0)
+			{
+				state = CHASE;
+			}
+			else	//Else wait for the player to move, for getting first(premptive) hit on player
+			{
+				state = IDLE;
+			}
 		}
 	}
 	else

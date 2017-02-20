@@ -128,6 +128,7 @@ void BattleScene::Init()
 
 	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT", "OBJ//iceknight_obj.obj");
 	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT")->textureID = LoadTGA("Image//iceknight_texture.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("BAR_BAR", "OBJ//bar_bar.obj");
 
 	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_TREE", "OBJ//Tree_low.obj");
 	MeshBuilder::GetInstance()->GetMesh("BASIC_TREE")->textureID = LoadTGA("Image//Tree.tga");
@@ -169,13 +170,17 @@ void BattleScene::Init()
 	f_SceneIntroDelay = 1;
 
 	b_isClashed = true;	//on start clash is true (clashed)
-	b_bonusRush = false;
-	b_spamLock = false;
+	b_bonusRush = true; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
+
+	b_spamLock = false; //Should not be touched. Automatically locks if not bonus + clashed once
+
+	f_bonus_time = 0;	//Timer for bonus duration
+	b_bonus_start = false; //Bool to start bonus mode countdown
 
 	i_totaldmg_txt = 0;
 	TotalDamage = Create::Text2DObject(("text"), Vector3(-180, 160, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
 	TotalDmgCheer = Create::Text2DObject(("text"), Vector3(-180, 140, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
-
+	TimerText = Create::Text2DObject(("text"), Vector3(-180, 120, 1), " ", Vector3(15, 15, 15), Color(0.7, 0.7, 1));
 	
 
 	fps = 0.f;
@@ -307,25 +312,23 @@ void BattleScene::LightMouseControl(double dt)
 		if (!b_spamLock)
 			b_isClashed = false;	//when m = no clash, start clashing
 
-	fps = 1 / dt;
-	
-	if (f_SceneIntroDelay > 0)
-		f_SceneIntroDelay -= dt;
-	else
-	{
-		if (!b_bonusRush && !b_spamLock)
+		if (!b_bonus_start && b_bonusRush)
 		{
-			b_isClashed = false;
+			b_bonus_start = true;
+			f_bonus_time = 5;
+			TimerText->SetPosition(Vector3(-180, 120, 1));
+			TimerText->SetText("TIME:");
 		}
 	}
 
 	//animation always running
 	RunBattleAnimation(dt, false, 123);
 
-	
+
 	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
 	{
-		SceneManager::GetInstance()->SetActiveScene("GameState");
+		if (b_bonusRush && b_spamLock)
+			SceneManager::GetInstance()->SetActiveScene("GameState");
 	}
 	//camera.Update(dt);
 
@@ -377,7 +380,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 	RenderTextStuff(dt, dmgvalue);
 
 	//if player attacking
-	if (!PlayerInfo::GetInstance()->b_attacking)
+	if (PlayerInfo::GetInstance()->b_attacking)
 	{
 		if (!b_isClashed)
 		{
@@ -392,7 +395,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 
 				player->attack(enemy);
 
-				cout << enemy->getHP() << endl;
+				//cout << enemy->getHP() << endl;
 				f_textDelayOnScreen = 5;
 
 				DamageText* tempdmg = new DamageText();
@@ -420,7 +423,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			}
 			else
 			{
-				if (!b_bonusRush && b_spamLock)
+				if (!b_bonusRush && b_spamLock && f_textDelayOnScreen <= 3)
 				{
 					SceneManager::GetInstance()->SetActiveScene("GameState");
 				}
@@ -441,6 +444,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				b_isClashed = true;
 
 				enemy->attack(player);
+				f_textDelayOnScreen = 5;
 
 				DamageText* tempdmg = new DamageText();
 				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
@@ -455,6 +459,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 
 				if (!b_bonusRush)
 					b_spamLock = true;
+				
 			}
 		}
 		else
@@ -533,6 +538,26 @@ void BattleScene::Render()
 	EntityManager::GetInstance()->RenderUI();
 
 	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(fps), Vector3(-200, 180, 10),  10, Color(1, 1, 1));
+
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+	modelStack.PushMatrix();
+	modelStack.Translate(-130, -150, 10);
+	modelStack.Scale(player->getHP()*0.5, 10, 5);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(80, -150, 10);
+	modelStack.Scale(enemy->getHP()*0.5, 10, 5);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(-140, 120, 0);
+	modelStack.Scale(f_bonus_time*50, 10, 10);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
+	modelStack.PopMatrix();
+
 }
 
 void BattleScene::RenderSkyBox()
@@ -635,7 +660,46 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 		}
 	}
 
+
+	if (!b_bonus_start && b_bonusRush)
+	{
+		
+		TotalDmgCheer->SetPosition(Vector3(-100, 130, 0));
+		TotalDmgCheer->SetScale(Vector3(30, 30, 30));
+		TotalDmgCheer->SetColor(Color(1, 1, 0));
+
+		TotalDmgCheer->SetText("BONUS ATTACK");
+
+
+		TimerText->SetPosition(Vector3(-80, 100, 0));
+		TimerText->SetText("(Mash M to Begin!)");
+		
+	}
+	else
+	{
+		
+	}
+
+	if (f_bonus_time > 0)
+	{
+		f_bonus_time -= dt * 1;
+	}
+	else
+	{
+		if (b_bonus_start)
+		{
+			b_spamLock = true;
+
+			TotalDamage->SetColor(Color(1, 1, 0));
+			TotalDmgCheer->SetColor(Color(1, 1, 0));
+			TotalDmgCheer->SetScale(TotalDamage->GetScale());
+			TotalDmgCheer->SetText("TIME OVER!");
+			TimerText->SetText("(Press K to return...)");
+		}
+	}
+
 	
+
 	if (TotalDamage->GetScale().y > 20)
 	{
 		TotalDamage->SetScale(Vector3(TotalDamage->GetScale().x, TotalDamage->GetScale().y, TotalDamage->GetScale().z) - Vector3(0, dt * 50, 0));
@@ -653,17 +717,24 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 	{
 		TotalDmgCheer->SetScale(Vector3(TotalDmgCheer->GetScale().x, TotalDmgCheer->GetScale().y, TotalDmgCheer->GetScale().z) - Vector3(dt * 50, 0, 0));
 	}
+
 	if (f_textDelayOnScreen > 0)
 	{
 		f_textDelayOnScreen -= dt * 1;
 	}
 	else
 	{
-		TotalDamage->SetScale(Vector3(TotalDamage->GetScale().x, TotalDamage->GetScale().y, TotalDamage->GetScale().z) - Vector3(0, dt * 50, 0));
-		TotalDamage->SetColor(Color(0, 0, 0));
-		i_totaldmg_txt = 0;
-		TotalDmgCheer->SetScale(Vector3(TotalDmgCheer->GetScale().x, TotalDmgCheer->GetScale().y, TotalDmgCheer->GetScale().z) - Vector3(0, dt * 50, 0));
-		TotalDmgCheer->SetText(" ");
+		if (b_bonus_start && (f_bonus_time >= 0))
+		{
+			TotalDamage->SetScale(Vector3(TotalDamage->GetScale().x, TotalDamage->GetScale().y, TotalDamage->GetScale().z) - Vector3(0, dt * 50, 0));
+			TotalDamage->SetColor(Color(0, 0, 0));
+			i_totaldmg_txt = 0;
+			TotalDmgCheer->SetScale(Vector3(TotalDmgCheer->GetScale().x, TotalDmgCheer->GetScale().y, TotalDmgCheer->GetScale().z) - Vector3(0, dt * 50, 0));
+			TotalDmgCheer->SetPosition(Vector3(-180, 140, 1));
+			TotalDmgCheer->SetText(" ");
+			
+		}
+
 	}
 	
 
