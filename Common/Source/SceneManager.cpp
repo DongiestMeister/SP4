@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "Scene.h"
+#include <iostream>
 
 SceneManager::SceneManager() : activeScene(nullptr), nextScene(nullptr)
 {
@@ -21,7 +22,11 @@ void SceneManager::Update(double _dt)
 			if (!activeScene->b_isPaused)
 				activeScene->Exit();
 			else
+			{
 				activeScene->Pause();
+				std::cout << "Scene Paused" << std::endl;
+			}
+				
 		}
 		
 		activeScene = nextScene;
@@ -40,7 +45,7 @@ void SceneManager::Update(double _dt)
 
 void SceneManager::Render()
 {
-	if (activeScene)
+	if (activeScene && !activeScene->b_isPaused)
 		activeScene->Render();
 }
 

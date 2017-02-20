@@ -10,6 +10,8 @@ AI_FSM::AI_FSM()
 	character = nullptr;
 	f_speed = 5;
 	b_isDone = false;
+	b_reachEnd = false;
+	b_attack = false;
 }
 AI_FSM::~AI_FSM()
 {
@@ -59,7 +61,7 @@ void AI_FSM::SearchNearestWithHP()
 
 }
 
-bool AI_FSM::SearchPath()
+bool AI_FSM::SearchForPath()
 {
 	if (target) // != null
 	{
@@ -68,6 +70,10 @@ bool AI_FSM::SearchPath()
 		AStar search((int)character->getPos().x, (int)character->getPos().y, (int)target->getPos().x, (int)target->getPos().y, map);
 		if (search.Search())//search.Search() = Finds the nearest path between parameters
 		{
+			if (character->i_movementCost >= search.bestPath.size() - 1)
+			{
+				b_reachEnd = true;
+			}
 			for (int i = 0; i < character->i_movementCost && i < search.bestPath.size() - 1; ++i)
 			{
 				unitPath.push_back(search.bestPath[i]);

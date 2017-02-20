@@ -201,6 +201,15 @@ void Application::Run()
 
 		PostInputUpdate();
 	}
+
+	CLuaInterface::GetInstance()->Destroy();
+	SceneManager::GetInstance()->Destroy();
+	//PlayerInfo::GetInstance()->Destroy();
+
+	//EntityManager::GetInstance()->Destroy();
+	//MeshBuilder::GetInstance()->Destroy();
+	//GraphicsManager::GetInstance()->Destroy();
+	Music::GetInstance()->Destroy();
 }
 
 void Application::Exit()
@@ -209,15 +218,8 @@ void Application::Exit()
 	glfwDestroyWindow(m_window);
 	//Finalize and clean up GLFW
 	glfwTerminate();
-	CLuaInterface::GetInstance()->Destroy();
-	SceneManager::GetInstance()->Destroy();
-	PlayerInfo::GetInstance()->Destroy();
 
-	EntityManager::GetInstance()->Destroy();
-	MeshBuilder::GetInstance()->Destroy();
-	GraphicsManager::GetInstance()->Destroy();
-	Music::GetInstance()->Destroy();
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 }
 
 void Application::UpdateInput()

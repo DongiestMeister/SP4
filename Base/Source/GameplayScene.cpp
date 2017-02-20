@@ -50,6 +50,8 @@ void GameplayScene::Init()
 	i_turn = 1;
 	i_enemyIterator = 0;
 
+	f_timeDelay = 1.f;
+
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
@@ -85,17 +87,9 @@ void GameplayScene::Init()
 	currProg->UpdateInt("numLights", 1);
 	currProg->UpdateInt("textEnabled", 0);
 	
-	// Create the playerinfo instance, which manages all information about the player
-	//playerInfo = CPlayerInfo::GetInstance();
-	//playerInfo->Init();
-
-	//playerInfo->lives = 3;
-
 	// Create and attach the camera to the scene
-	//camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	camera.Init(Vector3(100,-10,100), Vector3(100,0,100), Vector3(0,0,1));
 	camera.SetCameraOrtho(100.f, 16.f / 9.f);
-	//playerInfo->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	// Load all the meshes
@@ -189,26 +183,16 @@ void GameplayScene::Init()
 
 	Character *knight = new MeleeCharacter("K1");
 	Character *knight1 = new MeleeCharacter("K2");
-	knight1->FSM = new AI_DefenceFSM(knight1);
-	knight1->FSM->map = &gameMap;
 	Character *knight2 = new MeleeCharacter("K3");
-	knight2->FSM = new AI_DefenceFSM(knight2);
-	knight2->FSM->map = &gameMap;
 	Character *knight3 = new MeleeCharacter("K4");
-	knight3->FSM = new AI_DefenceFSM(knight3);
-	knight3->FSM->map = &gameMap;
-	//Unit *knight4 = new Unit(new MeleeCharacter());
-
-	/*gameMap.AddCharacter(1, 1, knight);
-	gameMap.AddCharacter(10, 15, knight1);
-	gameMap.AddCharacter(4, 7, knight2);
-	gameMap.AddCharacter(6, 5, knight3);
-	gameMap.AddCharacter(8, 11, knight4);*/
 
 	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 3), knight1);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);
+
+	knight1->FSM = new AI_DefenceFSM(knight1);
+	knight1->FSM->map = &gameMap;
 
 	gameMap.Init(200, 200, 10, 10); // Must be last line
 
@@ -217,7 +201,7 @@ void GameplayScene::Init()
 		cout << "Succesfully loaded map!" << endl;
 	}
 
-	DisplayText("Turn" + to_string(i_turn), Vector3(0, 1, 0));
+	DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
 	b_renderWin = false;
 }
 
@@ -285,7 +269,7 @@ void GameplayScene::Update(double dt)
 		}
 		else
 		{
-			turnDisplay->SetPosition(turnDisplay->GetPosition() + Vector3(100, 0, 0) * dt);
+			turnDisplay->SetPosition(turnDisplay->GetPosition() + Vector3(150, 0, 0) * dt);
 		}
 
 		if (turnDisplay->GetPosition().x > 100)
@@ -297,21 +281,23 @@ void GameplayScene::Update(double dt)
 	else
 	{
 		// Enemies movement
-
-		static float timeDelay = 1.f;
-
 		if (!b_playerTurn)
 		{
 			controller.selectedTile = gameMap.enemies[i_enemyIterator]->getPos();
-			if ((timeDelay -= dt) < 0)
+			if ((f_timeDelay -= dt) < 0)
 			{
 				if (gameMap.enemies[i_enemyIterator]->FSM && !gameMap.enemies[i_enemyIterator]->b_tookAction)
 				{
 					if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
 					{
 						gameMap.enemies[i_enemyIterator]->b_tookAction = true;
+						if (gameMap.enemies[i_enemyIterator]->FSM->b_attack)
+						{
+							gameMap.enemies[i_enemyIterator]->FSM->b_attack = false;
+							controller.b_cameraTransition = true;
+						}
 						i_enemyIterator++;
-						timeDelay = 1.f;
+						f_timeDelay = 1.f;
 						if (i_enemyIterator == gameMap.enemies.size())
 						{
 							i_enemyIterator = 0;
@@ -322,7 +308,7 @@ void GameplayScene::Update(double dt)
 				{
 					gameMap.enemies[i_enemyIterator]->b_tookAction = true;
 					i_enemyIterator++;
-					timeDelay = 1.f;
+					f_timeDelay = 1.f;
 					if (i_enemyIterator == gameMap.enemies.size())
 					{
 						i_enemyIterator = 0;
@@ -440,7 +426,6 @@ void GameplayScene::LightMouseControl(double dt)
 void GameplayScene::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	// Setup 3D pipeline then render 3D
 	//GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-camera.f_OrthoSize * camera.f_aspectRatio, camera.f_OrthoSize * camera.f_aspectRatio, -camera.f_OrthoSize, camera.f_OrthoSize, -2000, 2000);
@@ -459,15 +444,15 @@ void GameplayScene::Render()
 
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
 	GraphicsManager::GetInstance()->DetachCamera();
-	
-	if (b_renderWin)
-	{
-		modelStack.PushMatrix();
-		modelStack.Translate(winPos.x, winPos.y, 3);
-		modelStack.Scale(100, 70, 1);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Win"));
-		modelStack.PopMatrix();
-	}
+	//
+	//if (b_renderWin)
+	//{
+	//	modelStack.PushMatrix();
+	//	modelStack.Translate(winPos.x, winPos.y, 3);
+	//	modelStack.Scale(100, 70, 1);
+	//	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Win"));
+	//	modelStack.PopMatrix();
+	//}
 
 	controller.RenderUI();
 	EntityManager::GetInstance()->RenderUI();
@@ -496,8 +481,8 @@ void GameplayScene::Exit()
 	// Delete the lights
 	//delete lights[0];
 	//delete lights[1];
-	GraphicsManager::GetInstance()->RemoveLight("lights[0]");
-	GraphicsManager::GetInstance()->RemoveLight("lights[1]");
+	//GraphicsManager::GetInstance()->RemoveLight("lights[0]");
+	//GraphicsManager::GetInstance()->RemoveLight("lights[1]");
 }
 
 void GameplayScene::Pause()
@@ -525,6 +510,22 @@ void GameplayScene::Resume()
 	float fontSize = 5.0f;
 
 	fps = Create::Text2DObject("text", Vector3(-100, -95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
+
+	if (PlayerInfo::GetInstance()->b_attacking)
+	{
+		if (PlayerInfo::GetInstance()->player)
+		{
+			PlayerInfo::GetInstance()->player->b_tookAction = true;
+		}		
+	}
+	else if (!PlayerInfo::GetInstance()->b_attacking)
+	{
+		if (PlayerInfo::GetInstance()->enemy)
+		{
+			PlayerInfo::GetInstance()->enemy->b_tookAction = true;
+		}
+
+	}
 }
 
 void GameplayScene::DisplayText(string text,Vector3 color)

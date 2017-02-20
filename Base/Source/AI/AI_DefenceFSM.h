@@ -31,7 +31,6 @@ public:
 
 	// Stuff added for in-loop movement
 	bool b_foundEnemyPath;
-	
 };
 
 

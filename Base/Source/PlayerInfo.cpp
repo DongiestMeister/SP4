@@ -29,16 +29,16 @@ PlayerInfo::~PlayerInfo()
 		delete (*it);
 		(*it) = nullptr;
 	}
-	if (player)
-	{
-		delete player;
-		player = nullptr;
-	}
-	if (enemy)
-	{
-		delete enemy;
-		enemy = nullptr;
-	}
+	//if (player)
+	//{
+	//	delete player;
+	//	player = nullptr;
+	//}
+	//if (enemy)
+	//{
+	//	delete enemy;
+	//	enemy = nullptr;
+	//}
 }
 
 bool PlayerInfo::addCharacterToParty(Vector2 pos, Character* newUnit, int key)

@@ -39,7 +39,6 @@ BattleScene::~BattleScene()
 
 void BattleScene::Init()
 {
-	Math::InitRNG();
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
 
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
@@ -308,15 +307,27 @@ void BattleScene::LightMouseControl(double dt)
 		if (!b_spamLock)
 			b_isClashed = false;	//when m = no clash, start clashing
 
-
+	fps = 1 / dt;
+	
+	if (f_SceneIntroDelay > 0)
+		f_SceneIntroDelay -= dt;
+	else
+	{
+		if (!b_bonusRush && !b_spamLock)
+		{
+			b_isClashed = false;
+		}
 	}
 
+	//animation always running
+	RunBattleAnimation(dt, false, 123);
 
-
+	
 	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
 	{
 		SceneManager::GetInstance()->SetActiveScene("GameState");
 	}
+	//camera.Update(dt);
 
 
 	// if the left mouse button was released
@@ -706,6 +717,6 @@ void BattleScene::Exit()
 	// Delete the lights
 	//delete lights[0];
 	//delete lights[1];
-	GraphicsManager::GetInstance()->RemoveLight("lights[0]");
-	GraphicsManager::GetInstance()->RemoveLight("lights[1]");
+	//GraphicsManager::GetInstance()->RemoveLight("lights[0]");
+	//GraphicsManager::GetInstance()->RemoveLight("lights[1]");
 }

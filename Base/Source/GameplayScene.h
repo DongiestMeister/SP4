@@ -37,6 +37,8 @@ public:
 	virtual void Resume();
 
 private:
+	float f_timeDelay;
+
 	ShaderProgram* currProg;
 	//CPlayerInfo* playerInfo;
 	GroundEntity* groundEntity;

@@ -1,5 +1,6 @@
 #include "AI_DefenceFSM.h"
 #include "../AStar/AStar.h"
+#include "SceneManager.h"
 
 AI_DefenceFSM::AI_DefenceFSM(Character *character)
 {
@@ -7,6 +8,7 @@ AI_DefenceFSM::AI_DefenceFSM(Character *character)
 	target = nullptr;
 	b_foundEnemyPath = false;
 	state = IDLE;
+	b_isDone = false;
 }
 
 AI_DefenceFSM::~AI_DefenceFSM()
@@ -48,7 +50,6 @@ void AI_DefenceFSM::Idle()
 	//Set target of current unit to nearest target
 	SearchNearestWithHP();
 	
-
 	if (target != nullptr)
 	{
 		//if (character->getHP() <= 20)
@@ -68,9 +69,11 @@ void AI_DefenceFSM::Idle()
 
 void AI_DefenceFSM::Chase(double dt)
 {
+	
 	if (!b_foundEnemyPath)
 	{
-		b_foundEnemyPath = SearchPath();
+		b_foundEnemyPath = SearchForPath();
+
 		map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
 		map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
 	}
@@ -83,7 +86,7 @@ void AI_DefenceFSM::Chase(double dt)
 			//DEFENCE CHASE = if target is out of reach, return to IDLE state
 			if ((character->getPos() - target->getPos()).Length() <= character->i_movementCost)
 			{
-				// if dist btwn 1st pos & unit pos != 0, 
+				// if dist btwn 1st pos & unit pos != 0
 				if (!(unitPath[0] - character->getPos()).IsZero())
 				{
 					//find difference btwm unitPath and unitPos and store as temp
@@ -98,11 +101,18 @@ void AI_DefenceFSM::Chase(double dt)
 					//delete 1st unitpath, unitPath[1] become unitPath[0]
 					unitPath.erase(unitPath.begin());
 				}
-				if ((unitPath.size() <= 0))
+				if (unitPath.size() <= 0)
 				{
 					b_foundEnemyPath = false;
-					b_isDone = true;
-					//state = ATTACK;
+					if (b_reachEnd)
+					{
+						b_reachEnd = false;
+						state = ATTACK;
+					}
+					else
+					{
+						b_isDone = true;
+					}
 				}
 			}
 			else
@@ -115,7 +125,15 @@ void AI_DefenceFSM::Chase(double dt)
 
 void AI_DefenceFSM::Attack()
 {
-	//
+
+	PlayerInfo::GetInstance()->player = target;
+	PlayerInfo::GetInstance()->enemy = this->character;
+
+	PlayerInfo::GetInstance()->b_attacking = false;
+
+	b_attack = true;
+	state = IDLE;
+	b_isDone = true;
 }
 
 void AI_DefenceFSM::Retreat()

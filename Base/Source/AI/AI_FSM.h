@@ -12,7 +12,7 @@ public:
 	Character *character;
 	virtual bool Update(double dt) { return false; }
 
-	bool SearchPath();
+	bool SearchForPath();
 	bool SearchPathWithTerrain();
 
 	/*Search_funts sets :
@@ -31,6 +31,8 @@ public:
 
 	// Stuff for in-loop movement
 	bool b_isDone;
+	bool b_reachEnd;
+	bool b_attack;
 };
 
 

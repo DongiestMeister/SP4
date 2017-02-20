@@ -23,6 +23,7 @@ MapController::MapController()
 	selectedEnemy = nullptr;
 	enemyIterator = 0;
 	b_cameraTransition = false;
+	tempOrtho = 100.f;
 }
 
 MapController::~MapController()
@@ -69,9 +70,10 @@ void MapController::Update(double dt)
 		else if (b_attacking)
 		{
 			b_attacking = false;
-			selectedUnit->b_tookAction = true;
+			//selectedUnit->b_tookAction = true;
 			PlayerInfo::GetInstance()->enemy = selectedEnemy;
 			PlayerInfo::GetInstance()->player = selectedUnit;
+			PlayerInfo::GetInstance()->b_attacking = true;
 			selectedEnemy = nullptr;
 			selectedUnit = nullptr;
 			attackableUnits.clear();

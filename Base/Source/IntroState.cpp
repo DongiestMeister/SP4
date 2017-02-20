@@ -48,7 +48,7 @@ void CIntroState::Init()
 										Vector3(halfWindowWidth * 2, halfWindowHeight * 2, 0.0f));
 	cout << "CIntroState loaded\n" << endl;
 
-	timer = 1.f;
+	timer = 5.f;
 
 	f_swordTranslate[0] = -200.f;
 	f_swordTranslate[1] = -200.f;
