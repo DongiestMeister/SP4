@@ -20,9 +20,11 @@ public:
 
 	CharactersList party; // Party to be used on the map, should only be capped at 4 units
 	CharactersList availableUnits; // All of the available units
+
 	CharactersList enemies; // All of the available enemies
 	PlayerInfo();
 	~PlayerInfo();
+
 
 	Character *player;
 	Character *enemy;

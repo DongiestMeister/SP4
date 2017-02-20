@@ -20,43 +20,6 @@ AI_FSM::~AI_FSM()
 	}
 }
 
-//void AI_FSM::SearchNearest()
-//{
-//	//run list of units
-//	for (vector<Unit*>::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
-//	{
-//		float nearestDistance = FLT_MAX;
-//
-//		Unit* enemy = *it;
-//		//Get length between own unit and player position, 
-//		if ((character->getPos() - enemy->character->getPos()).Length() < character->i_movementCost
-//			&& (character->getPos() - enemy->character->getPos()).Length() < nearestDistance)
-//		{
-//			target = enemy;
-//			//if dist < own movecost & less than max dist
-//			//replace "newest" max dist
-//			nearestDistance = (character->getPos() - enemy->character->getPos()).Length();
-//		}
-//	}
-//}
-//
-//
-//void AI_FSM::SearchLowestHP()
-//{
-//	//run through enemy list
-//	for (vector<Unit*>::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
-//	{
-//		Unit* enemy = *it;
-//		int maxhealth = INT_MAX;
-//
-//		//if get target with next lowest hp, update maxhealth target
-//		if (enemy->character->getHP() <= maxhealth)
-//		{
-//			target = enemy;
-//			maxhealth = enemy->character->getHP();
-//		}
-//	}
-//}
 
 void AI_FSM::SearchNearestWithHP()
 {

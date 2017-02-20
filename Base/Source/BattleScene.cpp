@@ -170,19 +170,23 @@ void BattleScene::Init()
 	f_SceneIntroDelay = 1;
 
 	b_isClashed = true;	//on start clash is true (clashed)
-	b_bonusRush = true;
+	b_bonusRush = false;
 	b_spamLock = false;
 
 	i_totaldmg_txt = 0;
 	TotalDamage = Create::Text2DObject(("text"), Vector3(-180, 160, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
 	TotalDmgCheer = Create::Text2DObject(("text"), Vector3(-180, 140, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
 
+	
 
 	fps = 0.f;
 	
 	/*player = new MeleeCharacter();
 	Weapon* wtf = new Weapon(100, 50, false);
 	player->equipWeapon(wtf);*/
+
+	player = PlayerInfo::GetInstance()->player;
+	enemy = PlayerInfo::GetInstance()->enemy;
 }
 
 void BattleScene::Update(double dt)
@@ -191,58 +195,7 @@ void BattleScene::Update(double dt)
 	EntityManager::GetInstance()->Update(dt);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
-	if (KeyboardController::GetInstance()->IsKeyDown('1'))
-		glEnable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('2'))
-		glDisable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('3'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (KeyboardController::GetInstance()->IsKeyDown('4'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	if (KeyboardController::GetInstance()->IsKeyDown('5'))
-	{
-		lights[0]->type = Light::LIGHT_POINT;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
-	{
-		lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
-	{
-		lights[0]->type = Light::LIGHT_SPOT;
-	}
-
-	if (KeyboardController::GetInstance()->IsKeyDown('I'))
-		lights[0]->position.z -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('K'))
-		lights[0]->position.z += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('J'))
-		lights[0]->position.x -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('L'))
-		lights[0]->position.x += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('O'))
-		lights[0]->position.y -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('P'))
-		lights[0]->position.y += (float)(10.f * dt);
-
-	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
-	{
-		//Feel free to Remove/Edit.
-		
-		if (!b_spamLock)
-			b_isClashed = false;	//when m = no clash, start clashing
-		
-
-	}
-
 	
-
-	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
-	{
-		SceneManager::GetInstance()->SetActiveScene("GameState");
-	}
-
 	fps = 1 / dt;
 	
 	if (f_SceneIntroDelay > 0)
@@ -256,35 +209,15 @@ void BattleScene::Update(double dt)
 	}
 
 	//animation always running
-	RunBattleAnimation(dt, false, 123);
+	RunBattleAnimation(dt, false, player->getDamage());
 
+	LightMouseControl(dt);
 	
 
 	//camera.Update(dt);
 
 
-	// if the left mouse button was released
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
-	{
-		//cout << "Left Mouse Button was released!" << endl;
-//		player->attack();
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
-	{
-		//cout << "Right Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
-	{
-		//cout << "Middle Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
-	{
-		//cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
-	{
-		//cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
-	}
+	
 	// <THERE>
 
 	// Update the player position and other details based on keyboard and mouse inputs
@@ -331,6 +264,86 @@ void BattleScene::Update(double dt)
 	//textObj[5]->SetText(ss1.str());
 }
 
+void BattleScene::LightMouseControl(double dt)
+{
+	if (KeyboardController::GetInstance()->IsKeyDown('1'))
+		glEnable(GL_CULL_FACE);
+	if (KeyboardController::GetInstance()->IsKeyDown('2'))
+		glDisable(GL_CULL_FACE);
+	if (KeyboardController::GetInstance()->IsKeyDown('3'))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	if (KeyboardController::GetInstance()->IsKeyDown('4'))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	if (KeyboardController::GetInstance()->IsKeyDown('5'))
+	{
+		lights[0]->type = Light::LIGHT_POINT;
+	}
+	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
+	{
+		lights[0]->type = Light::LIGHT_DIRECTIONAL;
+	}
+	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
+	{
+		lights[0]->type = Light::LIGHT_SPOT;
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyDown('I'))
+		lights[0]->position.z -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('K'))
+		lights[0]->position.z += (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('J'))
+		lights[0]->position.x -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('L'))
+		lights[0]->position.x += (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('O'))
+		lights[0]->position.y -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('P'))
+		lights[0]->position.y += (float)(10.f * dt);
+
+	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
+	{
+		//Feel free to Remove/Edit.
+
+		if (!b_spamLock)
+			b_isClashed = false;	//when m = no clash, start clashing
+
+
+	}
+
+
+
+	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
+	{
+		SceneManager::GetInstance()->SetActiveScene("GameState");
+	}
+
+
+	// if the left mouse button was released
+	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
+	{
+		//cout << "Left Mouse Button was released!" << endl;
+		//		player->attack();
+	}
+	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
+	{
+		//cout << "Right Mouse Button was released!" << endl;
+	}
+	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
+	{
+		//cout << "Middle Mouse Button was released!" << endl;
+	}
+	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
+	{
+		//cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
+	}
+	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
+	{
+		//cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
+	}
+
+}
+
 void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 {
 
@@ -352,9 +365,8 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 	
 	RenderTextStuff(dt, dmgvalue);
 
-
 	//if player attacking
-	if (PlayerInfo::GetInstance()->b_attacking)
+	if (!PlayerInfo::GetInstance()->b_attacking)
 	{
 		if (!b_isClashed)
 		{
@@ -367,6 +379,9 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 
 				b_isClashed = true;	//clash true
 
+				player->attack(enemy);
+
+				cout << enemy->getHP() << endl;
 				f_textDelayOnScreen = 5;
 
 				DamageText* tempdmg = new DamageText();
@@ -391,7 +406,6 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			if (player_posx > 80)		//Return to left from right(original position)
 			{
 				player_posx -= dt * 50;
-				
 			}
 			else
 			{
@@ -415,11 +429,21 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			{
 				b_isClashed = true;
 
+				enemy->attack(player);
+
 				DamageText* tempdmg = new DamageText();
 				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
 				storeDmgTxt.push_back(tempdmg);
+
+				i_totaldmg_txt += dmgvalue;
+				TotalDamage->SetText("TOTAL DAMAGE:" + std::to_string(i_totaldmg_txt));
+				TotalDamage->SetScale(Vector3(23, 35, 20));
+
 				//PlayerInfo::GetInstance()->enemy->attack();
 				//TakenHitAnimation(player_posx);
+
+				if (!b_bonusRush)
+					b_spamLock = true;
 			}
 		}
 		else
@@ -428,8 +452,14 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			if (enemy_posx < 120)		//Return to right from left(original position)
 			{
 				enemy_posx += dt * 50;
-
-				
+			}
+			
+			else
+			{
+				if (!b_bonusRush && b_spamLock)
+				{
+					SceneManager::GetInstance()->SetActiveScene("GameState");
+				}
 			}
 		}
 	}

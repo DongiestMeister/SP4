@@ -227,72 +227,14 @@ void GameplayScene::Update(double dt)
 	EntityManager::GetInstance()->Update(dt);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
-	if(KeyboardController::GetInstance()->IsKeyDown('1'))
-		glEnable(GL_CULL_FACE);
-	if(KeyboardController::GetInstance()->IsKeyDown('2'))
-		glDisable(GL_CULL_FACE);
-	if(KeyboardController::GetInstance()->IsKeyDown('3'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if(KeyboardController::GetInstance()->IsKeyDown('4'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
-	if(KeyboardController::GetInstance()->IsKeyDown('5'))
-	{
-		lights[0]->type = Light::LIGHT_POINT;
-	}
-	else if(KeyboardController::GetInstance()->IsKeyDown('6'))
-	{
-		lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	}
-	else if(KeyboardController::GetInstance()->IsKeyDown('7'))
-	{
-		lights[0]->type = Light::LIGHT_SPOT;
-	}
-
-	if(KeyboardController::GetInstance()->IsKeyDown('I'))
-		lights[0]->position.z -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('K'))
-		lights[0]->position.z += (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('J'))
-		lights[0]->position.x -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('L'))
-		lights[0]->position.x += (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('O'))
-		lights[0]->position.y -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('P'))
-		lights[0]->position.y += (float)(10.f * dt);
-
-	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
-	{
-
-	}
-
-	// if the left mouse button was released
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
-	{
-		//cout << "Left Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
-	{
-		//cout << "Right Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
-	{
-		//cout << "Middle Mouse Button was released!" << endl;
-		DisplayWin();
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
-	{
-		//cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
-	{
-		//cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
-	}
+	LightMouseControl(dt);
 	// <THERE>
+
+
 
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
+
 	if (!b_textRunning)
 	{
 		if (b_playerTurn)
@@ -390,45 +332,6 @@ void GameplayScene::Update(double dt)
 		}
 	}
 
-	if (b_renderWin)
-	{
-		if (winPos.y > 0)
-		{
-			winPos.y -= 50 * dt;
-		}
-	}
-
-	if (condition == KILL)
-	{
-		if (gameMap.enemies.size() == 0)
-		{
-			// WIN
-			DisplayWin();
-		}
-	}
-	else if (condition == SURVIVE)
-	{
-		if (i_turn == 20)// for testing
-		{
-			// WIN
-			DisplayWin();
-		}
-	}
-	else if (condition == CAPTURE)
-	{
-		if (false) // havn't written
-		{
-			// WIN
-			DisplayWin();
-		}
-	}
-
-	if (gameMap.characters.size() == 0)
-	{
-		// LOSE
-
-	}
-
 	controller.Update(dt);
 
 	GraphicsManager::GetInstance()->UpdateLights(dt);
@@ -467,6 +370,71 @@ void GameplayScene::Update(double dt)
 	//ss1.str("");
 	//ss1 << "Score:" << m_iScore;
 	//textObj[5]->SetText(ss1.str());
+}
+
+void GameplayScene::LightMouseControl(double dt)
+{
+	if (KeyboardController::GetInstance()->IsKeyDown('1'))
+		glEnable(GL_CULL_FACE);
+	if (KeyboardController::GetInstance()->IsKeyDown('2'))
+		glDisable(GL_CULL_FACE);
+	if (KeyboardController::GetInstance()->IsKeyDown('3'))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	if (KeyboardController::GetInstance()->IsKeyDown('4'))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	if (KeyboardController::GetInstance()->IsKeyDown('5'))
+	{
+		lights[0]->type = Light::LIGHT_POINT;
+	}
+	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
+	{
+		lights[0]->type = Light::LIGHT_DIRECTIONAL;
+	}
+	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
+	{
+		lights[0]->type = Light::LIGHT_SPOT;
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyDown('I'))
+		lights[0]->position.z -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('K'))
+		lights[0]->position.z += (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('J'))
+		lights[0]->position.x -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('L'))
+		lights[0]->position.x += (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('O'))
+		lights[0]->position.y -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('P'))
+		lights[0]->position.y += (float)(10.f * dt);
+
+	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
+	{
+
+	}
+
+	// if the left mouse button was released
+	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
+	{
+		//cout << "Left Mouse Button was released!" << endl;
+	}
+	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
+	{
+		//cout << "Right Mouse Button was released!" << endl;
+	}
+	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
+	{
+		//cout << "Middle Mouse Button was released!" << endl;
+	}
+	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
+	{
+		//cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
+	}
+	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
+	{
+		//cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
+	}
 }
 
 void GameplayScene::Render()

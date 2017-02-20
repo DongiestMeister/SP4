@@ -58,9 +58,13 @@ private:
 
 	void DisplayText(string text,Vector3 color);
 
+
 	void DisplayWin();
 	bool b_renderWin;
 	Vector2 winPos;
+
+
+	void LightMouseControl(double dt);
 
 	bool b_textRunning;
 

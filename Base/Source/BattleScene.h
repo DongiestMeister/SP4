@@ -16,6 +16,7 @@
 #include "Character/Weapon.h"
 #include "PlayerInfo.h"
 #include "DamageText.h"
+#include "Character\Character.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -39,6 +40,7 @@ public:
 	void RenderProps();
 	void TakenHitAnimation(float& type_pos);
 	void RenderSkyBox();
+	void LightMouseControl(double dt);
 
 	/*RenderTextStuff 
 	- runs animation and appearance of Totaldamage Counter and Effects
@@ -56,7 +58,9 @@ private:
 	FPSCamera camera;
 	//TextEntity* textObj[6];
 	Light* lights[2];
-	MeleeCharacter* player;
+
+	Character *player;
+	Character *enemy;
 
 	float player_posx;
 	float enemy_posx;
