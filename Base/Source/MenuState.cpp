@@ -36,10 +36,10 @@ void CMenuState::Init()
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	MeshBuilder::GetInstance()->GenerateQuad("MENUSTATE_BKGROUND", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("MENUSTATE_BKGROUND")->textureID = LoadTGA("Image//MenuState.tga");
+	MeshBuilder::GetInstance()->GetMesh("MENUSTATE_BKGROUND")->textureID = LoadTGA("Image//MenuState2.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("ARROW", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("ARROW")->textureID = LoadTGA("Image//arrow.tga");
+	MeshBuilder::GetInstance()->GetMesh("ARROW")->textureID = LoadTGA("Image//arrowSwords.tga");
 
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
@@ -48,7 +48,7 @@ void CMenuState::Init()
 		Vector3(halfWindowWidth * 2, halfWindowHeight * 2, 0.0f));
 
 	arrow = Create::Sprite2DObject("ARROW",
-		Vector3(halfWindowWidth/2 + 50, halfWindowHeight - 25, 0.1f),
+		Vector3(halfWindowWidth/2 +250, halfWindowHeight - 70, 0.1f),
 		Vector3(100,100, 0.0f));
 	cout << "CMenuState loaded\n" << endl;
 
@@ -64,7 +64,7 @@ void CMenuState::Update(double dt)
 		Music::GetInstance()->playSound("Sounds//ding.wav");
 		if (state == PLAY)
 		{
-			state = HIGHSCORES;
+			state = EXIT;
 		}
 		else
 		{
@@ -72,13 +72,13 @@ void CMenuState::Update(double dt)
 		}
 		float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
 		float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
-		arrow->SetPosition(Vector3(halfWindowWidth / 2 + 50, halfWindowHeight - 25 - (int)state * 110, 0.1f));
+		arrow->SetPosition(Vector3(halfWindowWidth / 2 + 250, halfWindowHeight - 70 - (int)state * 210, 0.1f));
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_DOWN))
 	{
 		Music::GetInstance()->playSound("Sounds//ding.wav");
-		if (state == HIGHSCORES)
+		if (state == EXIT)
 		{
 			state = PLAY;
 		}
@@ -88,17 +88,17 @@ void CMenuState::Update(double dt)
 		}
 		float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
 		float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
-		arrow->SetPosition(Vector3(halfWindowWidth / 2 + 50, halfWindowHeight - 25 - (int)state * 110, 0.1f));
+		arrow->SetPosition(Vector3(halfWindowWidth / 2 + 250, halfWindowHeight - 70 - (int)state * 210, 0.1f));
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_RETURN))
 	{
 		if (state == PLAY)
 		{
-			cout << "Loading Menustate" << endl;
+			cout << "Loading LevelSelect" << endl;
 			SceneManager::GetInstance()->SetActiveScene("GameState");
 		}
-		else if (state == OPTIONS)
+		/*else if (state == OPTIONS)
 		{
 			cout << "Loading Optionstate" << endl;
 			SceneManager::GetInstance()->SetActiveScene("OptionState");
@@ -107,6 +107,10 @@ void CMenuState::Update(double dt)
 		{
 			cout << "Loading Scorestate" << endl;
 			SceneManager::GetInstance()->SetActiveScene("ScoreState");
+		}*/
+		else if (state == EXIT)
+		{
+			Application::GetInstance().ExitProgram = true;
 		}
 	}
 }

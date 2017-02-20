@@ -26,8 +26,9 @@ private:
 	enum MENU_STATE
 	{
 		PLAY = 0,
-		OPTIONS,
-		HIGHSCORES,
+		//OPTIONS,
+		//HIGHSCORES,
+		EXIT,
 		STATE_TOTAL
 	};
 

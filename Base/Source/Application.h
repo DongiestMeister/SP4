@@ -38,6 +38,8 @@ public:
 
 	int GetWindowHeight();
 	int GetWindowWidth();
+
+	bool ExitProgram;
 	
 private:
 	Application();
