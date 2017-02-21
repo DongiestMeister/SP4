@@ -22,6 +22,7 @@ Character::Character()
 	i_dexBoostFromTerrain = 0;
 	i_lukBoostFromTerrain = 0;
 
+	i_Damage = 0;
 }
 
 Character::~Character()
@@ -184,7 +185,15 @@ void Character::calculateStats()
 	i_STR += armor->i_strBoost + i_strBoostFromTerrain;
 	i_DEX += armor->i_dexBoost + i_dexBoostFromTerrain;
 	i_LUK += armor->i_lukBoost + i_lukBoostFromTerrain;
-	i_Damage = ((0.2 * i_STR) + (0.3 * (weapon->i_damageValue))) + 2;
+	
+	if (weapon != NULL)
+	{
+		i_Damage = ((0.2 * i_STR) + (0.3 * (weapon->i_damageValue))) + 2;
+	}
+	else
+	{
+		i_Damage = 0;
+	}
 }
 
 void Character::equipWeapon(Weapon* newWeapon)

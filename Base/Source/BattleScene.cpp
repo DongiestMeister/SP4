@@ -213,8 +213,10 @@ void BattleScene::Update(double dt)
 	}
 
 	//animation always running
+	//int i = player->getDamage();
 	RunBattleAnimation(dt, false, player->getDamage());
 
+	
 	LightMouseControl(dt);
 	
 
@@ -322,7 +324,7 @@ void BattleScene::LightMouseControl(double dt)
 	}
 
 	//animation always running
-	RunBattleAnimation(dt, false, 123);
+	//RunBattleAnimation(dt, false, 123);
 
 
 	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
@@ -375,7 +377,10 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 		ene_maxdist_forward = 85;
 	}
 
-	
+	//if (dmgvalue == NULL)
+	//{
+	//	dmgvalue = 0;
+	//}
 	
 	RenderTextStuff(dt, dmgvalue);
 

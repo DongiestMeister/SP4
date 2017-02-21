@@ -15,7 +15,7 @@ MeleeCharacter::MeleeCharacter(string name)
 	// All stats boosts of 0, equivalent to not having an armor
 	armor = new Armor(0, 0, 0, 0, true,"Nothing");
 	
-	calculateStats();
+	
 }
 
 MeleeCharacter::~MeleeCharacter()
@@ -24,7 +24,15 @@ MeleeCharacter::~MeleeCharacter()
 
 bool MeleeCharacter::attack(Character* opponent)
 {
-	int hitRate = i_DEX + weapon->i_weaponAccuracy - opponent->getLUK();
+	int hitRate;
+	if (weapon != NULL)
+	{
+		hitRate = i_DEX + weapon->i_weaponAccuracy - opponent->getLUK();
+	}
+	else
+	{
+		hitRate = i_DEX +  opponent->getLUK();
+	}
 	int hitResult = Math::RandIntMinMax(0, 100);
 	if (hitRate >= hitResult)
 	{
