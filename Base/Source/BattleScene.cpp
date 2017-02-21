@@ -605,18 +605,6 @@ void BattleScene::RenderProps()
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BASIC_TREE"));
 		modelStack.PopMatrix();
 	}
-
-
-
-	// Setup 2D pipeline then render 2D
-	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
-	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
-
-	GraphicsManager::GetInstance()->SetOrthographicProjection(-200, 200, -200, 200, -2000, 2000);
-	GraphicsManager::GetInstance()->DetachCamera();
-
-	EntityManager::GetInstance()->RenderUI();
-
 }
 
 void BattleScene::RenderTextStuff(double dt, int dmgvalue)
@@ -746,6 +734,7 @@ void BattleScene::Exit()
 	EntityManager::GetInstance()->RemoveEntity(groundEntity);
 	EntityManager::GetInstance()->RemoveEntity(TotalDmgCheer);
 	EntityManager::GetInstance()->RemoveEntity(TotalDamage);
+	EntityManager::GetInstance()->RemoveEntity(TimerText);
 	//groundEntity->SetIsDone(true);
 	//TotalDmgCheer->SetIsDone(true);
 	//TotalDamage->SetIsDone(true);

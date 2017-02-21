@@ -1,8 +1,8 @@
 
 #include <iostream>
 #include <fstream>
-#include <GL\glew.h>
-//#include "../../glew/include/GL/glew.h"
+//#include <GL\glew.h>
+#include "../../glew/include/GL/glew.h"
 
 #include "LoadTGA.h"
 

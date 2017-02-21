@@ -46,27 +46,19 @@ bool AI_DefenceFSM::Update(double dt)
 
 void AI_DefenceFSM::Idle()
 {
-	
+
 	//Set target of current unit to nearest target
 	SearchNearestWithHP();
-	
+
 	if (target != nullptr)
 	{
-		if (character->getHP() <= 20)
+		//if (character->getHP() <= 20)
+		//{
+		//	state = RETREAT;
+		//}
+		//else
 		{
-			state = RETREAT;
-		}
-		else
-		{
-			//Check if player is within range
-			if ((character->i_movementCost + target->i_movementCost) < 0)
-			{
-				state = CHASE;
-			}
-			else	//Else wait for the player to move, for getting first(premptive) hit on player
-			{
-				state = IDLE;
-			}
+			state = CHASE;
 		}
 	}
 	else
@@ -77,7 +69,7 @@ void AI_DefenceFSM::Idle()
 
 void AI_DefenceFSM::Chase(double dt)
 {
-	
+
 	if (!b_foundEnemyPath)
 	{
 		b_foundEnemyPath = SearchForPath();
@@ -147,7 +139,7 @@ void AI_DefenceFSM::Attack()
 void AI_DefenceFSM::Retreat()
 {
 	float nearestdist = FLT_MAX;
-	
+
 	for (CharactersList::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
 	{
 		Character* enemy = *it;

@@ -16,11 +16,11 @@ public:
 	bool SearchPathWithTerrain();
 
 	/*Search_funts sets :
-		- target
-		- nearestdistance	*/
+	- target
+	- nearestdistance	*/
 	/*void SearchNearest();
 	void SearchLowestHP();*/
-	
+
 	void SearchNearestWithHP();
 
 

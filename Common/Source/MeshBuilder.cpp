@@ -1,6 +1,7 @@
 #include "MeshBuilder.h"
 #include "Mesh.h"
-#include <GL\glew.h>
+//#include <GL\glew.h>
+#include "../../glew/include/GL/glew.h"
 #include <vector>
 #include "MyMath.h"
 #include "LoadOBJ.h"
@@ -23,7 +24,7 @@ Then generate the VBO/IBO and store them in Mesh object
 Mesh* MeshBuilder::GenerateAxes(const std::string &meshName, float lengthX, float lengthY, float lengthZ)
 {
 	Vertex v;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	v.pos.Set(-1000, 0, 0);
 	v.color.Set(1, 0, 0);
 	vertex_buffer_data.push_back(v);
@@ -86,8 +87,7 @@ Mesh* MeshBuilder::GenerateCrossHair(const std::string &meshName, float colour_r
 {
 	// Declare the variable to store a vertex and the buffer for storing vertices
 	Vertex v;
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	// Vertex #1
 	v.pos.Set(-length, 0, 0);
 	v.color.Set(colour_r, colour_g, colour_b);
@@ -142,8 +142,7 @@ Then generate the VBO/IBO and store them in Mesh object
 Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float length)
 {
 	Vertex v;
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
 	
 	v.pos.Set(-0.5f * length,-0.5f * length,0);
@@ -205,8 +204,7 @@ Then generate the VBO/IBO and store them in Mesh object
 /******************************************************************************/
 Mesh* MeshBuilder::GenerateCube(const std::string &meshName, Color color, float length)
 {
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
 
 	Vertex v;
@@ -307,8 +305,7 @@ Mesh* MeshBuilder::GenerateCube(const std::string &meshName, Color color, float 
 
 Mesh* MeshBuilder::GenerateRing(const std::string &meshName, Color color, unsigned numSlice, float outerR, float innerR)
 {
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
 	Vertex v;
 
@@ -368,8 +365,7 @@ float sphereZ(float phi, float theta)
 
 Mesh* MeshBuilder::GenerateSphere(const std::string &meshName, Color color, unsigned numStack, unsigned numSlice, float radius)
 {
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
 	
 	float degreePerStack = 180.f / numStack;
@@ -420,8 +416,7 @@ Mesh* MeshBuilder::GenerateSphere(const std::string &meshName, Color color, unsi
 
 Mesh* MeshBuilder::GenerateCone(const std::string &meshName, Color color, unsigned numSlice, float radius, float height)
 {
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
 	
 	Vertex v;
@@ -474,8 +469,7 @@ Mesh* MeshBuilder::GenerateOBJ(const std::string &meshName, const std::string &f
 	if(!success)
 		return NULL;
 
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
 	
 	IndexVBO(vertices, uvs, normals, index_buffer_data, vertex_buffer_data);
@@ -499,8 +493,7 @@ Mesh* MeshBuilder::GenerateOBJ(const std::string &meshName, const std::string &f
 Mesh* MeshBuilder::GenerateText(const std::string &meshName, unsigned numRow, unsigned numCol)
 {
 	Vertex v;
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	std::vector<GLuint> index_buffer_data;
 	
 	float width = 1.f / numCol;
@@ -568,8 +561,7 @@ Then generate the VBO/IBO and store them in Mesh object
 Mesh* MeshBuilder::GenerateRay(const std::string &meshName, const float length)
 {
 	Vertex v;
-	//std::vector<Vertex> vertex_buffer_data;
-	vertex_buffer_data.clear();
+	std::vector<Vertex> vertex_buffer_data;
 	v.pos.Set(0, length, 0);
 	v.color.Set(1, 0, 0);
 	vertex_buffer_data.push_back(v);

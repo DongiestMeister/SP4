@@ -40,7 +40,6 @@ public:
 	void RemoveMesh(const std::string& _meshName);
 private:
 	std::map<std::string, Mesh*> meshMap;
-	std::vector<Vertex> vertex_buffer_data;
 };
 
 #endif

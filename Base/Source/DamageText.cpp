@@ -1,6 +1,6 @@
 
 #include "DamageText.h"
-
+#include "EntityManager.h"
 
 
 DamageText::DamageText()
@@ -20,7 +20,8 @@ bool DamageText::Update(double dt)
 
 	if (dmgTxt->GetPosition().y <= -30)
 	{
-		dmgTxt->SetIsDone(true);
+		EntityManager::GetInstance()->RemoveEntity(dmgTxt);
+		dmgTxt = nullptr;
 		return true;
 	}
 	return false;

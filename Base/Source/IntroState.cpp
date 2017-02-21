@@ -61,8 +61,8 @@ void CIntroState::Update(double dt)
 	if ((timer -= dt) <= 0)
 	{
 		cout << "Loading Menustate" << endl;
-		//SceneManager::GetInstance()->SetActiveScene("BattleState");
-		SceneManager::GetInstance()->SetActiveScene("MenuState");
+		SceneManager::GetInstance()->SetActiveScene("GameState");
+		//SceneManager::GetInstance()->SetActiveScene("MenuState");
 	//	SceneManager::GetInstance()->SetActiveScene("PartySelect");
 	}
 	float screenwidth = Application::GetInstance().GetWindowWidth();
@@ -112,10 +112,6 @@ void CIntroState::Render()
 void CIntroState::Exit()
 {
 	EntityManager::GetInstance()->RemoveEntity(IntroStateBackground);
-
-	MeshBuilder::GetInstance()->RemoveMesh("INTROSTATE_BKGROUND");
-
-	MeshBuilder::GetInstance()->RemoveMesh("sword");
 
 	GraphicsManager::GetInstance()->DetachCamera();
 }

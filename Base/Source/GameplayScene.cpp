@@ -95,8 +95,8 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("quad")->textureID = LoadTGA("Image//calibri.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
-	MeshBuilder::GetInstance()->GetMesh("Chair")->textureID = LoadTGA("Image//chair.tga");
+	//MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
+	//MeshBuilder::GetInstance()->GetMesh("Chair")->textureID = LoadTGA("Image//chair.tga");
 	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
 	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
 	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 0.5f);
@@ -277,7 +277,8 @@ void GameplayScene::Update(double dt)
 
 		if (turnDisplay->GetPosition().x > 100)
 		{
-			turnDisplay->SetIsDone(true);
+			EntityManager::GetInstance()->RemoveEntity(turnDisplay);
+			turnDisplay = nullptr;
 			b_textRunning = false;
 		}
 	}
@@ -388,24 +389,21 @@ void GameplayScene::LightMouseControl(double dt)
 		lights[0]->type = Light::LIGHT_SPOT;
 	}
 
-	if (KeyboardController::GetInstance()->IsKeyDown('I'))
-		lights[0]->position.z -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('K'))
-		lights[0]->position.z += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('J'))
-		lights[0]->position.x -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('L'))
-		lights[0]->position.x += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('O'))
-		lights[0]->position.y -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('P'))
-		lights[0]->position.y += (float)(10.f * dt);
+	//if (KeyboardController::GetInstance()->IsKeyDown('I'))
+	//	lights[0]->position.z -= (float)(10.f * dt);
+	//if (KeyboardController::GetInstance()->IsKeyDown('K'))
+	//	lights[0]->position.z += (float)(10.f * dt);
+	//if (KeyboardController::GetInstance()->IsKeyDown('J'))
+	//	lights[0]->position.x -= (float)(10.f * dt);
+	//if (KeyboardController::GetInstance()->IsKeyDown('L'))
+	//	lights[0]->position.x += (float)(10.f * dt);
+	//if (KeyboardController::GetInstance()->IsKeyDown('O'))
+	//	lights[0]->position.y -= (float)(10.f * dt);
+	//if (KeyboardController::GetInstance()->IsKeyDown('P'))
+	//	lights[0]->position.y += (float)(10.f * dt);
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
 	{
-		PlayerInfo::GetInstance()->player = gameMap.GetCharacter(1,1);
-		PlayerInfo::GetInstance()->enemy = gameMap.GetEnemy(1,3);
-		SceneManager::GetInstance()->SetActiveScene("IntroState",true);
 	}
 
 	// if the left mouse button was released
@@ -470,9 +468,9 @@ void GameplayScene::Exit()
 	BGM->stop();
 	BGM->drop();
 	BGM = nullptr;
-	turnDisplay->SetIsDone(true);
-	groundEntity->SetIsDone(true);
-	fps->SetIsDone(true);
+	EntityManager::GetInstance()->RemoveEntity(turnDisplay);
+	EntityManager::GetInstance()->RemoveEntity(groundEntity);
+	EntityManager::GetInstance()->RemoveEntity(fps);
 	turnDisplay = nullptr;
 	groundEntity = nullptr;
 	//playerInfo->DetachCamera();
@@ -502,6 +500,9 @@ void GameplayScene::Pause()
 	EntityManager::GetInstance()->RemoveEntity(groundEntity);
 	EntityManager::GetInstance()->RemoveEntity(fps);
 	EntityManager::GetInstance()->RemoveEntity(turnDisplay);
+	groundEntity = nullptr;
+	fps = nullptr;
+	turnDisplay = nullptr;
 	b_textRunning = false;
 }
 

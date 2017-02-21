@@ -137,6 +137,7 @@ void CMenuState::Render()
 
 void CMenuState::Exit()
 {
+	BGM->stop();
 	BGM->drop();
 	EntityManager::GetInstance()->RemoveEntity(MenuStateBackground);
 	EntityManager::GetInstance()->RemoveEntity(arrow);

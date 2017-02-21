@@ -282,8 +282,8 @@ void WarMapScene::Exit()
 	BGM = nullptr;
 
 	//playerInfo->DetachCamera();
-	fps->SetIsDone(true);
-
+	//fps->SetIsDone(true);
+	EntityManager::GetInstance()->RemoveEntity(fps);
 	//	if (playerInfo->DropInstance() == false)
 	//	{
 	//#if _DEBUGMODE==1
@@ -301,7 +301,8 @@ void WarMapScene::Exit()
 void WarMapScene::Pause()
 {
 	BGM->setIsPaused(true);
-	fps->SetIsDone(true);
+	EntityManager::GetInstance()->RemoveEntity(fps);
+	fps = nullptr;
 }
 
 void WarMapScene::Resume()

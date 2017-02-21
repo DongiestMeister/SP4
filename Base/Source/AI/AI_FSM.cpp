@@ -38,14 +38,14 @@ void AI_FSM::SearchNearestWithHP()
 		{
 			targetVector.clear();
 			targetVector.push_back(enemy);
-			
+
 			nearestDistance = (character->getPos() - enemy->getPos()).Length();
 		}
 		//if both target is same distance
 		/*else if ((character->getPos() - enemy->character->getPos()).Length() < character->i_movementCost
-			&& (character->getPos() - enemy->character->getPos()).Length() == nearestDistance)
+		&& (character->getPos() - enemy->character->getPos()).Length() == nearestDistance)
 		{
-			targetVector.push_back(enemy);
+		targetVector.push_back(enemy);
 		}*/
 	}
 	float maxHP = INT_MAX;
