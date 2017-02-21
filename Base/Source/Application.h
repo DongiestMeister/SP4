@@ -11,9 +11,9 @@
 #include "OptionState.h"
 #include "ScoreState.h"
 #include "GameplayScene.h"
-#include "EmptyScene.h"
 #include "BattleScene.h"
 #include "PartySelectScene.h"
+#include "WarMapScene.h"
 
 class ShaderProgram;
 struct GLFWwindow;

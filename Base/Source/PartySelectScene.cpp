@@ -40,7 +40,6 @@ void PartySelectScene::Init()
 {
 	Math::InitRNG();
 	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
-	Music::GetInstance()->Init();
 
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
@@ -98,7 +97,7 @@ void PartySelectScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("changeWhoseEQ", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("changeWhoseEQ")->textureID = LoadTGA("Image//changeWhoseEQ.tga");
 
-	groundEntity = Create::Ground("PartySelectBG", "GEO_GRASS_LIGHTGREEN");
+	//groundEntity = Create::Ground("PartySelectBG", "GEO_GRASS_LIGHTGREEN");
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
@@ -215,6 +214,9 @@ void PartySelectScene::Update(double dt)
 		lights[0]->position.y -= (float)(10.f * dt);
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 		lights[0]->position.y += (float)(10.f * dt);
+
+	if (KeyboardController::GetInstance()->IsKeyDown('M'))
+		SceneManager::GetInstance()->SetActiveScene("BattleState");
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
@@ -761,7 +763,7 @@ void PartySelectScene::Exit()
 	// Detach camera from other entities
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
-	groundEntity->SetIsDone(true);
+	//groundEntity->SetIsDone(true);
 	//playerInfo->DetachCamera();
 
 	//	if (playerInfo->DropInstance() == false)
@@ -772,6 +774,6 @@ void PartySelectScene::Exit()
 	//	}
 
 	// Delete the lights
-	GraphicsManager::GetInstance()->RemoveLight("lights[0]");
-	GraphicsManager::GetInstance()->RemoveLight("lights[1]");
+	//GraphicsManager::GetInstance()->RemoveLight("lights[0]");
+	//GraphicsManager::GetInstance()->RemoveLight("lights[1]");
 }

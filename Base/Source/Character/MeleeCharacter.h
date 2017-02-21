@@ -9,6 +9,7 @@ public:
 	MeleeCharacter(string name);
 	virtual ~MeleeCharacter();
 	virtual bool attack(Character* opponent);
+	virtual MeleeCharacter* clone();
 };
 
 #endif 

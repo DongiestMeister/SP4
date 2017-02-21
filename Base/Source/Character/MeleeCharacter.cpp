@@ -11,9 +11,9 @@ MeleeCharacter::MeleeCharacter(string name)
 	i_attackRange = 1; // All melee characters have a base attack range of 1
 
 	// Damage value of 0, so equivalent to not having a weapon at all
-	weapon = new Weapon(0, 100, true, "Nothing");
+	weapon = nullptr;
 	// All stats boosts of 0, equivalent to not having an armor
-	armor = new Armor(0, 0, 0, 0, true,"Nothing");
+	armor = nullptr;
 	
 	
 }
@@ -31,8 +31,9 @@ bool MeleeCharacter::attack(Character* opponent)
 	}
 	else
 	{
-		hitRate = i_DEX +  opponent->getLUK();
+		hitRate = i_DEX - opponent->getLUK();
 	}
+	
 	int hitResult = Math::RandIntMinMax(0, 100);
 	if (hitRate >= hitResult)
 	{
@@ -48,4 +49,9 @@ bool MeleeCharacter::attack(Character* opponent)
 		return false;
 	}
 	return false;
+}
+
+MeleeCharacter* MeleeCharacter::clone()
+{
+	return new MeleeCharacter(*this);
 }

@@ -48,7 +48,7 @@ void GroundEntity::Render()
 			// the y- and z- components are swapped because of the way that MVP is calculated inside RenderMesh
 			modelStack.Translate(x - (grids.x * size.x) / 2, z - (grids.z * size.z) / 2, 0.0f);
 			//RenderHelper::RenderMesh(modelMesh[0]);
-			RenderHelper::RenderMeshWithLight(modelMesh[0]);
+			RenderHelper::RenderMesh(modelMesh[0]);
 			modelStack.PopMatrix();
 		}
 	}

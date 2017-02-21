@@ -6,7 +6,7 @@
 using namespace std;
 
 //Include GLEW
-#include "../../glew/include/GL/glew.h"
+#include "GL\glew.h"
 
 #include "../LevelOfDetails/LevelOfDetails.h"
 

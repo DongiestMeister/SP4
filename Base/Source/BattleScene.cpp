@@ -39,51 +39,39 @@ BattleScene::~BattleScene()
 
 void BattleScene::Init()
 {
-	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
+	currProg = GraphicsManager::GetInstance()->GetActiveShader();
 
 	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
-	// Tell the graphics manager to use the shader we just loaded
-	GraphicsManager::GetInstance()->SetActiveShader("default");
+	//lights[0] = new Light();
+	//GraphicsManager::GetInstance()->AddLight("lights[0]", lights[0]);
+	//lights[0]->type = Light::LIGHT_DIRECTIONAL;
+	//lights[0]->position.Set(0, -10, 0);
+	//lights[0]->color.Set(1, 1, 0.7);
+	//lights[0]->power = 1;
+	//lights[0]->kC = 1.f;
+	//lights[0]->kL = 0.01f;
+	//lights[0]->kQ = 0.001f;
+	//lights[0]->cosCutoff = cos(Math::DegreeToRadian(45));
+	//lights[0]->cosInner = cos(Math::DegreeToRadian(30));
+	//lights[0]->exponent = 3.f;
+	//lights[0]->spotDirection.Set(0.f, 1.f, 0.f);
+	//lights[0]->name = "lights[0]";
 
+	//lights[1] = new Light();
+	//GraphicsManager::GetInstance()->AddLight("lights[1]", lights[1]);
+	//lights[1]->type = Light::LIGHT_DIRECTIONAL;
+	//lights[1]->position.Set(1, 1, 0);
+	//lights[1]->color.Set(1, 1, 0.5f);
+	//lights[1]->power = 0.4f;
+	//lights[1]->name = "lights[1]";
 
-	lights[0] = new Light();
-	GraphicsManager::GetInstance()->AddLight("lights[0]", lights[0]);
-	lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	lights[0]->position.Set(0, -10, 0);
-	lights[0]->color.Set(1, 1, 0.7);
-	lights[0]->power = 1;
-	lights[0]->kC = 1.f;
-	lights[0]->kL = 0.01f;
-	lights[0]->kQ = 0.001f;
-	lights[0]->cosCutoff = cos(Math::DegreeToRadian(45));
-	lights[0]->cosInner = cos(Math::DegreeToRadian(30));
-	lights[0]->exponent = 3.f;
-	lights[0]->spotDirection.Set(0.f, 1.f, 0.f);
-	lights[0]->name = "lights[0]";
-
-	lights[1] = new Light();
-	GraphicsManager::GetInstance()->AddLight("lights[1]", lights[1]);
-	lights[1]->type = Light::LIGHT_DIRECTIONAL;
-	lights[1]->position.Set(1, 1, 0);
-	lights[1]->color.Set(1, 1, 0.5f);
-	lights[1]->power = 0.4f;
-	lights[1]->name = "lights[1]";
-
-	currProg->UpdateInt("numLights", 1);
-	currProg->UpdateInt("textEnabled", 0);
-
-	// Create the playerinfo instance, which manages all information about the player
-	//playerInfo = CPlayerInfo::GetInstance();
-	//playerInfo->Init();
-
-	//playerInfo->lives = 3;
+	//currProg->UpdateInt("numLights", 1);
+	//currProg->UpdateInt("textEnabled", 0);
 
 	// Create and attach the camera to the scene
-	//camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	camera.Init(Vector3(100, -20, -10), Vector3(100, -19, 100), Vector3(0, 0, 1));
-	//playerInfo->AttachCamera(&camera);
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	// Load all the meshes
@@ -93,7 +81,7 @@ void BattleScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("quad")->textureID = LoadTGA("Image//calibri.tga");
 
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
-	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//calibri.tga");
+	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//grisaiaCustom.tga");
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
 
 	MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
@@ -213,10 +201,9 @@ void BattleScene::Update(double dt)
 	}
 
 	//animation always running
-	//int i = player->getDamage();
-	RunBattleAnimation(dt, false, player->getDamage());
+	if (player)
+		RunBattleAnimation(dt, false, player->getDamage());
 
-	
 	LightMouseControl(dt);
 	
 
@@ -293,19 +280,6 @@ void BattleScene::LightMouseControl(double dt)
 	{
 		lights[0]->type = Light::LIGHT_SPOT;
 	}
-
-	if (KeyboardController::GetInstance()->IsKeyDown('I'))
-		lights[0]->position.z -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('K'))
-		lights[0]->position.z += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('J'))
-		lights[0]->position.x -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('L'))
-		lights[0]->position.x += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('O'))
-		lights[0]->position.y -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('P'))
-		lights[0]->position.y += (float)(10.f * dt);
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
 	{
@@ -515,8 +489,6 @@ void BattleScene::TakenHitAnimation(float& type_pos)
 void BattleScene::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
 
 	// Setup 3D pipeline then render 3D
 	GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
@@ -771,16 +743,20 @@ void BattleScene::Exit()
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
 
-	groundEntity->SetIsDone(true);
-	TotalDmgCheer->SetIsDone(true);
-	TotalDamage->SetIsDone(true);
+	EntityManager::GetInstance()->RemoveEntity(groundEntity);
+	EntityManager::GetInstance()->RemoveEntity(TotalDmgCheer);
+	EntityManager::GetInstance()->RemoveEntity(TotalDamage);
+	//groundEntity->SetIsDone(true);
+	//TotalDmgCheer->SetIsDone(true);
+	//TotalDamage->SetIsDone(true);
 
 	for (vector<DamageText*>::iterator it = storeDmgTxt.begin(); it != storeDmgTxt.end();)
 	{
-		(*it)->dmgTxt->SetIsDone(true);
+		EntityManager::GetInstance()->RemoveEntity((*it)->dmgTxt);
 		delete *it;
 		it = storeDmgTxt.erase(it);
 	}
+
 	//playerInfo->DetachCamera();
 
 	//	if (playerInfo->DropInstance() == false)

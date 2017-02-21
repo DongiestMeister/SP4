@@ -79,6 +79,7 @@ void MapController::Update(double dt)
 			attackableUnits.clear();
 			tempOrtho = camera->f_OrthoSize;
 			b_cameraTransition = true;
+			enemyIterator = 0;
 			//SceneManager::GetInstance()->SetActiveScene("BattleState", true);
 		}
 	}
@@ -399,6 +400,14 @@ void MapController::CloseButtons()
 	{
 		selectedUnit->b_tookAction = true;
 		selectedUnit = nullptr;
+		for (int i = 0; i < map->characters.size(); ++i)
+		{
+			if (map->characters[i]->b_tookAction == false)
+			{
+				selectedTile = map->characters[i]->getPos();
+				break;
+			}
+		}
 	}
 	else if (selectedButton == ATTACK)
 	{
@@ -560,5 +569,51 @@ void MapController::RenderUI()
 		}
 
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), textdisplay, Vector3(-30, 50, 1), 7.f, Color(1, 1, 1));
+	}
+
+	if (!b_movingUnit && *b_playerTurn)
+	{
+		if (selectedUnit)
+		{
+			selectedUnit->calculateStats();
+			string Name = "Name:" + selectedUnit->getName();
+			string HP = "HP:" + std::to_string(selectedUnit->getHP());
+			string DMG = "DMG:" + std::to_string(selectedUnit->getDamage());
+
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(-50, 50, 1), 7.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(-50, 40, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(-50, 30, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(-50, 40, 0.9), Vector3(50, 50, 50), Vector3(0, 0, 0));
+			RenderHelper::Render2DMesh(selectedUnit->getPortrait(), Vector3(-62, 40, 1), Vector3(20, 20, 20), Vector3(0, 0, 0));
+		}
+		else if (map->GetCharacter(selectedTile.x, selectedTile.y))
+		{
+			Character* temp = map->GetCharacter(selectedTile.x, selectedTile.y);
+			temp->calculateStats();
+			string Name = "Name:" + temp->getName();
+			string HP = "HP:" + std::to_string(temp->getHP());
+			string DMG = "DMG:" + std::to_string(temp->getDamage());
+
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(-50, 50, 1), 7.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(-50, 40, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(-50, 30, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(-50, 40, 0.9), Vector3(50, 50, 50), Vector3(0, 0, 0));
+			RenderHelper::Render2DMesh(temp->getPortrait(), Vector3(-62, 40, 1), Vector3(20, 20, 20), Vector3(0, 0, 0));
+		}
+
+		if (map->GetEnemy(selectedTile.x, selectedTile.y))
+		{
+			Character* temp = map->GetEnemy(selectedTile.x, selectedTile.y);
+			temp->calculateStats();
+			string Name = "Name:" + temp->getName();
+			string HP = "HP:" + std::to_string(temp->getHP());
+			string DMG = "DMG:" + std::to_string(temp->getDamage());
+
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(50, 50, 1), 7.f, Color(1, 0.3, 0.3));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(50, 40, 1), 5.f, Color(1, 0.3, 0.3));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(50, 30, 1), 5.f, Color(1, 0.3, 0.3));
+			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(60, 40, 0.9), Vector3(50, 50, 50), Vector3(0, 0, 0));
+			RenderHelper::Render2DMesh(temp->getPortrait(), Vector3(68, 40, 1), Vector3(20, 20, 20), Vector3(0, 0, 0));
+		}
 	}
 }

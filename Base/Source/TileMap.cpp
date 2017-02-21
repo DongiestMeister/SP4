@@ -5,6 +5,7 @@
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
 #include "MeshBuilder.h"
+#include "AI\AI_DefenceFSM.h"
 
 
 using namespace std;
@@ -16,7 +17,7 @@ TileMap::TileMap()
 
 TileMap::~TileMap()
 {
-	//ClearCharacters();
+	ClearCharacters();
 }
 
 void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int numTilesWidth)
@@ -32,8 +33,23 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 	for (int i = 0; i < numTilesHeight; ++i)
 		theScreenMap[i].resize(numTilesWidth);
 
-	characters = PlayerInfo::GetInstance()->party;
-	enemies = PlayerInfo::GetInstance()->enemies;
+	for (int i = 0; i < PlayerInfo::GetInstance()->party.size(); ++i)
+	{
+		characters.push_back(PlayerInfo::GetInstance()->party[i]->clone());
+	}
+	for (int i = 0; i < PlayerInfo::GetInstance()->enemies.size(); ++i)
+	{
+		Character* temp = PlayerInfo::GetInstance()->enemies[i]->clone();
+		if (temp->strategy == Character::DEFENCE)
+		{
+			temp->FSM = new AI_DefenceFSM(temp);
+			temp->FSM->map = this;
+		}
+		else if (temp->strategy == Character::OFFENCE)
+		{
+		}
+		enemies.push_back(temp);
+	}
 
 	for (int i = 0; i < characters.size(); ++i)
 	{

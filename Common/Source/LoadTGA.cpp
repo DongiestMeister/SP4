@@ -1,8 +1,8 @@
 
 #include <iostream>
 #include <fstream>
-//#include <GL\glew.h>
-#include "../../glew/include/GL/glew.h"
+#include <GL\glew.h>
+//#include "../../glew/include/GL/glew.h"
 
 #include "LoadTGA.h"
 
@@ -41,14 +41,12 @@ GLuint LoadTGA(const char *file_path)				// load TGA file to memory
 	fileStream.seekg(18, std::ios::beg);
 	fileStream.read((char *)data, imageSize);
 	fileStream.close();	
-
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	if(bytesPerPixel == 3)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
 	else //bytesPerPixel == 4
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	float maxAnisotropy = 1.f;
@@ -57,7 +55,6 @@ GLuint LoadTGA(const char *file_path)				// load TGA file to memory
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	
 	glGenerateMipmap( GL_TEXTURE_2D );
 	
 	delete []data;

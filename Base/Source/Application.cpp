@@ -7,6 +7,7 @@
 #include "Sounds\Music.h"
 #include "EntityManager.h"
 #include "MeshBuilder.h"
+#include "LoadTGA.h"
 
 //Include GLEW
 #include <GL/glew.h>
@@ -108,12 +109,17 @@ void Application::InitDisplay(void)
 
 void Application::Init()
 {
+
+
 	CLuaInterface::GetInstance()->Init();
 
 	m_window_width = CLuaInterface::GetInstance()->getIntValue("width");
 	m_window_height = CLuaInterface::GetInstance()->getIntValue("height");
 
-	CLuaInterface::GetInstance()->Run();
+	m_window_width = 1920;
+	m_window_height = 1080;
+
+	//CLuaInterface::GetInstance()->Run();
 
 	//Set the error callback
 	glfwSetErrorCallback(error_callback);
@@ -175,6 +181,7 @@ void Application::Init()
 	SceneManager::GetInstance()->AddScene("ScoreState", new CScoreState());
 	SceneManager::GetInstance()->AddScene("BattleState", new BattleScene());
 	SceneManager::GetInstance()->AddScene("PartySelect", new PartySelectScene());
+	SceneManager::GetInstance()->AddScene("WarMap", new WarMapScene());
 	//
 	SceneManager::GetInstance()->SetActiveScene("IntroState");
 }
@@ -205,11 +212,11 @@ void Application::Run()
 
 	CLuaInterface::GetInstance()->Destroy();
 	SceneManager::GetInstance()->Destroy();
-	//PlayerInfo::GetInstance()->Destroy();
+	PlayerInfo::GetInstance()->Destroy();
 
-	//EntityManager::GetInstance()->Destroy();
-	//MeshBuilder::GetInstance()->Destroy();
-	//GraphicsManager::GetInstance()->Destroy();
+	EntityManager::GetInstance()->Destroy();
+	MeshBuilder::GetInstance()->Destroy();
+	GraphicsManager::GetInstance()->Destroy();
 	Music::GetInstance()->Destroy();
 }
 

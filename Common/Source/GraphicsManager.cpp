@@ -1,6 +1,5 @@
 #include "GraphicsManager.h"
-//#include "GL\glew.h"
-#include "../../glew/include/GL/glew.h"
+#include "GL\glew.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -218,6 +217,10 @@ ShaderProgram* GraphicsManager::LoadShader(const std::string& _name, const std::
 	// Create our actual shader program object if success
 	if (compileResult)
 	{
+		if (shaderMap.count(_name) != 0)
+		{
+			delete shaderMap[_name];
+		}
 		ShaderProgram* result = new ShaderProgram(ProgramID);
 		shaderMap[_name] = result;
 		return result;

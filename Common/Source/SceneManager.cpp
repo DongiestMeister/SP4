@@ -20,13 +20,14 @@ void SceneManager::Update(double _dt)
 		{
 			// Scene is valid, need to call appropriate function to exit
 			if (!activeScene->b_isPaused)
+			{
 				activeScene->Exit();
+			}
 			else
 			{
 				activeScene->Pause();
 				std::cout << "Scene Paused" << std::endl;
-			}
-				
+			}	
 		}
 		
 		activeScene = nextScene;
@@ -39,7 +40,7 @@ void SceneManager::Update(double _dt)
 		}		
 	}
 
-	if (activeScene)
+	if (activeScene && !activeScene->b_isPaused)
 		activeScene->Update(_dt);
 }
 

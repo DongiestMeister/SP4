@@ -16,13 +16,22 @@ class AI_FSM;
 class Character
 {
 public:
+	enum STRATEGY
+	{
+		OFFENCE = 0,
+		DEFENCE,
+		NEUTRAL,
+		STRAT_TOTAL
+	};
+
 	Character(); // Hp always default to 100
 	virtual ~Character();
 	void takeDamage(int dmg);
-	virtual bool attack(Character* opponent) = 0; // returns true if the attack was successful
+	virtual bool attack(Character* opponent) { return false; } // returns true if the attack was successful
 	virtual void equipWeapon(Weapon* newWeapon);
 	virtual void equipArmor(Armor* newArmor);
 	virtual void calculateStats(); // Calculates all of this character's stats. Including total str/dex/luk/hp (includes terrain boosts), attack power.
+	virtual Character* clone() = 0;
 
 	int getSTR();
 	int getDEX();
@@ -60,6 +69,7 @@ public:
 	int i_dexBoostFromTerrain;
 	int i_lukBoostFromTerrain;
 
+	STRATEGY strategy;
 protected:
 	Weapon* weapon;
 	Armor* armor;

@@ -5,13 +5,17 @@
 #include "Vertex.h"
 #include <map>
 #include <string>
+#include <vector>
 
 // Forward Declaration
 class Mesh;
 
 /******************************************************************************/
 /*!
-		Class MeshBuilder:
+		Class 
+		
+		
+		:
 \brief	Provides methods to generate mesh of different shapes
 */
 /******************************************************************************/
@@ -34,10 +38,9 @@ public:
 	Mesh* GetMesh(const std::string& _meshName);
 	void AddMesh(const std::string& _meshName, Mesh* _newMesh);
 	void RemoveMesh(const std::string& _meshName);
-
-	~MeshBuilder();
 private:
 	std::map<std::string, Mesh*> meshMap;
+	std::vector<Vertex> vertex_buffer_data;
 };
 
 #endif

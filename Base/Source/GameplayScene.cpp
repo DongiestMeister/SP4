@@ -43,7 +43,7 @@ GameplayScene::~GameplayScene()
 
 void GameplayScene::Init()
 {
-	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
+	currProg = GraphicsManager::GetInstance()->GetActiveShader();
 
 	turnDisplay = nullptr;
 	b_textRunning = false;
@@ -58,10 +58,8 @@ void GameplayScene::Init()
 	srand(NULL);
 	
 	// Tell the graphics manager to use the shader we just loaded
-	GraphicsManager::GetInstance()->SetActiveShader("default");
-	
 
-	lights[0] = new Light();
+	/*lights[0] = new Light();
 	GraphicsManager::GetInstance()->AddLight("lights[0]", lights[0]);
 	lights[0]->type = Light::LIGHT_DIRECTIONAL;
 	lights[0]->position.Set(0, -10, 0);
@@ -85,7 +83,7 @@ void GameplayScene::Init()
 	lights[1]->name = "lights[1]";
 
 	currProg->UpdateInt("numLights", 1);
-	currProg->UpdateInt("textEnabled", 0);
+	currProg->UpdateInt("textEnabled", 0);*/
 	
 	// Create and attach the camera to the scene
 	camera.Init(Vector3(100,-10,100), Vector3(100,0,100), Vector3(0,0,1));
@@ -149,6 +147,9 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Win", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Win")->textureID = LoadTGA("Image//youwin.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Frame", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Frame")->textureID = LoadTGA("Image//frame.tga");
+
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
@@ -185,14 +186,19 @@ void GameplayScene::Init()
 	Character *knight1 = new MeleeCharacter("K2");
 	Character *knight2 = new MeleeCharacter("K3");
 	Character *knight3 = new MeleeCharacter("K4");
+	Character *knight4 = new MeleeCharacter("K5");
+
+	knight->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	knight1->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	knight2->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	knight3->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	knight4->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
 
 	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
+	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 3), knight1);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);
-
-	knight1->FSM = new AI_DefenceFSM(knight1);
-	knight1->FSM->map = &gameMap;
 
 	gameMap.Init(200, 200, 10, 10); // Must be last line
 
@@ -213,9 +219,6 @@ void GameplayScene::Update(double dt)
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
 	LightMouseControl(dt);
 	// <THERE>
-
-
-
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
 
@@ -290,11 +293,14 @@ void GameplayScene::Update(double dt)
 				{
 					if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
 					{
-						gameMap.enemies[i_enemyIterator]->b_tookAction = true;
 						if (gameMap.enemies[i_enemyIterator]->FSM->b_attack)
 						{
 							gameMap.enemies[i_enemyIterator]->FSM->b_attack = false;
 							controller.b_cameraTransition = true;
+						}
+						else
+						{
+							gameMap.enemies[i_enemyIterator]->b_tookAction = true;
 						}
 						i_enemyIterator++;
 						f_timeDelay = 1.f;
@@ -397,7 +403,9 @@ void GameplayScene::LightMouseControl(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
 	{
-
+		PlayerInfo::GetInstance()->player = gameMap.GetCharacter(1,1);
+		PlayerInfo::GetInstance()->enemy = gameMap.GetEnemy(1,3);
+		SceneManager::GetInstance()->SetActiveScene("IntroState",true);
 	}
 
 	// if the left mouse button was released
@@ -439,8 +447,6 @@ void GameplayScene::Render()
 	EntityManager::GetInstance()->Render();
 
 	// Setup 2D pipeline then render 2D
-	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
-	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
 
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
 	GraphicsManager::GetInstance()->DetachCamera();
@@ -464,13 +470,15 @@ void GameplayScene::Exit()
 	BGM->stop();
 	BGM->drop();
 	BGM = nullptr;
-	GraphicsManager::GetInstance()->DetachCamera();
 	turnDisplay->SetIsDone(true);
 	groundEntity->SetIsDone(true);
+	fps->SetIsDone(true);
 	turnDisplay = nullptr;
 	groundEntity = nullptr;
 	//playerInfo->DetachCamera();
-	fps->SetIsDone(true);
+	
+
+	gameMap.ClearCharacters();
 //	if (playerInfo->DropInstance() == false)
 //	{
 //#if _DEBUGMODE==1
@@ -488,9 +496,12 @@ void GameplayScene::Exit()
 void GameplayScene::Pause()
 {
 	BGM->setIsPaused(true);
-	groundEntity->SetIsDone(true);
-	fps->SetIsDone(true);
-	turnDisplay->SetIsDone(true);
+	//groundEntity->SetIsDone(true);
+	//fps->SetIsDone(true);
+	//turnDisplay->SetIsDone(true);
+	EntityManager::GetInstance()->RemoveEntity(groundEntity);
+	EntityManager::GetInstance()->RemoveEntity(fps);
+	EntityManager::GetInstance()->RemoveEntity(turnDisplay);
 	b_textRunning = false;
 }
 
@@ -516,6 +527,14 @@ void GameplayScene::Resume()
 		if (PlayerInfo::GetInstance()->player)
 		{
 			PlayerInfo::GetInstance()->player->b_tookAction = true;
+			for (int i = 0; i < gameMap.characters.size(); ++i)
+			{
+				if (gameMap.characters[i]->b_tookAction == false)
+				{
+					controller.selectedTile = gameMap.characters[i]->getPos();
+					break;
+				}
+			}
 		}		
 	}
 	else if (!PlayerInfo::GetInstance()->b_attacking)
@@ -524,7 +543,6 @@ void GameplayScene::Resume()
 		{
 			PlayerInfo::GetInstance()->enemy->b_tookAction = true;
 		}
-
 	}
 }
 

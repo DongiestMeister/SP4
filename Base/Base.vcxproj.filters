@@ -126,9 +126,6 @@
     <ClCompile Include="Source\AStar\AStar.cpp">
       <Filter>AStar</Filter>
     </ClCompile>
-    <ClCompile Include="Source\EmptyScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Controls\MapController.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
@@ -176,6 +173,9 @@
     </ClCompile>
     <ClCompile Include="Source\Application.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WarMapScene.cpp">
+      <Filter>GameStateManagement</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,9 +269,6 @@
     <ClInclude Include="Source\AStar\AStar.h">
       <Filter>AStar</Filter>
     </ClInclude>
-    <ClInclude Include="Source\EmptyScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Controls\MapController.h">
       <Filter>Controls</Filter>
     </ClInclude>
@@ -322,6 +319,9 @@
     </ClInclude>
     <ClInclude Include="Source\Character\Item.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WarMapScene.h">
+      <Filter>GameStateManagement</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

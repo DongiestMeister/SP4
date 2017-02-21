@@ -52,8 +52,9 @@ public:
 
 	void AddObstacle(int x, int y, int type, int cost);
 	Obstacle GetObstacle(int x, int y);
-private:
 	void ClearCharacters();
+private:
+	
 };
 
 
