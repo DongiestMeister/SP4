@@ -37,7 +37,8 @@ public:
 	int getDEX();
 	int getLUK();
 	int getDamage();
-	int getHP();
+	int getMaxHP();
+	int getCurrentHP();
 	Mesh* get3DMesh();
 	Mesh* get2DMesh();
 	Mesh* getPortrait();

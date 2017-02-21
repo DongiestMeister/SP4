@@ -530,13 +530,13 @@ void BattleScene::Render()
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	modelStack.PushMatrix();
 	modelStack.Translate(-130, -150, 10);
-	modelStack.Scale(player->getHP()*0.5, 10, 5);
+	modelStack.Scale(player->getCurrentHP()*0.5, 10, 5);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
 	modelStack.Translate(80, -150, 10);
-	modelStack.Scale(enemy->getHP()*0.5, 10, 5);
+	modelStack.Scale(enemy->getCurrentHP()*0.5, 10, 5);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
 	modelStack.PopMatrix();
 

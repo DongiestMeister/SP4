@@ -859,7 +859,7 @@ void PartySelectScene::Render()
 		// This character's LUK
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getLUK()), Vector3(3, 20, 1), 10.f, Color(1, 1, 1));
 		// This character's HP
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getHP()), Vector3(3, 3, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getMaxHP()), Vector3(3, 3, 1), 10.f, Color(1, 1, 1));
 
 		// This character's Attack Range
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_attackRange), Vector3(65.f, 54, 1), 10.f, Color(1, 1, 1));

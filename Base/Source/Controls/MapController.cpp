@@ -577,7 +577,7 @@ void MapController::RenderUI()
 		{
 			selectedUnit->calculateStats();
 			string Name = "Name:" + selectedUnit->getName();
-			string HP = "HP:" + std::to_string(selectedUnit->getHP());
+			string HP = "HP:" + std::to_string(selectedUnit->getCurrentHP()) + "/" + std::to_string(selectedUnit->getMaxHP());
 			string DMG = "DMG:" + std::to_string(selectedUnit->getDamage());
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(-50, 50, 1), 7.f, Color(0.3, 0.3, 1));
@@ -591,7 +591,7 @@ void MapController::RenderUI()
 			Character* temp = map->GetCharacter(selectedTile.x, selectedTile.y);
 			temp->calculateStats();
 			string Name = "Name:" + temp->getName();
-			string HP = "HP:" + std::to_string(temp->getHP());
+			string HP = "HP:" + std::to_string(temp->getCurrentHP()) + "/" + std::to_string(temp->getMaxHP());
 			string DMG = "DMG:" + std::to_string(temp->getDamage());
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(-50, 50, 1), 7.f, Color(0.3, 0.3, 1));
@@ -606,7 +606,7 @@ void MapController::RenderUI()
 			Character* temp = map->GetEnemy(selectedTile.x, selectedTile.y);
 			temp->calculateStats();
 			string Name = "Name:" + temp->getName();
-			string HP = "HP:" + std::to_string(temp->getHP());
+			string HP = "HP:" + std::to_string(temp->getCurrentHP()) + "/" + std::to_string(temp->getMaxHP());
 			string DMG = "DMG:" + std::to_string(temp->getDamage());
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(50, 50, 1), 7.f, Color(1, 0.3, 0.3));

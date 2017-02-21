@@ -1,10 +1,17 @@
 #include "Character.h"
 
-Character::Character()
+Character::Character() : i_strBoostFromTerrain(0), i_dexBoostFromTerrain(0), i_lukBoostFromTerrain(0), i_Damage(0)
 {
+	strategy = DEFENCE;
+
 	i_baseHP = 100;
 	i_currentHP = 100;
+	i_HP = 100;
 	i_idInParty = -1;
+
+	i_STR = 0;
+	i_DEX = 0;
+	i_LUK = 0;
 	character3DMesh = nullptr;
 	character2DMesh = nullptr;
 	characterPortrait = nullptr;
@@ -17,15 +24,6 @@ Character::Character()
 	s_Name = "";
 
 	FSM = nullptr;
-
-	i_strBoostFromTerrain = 0;
-	i_dexBoostFromTerrain = 0;
-	i_lukBoostFromTerrain = 0;
-
-	i_Damage = 0;
-
-	strategy = DEFENCE;
-
 }
 
 Character::~Character()
@@ -82,11 +80,15 @@ int Character::getDamage()
 	return i_Damage;
 }
 
-int Character::getHP()
+int Character::getCurrentHP()
+{
+	return i_currentHP;
+}
+
+int Character::getMaxHP()
 {
 	return i_HP;
 }
-
 Vector2 Character::getPos()
 {
 	return pos;
@@ -179,12 +181,11 @@ void Character::setPortrait(Mesh* newMesh)
 
 void Character::takeDamage(int dmg)
 {
-	i_HP -= dmg;
+	i_currentHP -= dmg;
 }
 
 void Character::calculateStats()
 {
-
 	if (armor)
 	{
 		i_HP = armor->i_hpBoost + i_baseHP;

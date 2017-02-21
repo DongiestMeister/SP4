@@ -14,8 +14,6 @@ MeleeCharacter::MeleeCharacter(string name)
 	weapon = nullptr;
 	// All stats boosts of 0, equivalent to not having an armor
 	armor = nullptr;
-	
-	
 }
 
 MeleeCharacter::~MeleeCharacter()

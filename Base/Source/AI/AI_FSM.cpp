@@ -51,9 +51,9 @@ void AI_FSM::SearchNearestWithHP()
 	float maxHP = INT_MAX;
 	for (int i = 0; i < targetVector.size(); ++i)
 	{
-		if (targetVector[i]->getHP() < maxHP)
+		if (targetVector[i]->getCurrentHP() < maxHP)
 		{
-			maxHP = targetVector[i]->getHP();
+			maxHP = targetVector[i]->getCurrentHP();
 			target = targetVector[i];
 		}
 	}
