@@ -372,17 +372,28 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 
 				b_isClashed = true;	//clash true
 
-				player->attack(enemy);
+			
+				if (player->attack(enemy))
+				{
+					//cout << enemy->getHP() << endl;
+					f_textDelayOnScreen = 5;
 
-				//cout << enemy->getHP() << endl;
-				f_textDelayOnScreen = 5;
+					DamageText* tempdmg = new DamageText();
+					tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx - 6, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
+					storeDmgTxt.push_back(tempdmg);
+					i_totaldmg_txt += dmgvalue;
+				}
+				else if (!player->attack(enemy))
+				{
+					f_textDelayOnScreen = 5;
 
-				DamageText* tempdmg = new DamageText();
-				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx-6, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
-				storeDmgTxt.push_back(tempdmg);
+					DamageText* tempdmg = new DamageText();
+					tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx - 6, -20, 60), "MISS", Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
+					storeDmgTxt.push_back(tempdmg);
+				}
+
+
 				
-
-				i_totaldmg_txt += dmgvalue;
 				TotalDamage->SetText("TOTAL DAMAGE:"+std::to_string(i_totaldmg_txt));
 				TotalDamage->SetScale(Vector3(23, 35, 20));
 
@@ -703,14 +714,14 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 	}
 	
 
-	if (i_totaldmg_txt >= (dmgvalue*50))
+	if (i_totaldmg_txt >= (dmgvalue*10))
 	{
 
 		TotalDamage->SetColor(Color(1, 0, 0));
 		TotalDmgCheer->SetColor(Color(1, 0, 0));
 		TotalDmgCheer->SetScale(TotalDamage->GetScale());
 		TotalDmgCheer->SetText("GOOD");
-		if (i_totaldmg_txt >= (dmgvalue*100))
+		if (i_totaldmg_txt >= (dmgvalue*20))
 		{
 
 			TotalDamage->SetColor(Color(1, 1, 0));

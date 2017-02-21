@@ -24,8 +24,8 @@ MeleeCharacter::~MeleeCharacter()
 
 bool MeleeCharacter::attack(Character* opponent)
 {
-	int hitRate;
-	if (weapon != NULL)
+	int hitRate =0;
+	if (weapon != nullptr)
 	{
 		hitRate = i_DEX + weapon->i_weaponAccuracy - opponent->getLUK();
 	}
@@ -42,7 +42,7 @@ bool MeleeCharacter::attack(Character* opponent)
 		b_tookAction = true;
 		return true;
 	}
-	if (hitRate < hitResult)
+	else if (hitRate < hitResult)
 	{
 		std::cout << "attack failed" << std::endl;
 		b_tookAction = true;

@@ -194,6 +194,8 @@ void GameplayScene::Init()
 	knight3->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
 	knight4->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
 
+	knight->equipWeapon(new Weapon(10, 50, false, "Xcalibur"));
+
 	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
 	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
 	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 3), knight1);
