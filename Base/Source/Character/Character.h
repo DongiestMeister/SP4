@@ -81,7 +81,12 @@ protected:
 	int i_STR; // Determines the unit's attack power
 	int i_DEX; // Determines the accuracy of the attacks of this unit
 	int i_LUK; // Determines the avoidability of this unit
-	string s_Name; // Name of this unit
+
+	int i_baseHP;
+	int i_baseSTR; 
+	int i_baseDEX; 
+	int i_baseLUK; 
+	string s_Name; 
 	Mesh* character3DMesh; // For battle uses
 	Mesh* character2DMesh; // For rendering on the tilemap
 	Mesh* characterPortrait; // For rendering on the status screen

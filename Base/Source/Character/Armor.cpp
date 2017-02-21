@@ -1,9 +1,15 @@
 #include "Armor.h"
 
-Armor::Armor() : i_strBoost(0), i_dexBoost(0), i_lukBoost(0), i_hpBoost(0)
+Armor::Armor()
 {
 	s_Name = "";
 	b_isEquippedToSomeone = false;
+	b_isArmor = true;
+	b_isWeapon = false;
+	i_strBoost = -1;
+	i_dexBoost = -1;
+	i_lukBoost = -1;
+	i_hpBoost = -1;
 }
 
 Armor::Armor(int str, int dex, int luk, int hp, bool equipped, string name)

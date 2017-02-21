@@ -8,9 +8,6 @@ struct Weapon : public Item
 	Weapon();
 	Weapon(int damage,int weaponAcc, bool equip,string name);
 	~Weapon();
-
-	int i_damageValue;
-	int i_weaponAccuracy;
 };
 #endif WEAPON_H
 

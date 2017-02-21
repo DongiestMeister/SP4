@@ -56,8 +56,12 @@ private:
 
 	int i_selectedUnitsCounter; // for units
 	int i_selectedOptionCounter; // for going into screens (select characters/change equipment etc)
+	int i_selectedEquipmentCounter;
 	bool b_statusCursor;
+	bool b_equipmentCursor;
+	bool showArrowAtEQs;
 	Vector3 statusCursorPos;
+	Vector3 equipmentCursorPos;
 	ISound* BGM;
 };
 

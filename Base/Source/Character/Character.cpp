@@ -2,7 +2,7 @@
 
 Character::Character()
 {
-	i_HP = 100;
+	i_baseHP = 100;
 	i_currentHP = 100;
 	i_idInParty = -1;
 	character3DMesh = nullptr;
@@ -184,12 +184,13 @@ void Character::takeDamage(int dmg)
 
 void Character::calculateStats()
 {
+
 	if (armor)
 	{
-		i_HP += armor->i_hpBoost;
-		i_STR += armor->i_strBoost + i_strBoostFromTerrain;
-		i_DEX += armor->i_dexBoost + i_dexBoostFromTerrain;
-		i_LUK += armor->i_lukBoost + i_lukBoostFromTerrain;
+		i_HP = armor->i_hpBoost + i_baseHP;
+		i_STR = armor->i_strBoost + i_strBoostFromTerrain + i_baseSTR;
+		i_DEX = armor->i_dexBoost + i_dexBoostFromTerrain + i_baseDEX;
+		i_LUK = armor->i_lukBoost + i_lukBoostFromTerrain + i_baseLUK;
 	}
 	if (weapon)
 	{
@@ -203,6 +204,8 @@ void Character::calculateStats()
 
 void Character::equipWeapon(Weapon* newWeapon)
 {
+	if (newWeapon == nullptr || weapon == newWeapon)
+		return;
 	if (newWeapon->b_isEquippedToSomeone == false)
 	{
 		if (weapon)
@@ -219,6 +222,8 @@ void Character::equipWeapon(Weapon* newWeapon)
 
 void Character::equipArmor(Armor* newArmor)
 {
+	if (newArmor == nullptr || armor == newArmor)
+		return;
 	if (newArmor->b_isEquippedToSomeone == false)
 	{
 		if (armor)

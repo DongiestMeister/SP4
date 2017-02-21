@@ -93,3 +93,89 @@ void PlayerInfo::addCharacterToEnemies(Vector2 pos, Character* newUnit)
 	newUnit->setPos(pos);
 	enemies.push_back(newUnit);
 }
+
+void PlayerInfo::addItem(Item* itemToAdd)
+{
+	inventory.push_back(itemToAdd);
+}
+
+void PlayerInfo::loadWeaponsFromCSV(const string filepath)
+{
+	std::ifstream file(filepath);
+	if (file.is_open())
+	{
+		while (file.good())
+		{
+			string aLineOfText = "";
+			getline(file, aLineOfText);
+
+			if (aLineOfText.empty())
+				continue;
+			Weapon* weapon = new Weapon();
+			string token;
+			std::istringstream iss(aLineOfText);
+			while (getline(iss, token, ','))
+			{
+				if (weapon->s_Name == "")
+					weapon->s_Name = token;
+				else if (weapon->i_damageValue == -1)
+					weapon->i_damageValue = stoi(token);
+				else if (weapon->i_weaponAccuracy == -1)
+					weapon->i_weaponAccuracy = stoi(token);
+				else if (weapon->s_ownerName == "")
+					weapon->s_ownerName = token;
+				else if (token == "FALSE")
+					weapon->b_isEquippedToSomeone = false;
+				else if (token == "TRUE")
+					weapon->b_isEquippedToSomeone = true;
+
+				weapon->itemPortrait = MeshBuilder::GetInstance()->GetMesh("swordPortrait");
+			}
+			addItem(weapon);
+		}
+	}
+	file.close();
+}
+
+void PlayerInfo::loadArmorFromCSV(const string filepath)
+{
+	std::ifstream file(filepath);
+	if (file.is_open())
+	{
+		while (file.good())
+		{
+			string aLineOfText = "";
+			getline(file, aLineOfText);
+
+
+			if (aLineOfText.empty())
+				continue;
+
+			Armor* armor = new Armor();
+			string token;
+			std::istringstream iss(aLineOfText);
+			while (getline(iss, token, ','))
+			{
+				if (armor->s_Name == "")
+					armor->s_Name = token;
+				else if (armor->i_strBoost == -1)
+					armor->i_strBoost = stoi(token);
+				else if (armor->i_dexBoost == -1)
+					armor->i_dexBoost = stoi(token);
+				else if (armor->i_lukBoost == -1)
+					armor->i_lukBoost = stoi(token);
+				else if (armor->i_hpBoost == -1)
+					armor->i_hpBoost = stoi(token);
+				else if (armor->s_ownerName == "")
+					armor->s_ownerName = token;
+				else if (token == "FALSE")
+					armor->b_isEquippedToSomeone = false;
+				else if (token == "TRUE")
+					armor->b_isEquippedToSomeone = true;
+			}
+			armor->itemPortrait = MeshBuilder::GetInstance()->GetMesh("armorPortrait");
+			addItem(armor);
+		}
+	}
+	file.close();
+}

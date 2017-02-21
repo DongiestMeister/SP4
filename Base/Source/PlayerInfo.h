@@ -4,10 +4,13 @@
 #include "SingletonTemplate.h"
 #include "Character/Character.h"
 #include "Character/Item.h"
+#include "MeshBuilder.h"
 
 #include <string>
 #include <vector>
 #include <map>
+#include <fstream>
+#include <sstream>
 
 using std::string;
 typedef std::vector<Item*> ItemList;
@@ -35,7 +38,10 @@ public:
 	void removeCharacterFromParty(int key);
 	void addCharacter(Vector2 pos, Character* newUnit); // adds a character to the list of characters that you have
 	void addCharacterToEnemies(Vector2 pos, Character* newUnit); //adds a character to the list of enemies
-
+	void addItem(Item* itemToAdd);
+	void loadWeaponsFromCSV(const string filepath);
+	void loadArmorFromCSV(const string filepath);
+	void saveInventoryToCSV(const string filepath);
 protected:
 
 

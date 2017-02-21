@@ -94,9 +94,7 @@ bool TileMap::LoadMap(const string mapName)
 				{
 					theScreenMap[theLineCounter][theColumnCounter++] = atoi(token.c_str()); // theScreenMap[y][x]
 				}
-				
 			}
-
 			theLineCounter--;
 		}
 	}
