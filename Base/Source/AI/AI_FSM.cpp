@@ -88,10 +88,33 @@ bool AI_FSM::SearchForPath()
 	return false;
 }
 
-bool AI_FSM::SearchPathWithTerrain()
+void AI_FSM::Attack()
 {
-	if (target)
+
+	PlayerInfo::GetInstance()->player = target;
+	PlayerInfo::GetInstance()->enemy = this->character;
+
+	PlayerInfo::GetInstance()->b_attacking = false;
+
+	b_attack = true;
+	b_isDone = true;
+}
+
+void AI_FSM::MoveUnit(double dt)
+{
+	// if dist btwn 1st pos & unit pos != 0
+	if (!(unitPath[0] - character->getPos()).IsZero())
 	{
-		return true;
+		//find difference btwm unitPath and unitPos and store as temp
+		Vector2 tempStep = (unitPath[0] - character->getPos()).Normalized();
+		//add temp to curr unit pos for new pos
+		character->setPos(character->getPos() + (tempStep *dt*f_speed));
+	}
+	//if value too low, snap character to "perfect" pos of unitPath
+	if ((unitPath[0] - character->getPos()).Length() < 0.1f)
+	{
+		character->setPos(unitPath[0]);
+		//delete 1st unitpath, unitPath[1] become unitPath[0]
+		unitPath.erase(unitPath.begin());
 	}
 }

@@ -74,3 +74,8 @@ bool Vector2::IsZero(void)
 {
 	return IsEqual(x, 0.f) && IsEqual(y, 0.f);
 }
+
+bool Vector2::operator==(Vector2 a)
+{
+	return IsEqual(x, a.x) && IsEqual(y, a.y);
+}

@@ -12,25 +12,35 @@ public:
 	{
 		//HEAL_MEMBER,
 		//DEFEND_POINT,
-		RETREAT,
+		
 		IDLE,
-		CHASE,
+		CHASE_DEF,
 		ATTACK,
-
+		STATIONARY,
+		RETURN_TO_POSITION,
+		RETREAT,
+		DEFEND_CAPTURE,
 	};
 
 	Defence_Strategy state;
 
-	void Idle();	//Detect closest player
+	void Idle(bool is_stationary);	//Detect closest player
 	void Chase(double dt);
-	void Attack();
-	void Retreat();	//Retreats to closest ally
+	void Retreat(double dt);	//Retreats to closest ally
+	void Stationary(double dt);			//only move when enemy close, return to position if player out of range
+	void ReturnToPosition(double dt);
+
+	void SetAIState(AI_DefenceFSM::Defence_Strategy _state);
 
 	bool Update(double dt);
 
 
 	// Stuff added for in-loop movement
 	bool b_foundEnemyPath;
+
+private:
+	//Original Position set for Stationary units
+	Vector2 originalPosition;
 };
 
 

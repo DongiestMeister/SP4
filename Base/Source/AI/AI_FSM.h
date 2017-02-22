@@ -13,15 +13,15 @@ public:
 	virtual bool Update(double dt) { return false; }
 
 	bool SearchForPath();
-	bool SearchPathWithTerrain();
+	
 
 	/*Search_funts sets :
 	- target
 	- nearestdistance	*/
-	/*void SearchNearest();
-	void SearchLowestHP();*/
-
 	void SearchNearestWithHP();
+
+	void Attack();
+	void MoveUnit(double dt);
 
 
 	Character *target;

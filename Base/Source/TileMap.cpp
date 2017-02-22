@@ -6,7 +6,11 @@
 #include "RenderHelper.h"
 #include "MeshBuilder.h"
 #include "AI\AI_DefenceFSM.h"
+
 #include "PlayerInfo.h"
+
+#include "AI\AI_OffenceFSM.h"
+
 
 
 using namespace std;
@@ -48,6 +52,8 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 		}
 		else if (temp->strategy == Character::OFFENCE)
 		{
+			temp->FSM = new AI_OffenceFSM(temp);
+			temp->FSM->map = this;
 		}
 		enemies.push_back(temp);
 	}

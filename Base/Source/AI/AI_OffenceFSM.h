@@ -24,8 +24,10 @@ public:
 
 
 		ATTACK,
-		CHASE
-
+		CHASE_ALL,
+		CHASE_RANGED,
+		CHASE_MELEE,
+		CHASE_CAPTURETARGET,
 
 	};
 
@@ -34,7 +36,6 @@ public:
 	vector<Vector2> unitPath;
 
 
-	void Attack();
 	void Chase(double dt);
 
 

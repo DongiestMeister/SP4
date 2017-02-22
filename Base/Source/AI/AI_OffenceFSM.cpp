@@ -4,6 +4,7 @@
 AI_OffenceFSM::AI_OffenceFSM(Character *character)
 {
 	this->character = character;
+	state = CHASE_ALL;
 }
 
 
@@ -21,9 +22,14 @@ bool AI_OffenceFSM::Update(double dt)
 		case ATTACK:
 			Attack(); 
 			break;
-		case CHASE:
+		case CHASE_ALL:
 			Chase(dt);
 			break;
+		case CHASE_RANGED:
+			break;
+		case CHASE_MELEE:
+			break;
+
 		default:
 			break;
 		}
@@ -31,11 +37,6 @@ bool AI_OffenceFSM::Update(double dt)
 	return false;
 }
 
-
-void AI_OffenceFSM::Attack()
-{
-	
-}
 
 void AI_OffenceFSM::Chase(double dt)
 {

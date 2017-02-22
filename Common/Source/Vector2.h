@@ -16,6 +16,7 @@ struct Vector2
 	Vector2 operator-( const Vector2& rhs ) const; //Vector subtraction
 	Vector2 operator-( void ) const; //Unary negation
 	Vector2 operator*( float scalar ) const; //Scalar multiplication
+	bool operator== (Vector2 a);
 	float Length( void ) const; //Get magnitude
 	float Dot( const Vector2& rhs ) const; //Dot product
 	Vector2 Normalized( void ); //Return a copy of this vector, normalized

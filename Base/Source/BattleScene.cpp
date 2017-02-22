@@ -21,6 +21,7 @@
 #include "Light.h"
 #include "RenderHelper.h"
 #include "MyMath.h"
+#include "AI\AI_DefenceFSM.h"
 
 
 #include <iostream>
@@ -116,6 +117,13 @@ void BattleScene::Init()
 
 	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT", "OBJ//iceknight_obj.obj");
 	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT")->textureID = LoadTGA("Image//iceknight_texture.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_RED", "OBJ//iceknight_obj.obj");
+	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_RED")->textureID = LoadTGA("Image//iceknight_red.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_YELLOW", "OBJ//iceknight_obj.obj");
+	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_YELLOW")->textureID = LoadTGA("Image//iceknight_yellow.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_GREEN", "OBJ//iceknight_obj.obj");
+	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_GREEN")->textureID = LoadTGA("Image//iceknight_green.tga");
+
 	MeshBuilder::GetInstance()->GenerateOBJ("BAR_BAR", "OBJ//bar_bar.obj");
 
 	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_TREE", "OBJ//Tree_low.obj");
@@ -563,28 +571,14 @@ void BattleScene::RenderSkyBox()
 
 }
 
+
+
 void BattleScene::RenderProps()
 {
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 
 
-	//Right - Enemy Render
-	modelStack.PushMatrix();
-	modelStack.Translate(enemy_posx, 0, 60);
-	modelStack.Scale(3, 3, 3);
-	modelStack.Rotate(180, 0, 0, 1);
-	modelStack.Rotate(110, 0, 1, 0);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT"));
-	modelStack.PopMatrix();
-
-	//Left - Player Render
-	modelStack.PushMatrix();
-	modelStack.Translate(player_posx, 0, 60);
-	modelStack.Scale(3, 3, 3);
-	modelStack.Rotate(180, 0, 0, 1);
-	modelStack.Rotate(-110, 0, 1, 0);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT"));
-	modelStack.PopMatrix();
+	RenderUnitsModels(modelStack);
 
 
 
@@ -616,6 +610,39 @@ void BattleScene::RenderProps()
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BASIC_TREE"));
 		modelStack.PopMatrix();
 	}
+}
+
+void BattleScene::RenderUnitsModels(MS& _ms)
+{
+	if (enemy->strategy == Character::DEFENCE)
+	{
+		//Right - Enemy Render
+		_ms.PushMatrix();
+		_ms.Translate(enemy_posx, 0, 60);
+		_ms.Scale(3, 3, 3);
+		_ms.Rotate(180, 0, 0, 1);
+		_ms.Rotate(110, 0, 1, 0);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_GREEN"));
+		_ms.PopMatrix();
+	}
+	else
+	{
+		_ms.PushMatrix();
+		_ms.Translate(enemy_posx, 0, 60);
+		_ms.Scale(3, 3, 3);
+		_ms.Rotate(180, 0, 0, 1);
+		_ms.Rotate(110, 0, 1, 0);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_RED"));
+		_ms.PopMatrix();
+	}
+	//Left - Player Render
+	_ms.PushMatrix();
+	_ms.Translate(player_posx, 0, 60);
+	_ms.Scale(3, 3, 3);
+	_ms.Rotate(180, 0, 0, 1);
+	_ms.Rotate(-110, 0, 1, 0);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT"));
+	_ms.PopMatrix();
 }
 
 void BattleScene::RenderTextStuff(double dt, int dmgvalue)

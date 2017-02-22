@@ -38,6 +38,7 @@ public:
 
 	void RunBattleAnimation(double dt, bool ranged, int dmgvalue);
 	void RenderProps();
+	void RenderUnitsModels(MS& _ms);
 	void TakenHitAnimation(float& type_pos);
 	void RenderSkyBox();
 	void LightMouseControl(double dt);
