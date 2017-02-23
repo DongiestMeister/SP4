@@ -214,6 +214,7 @@ void GameplayScene::Init()
 
 	DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
 	b_renderWin = false;
+	b_renderLose = false;
 	if (PlayerInfo::GetInstance()->level)
 	{
 		condition = PlayerInfo::GetInstance()->level->condition;
@@ -231,7 +232,7 @@ void GameplayScene::Update(double dt)
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
 
-	if (!b_renderWin || !b_renderLose)
+	if (!b_renderWin && !b_renderLose)
 	{
 		if (!b_textRunning)
 		{
@@ -339,17 +340,18 @@ void GameplayScene::Update(double dt)
 		controller.Update(dt);
 	}
 
-	if (condition == KILL && !b_renderWin)
+	if (condition == KILL && (!b_renderWin && !b_renderLose))
 	{
 		if (gameMap.enemies.size() == 0)
 		{
 			DisplayWin(true);
 		}
+		else if (gameMap.characters.size() == 0)
+		{
+			DisplayWin(false);
+		}
 	}
-	else if (gameMap.characters.size() == 0)
-	{
-		DisplayWin(false);
-	}
+
 
 	
 
@@ -509,6 +511,14 @@ void GameplayScene::Render()
 		modelStack.Translate(bannerPos.x, bannerPos.y, 3);
 		modelStack.Scale(100, 70, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Win"));
+		modelStack.PopMatrix();
+	}
+	else if (b_renderLose)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(bannerPos.x, bannerPos.y, 3);
+		modelStack.Scale(100, 70, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Lose"));
 		modelStack.PopMatrix();
 	}
 

@@ -116,12 +116,12 @@ void PartySelectScene::Init()
 	PlayerInfo::GetInstance()->loadWeaponsFromCSV("Image//Weapons.csv");
 	PlayerInfo::GetInstance()->loadArmorFromCSV("Image//Armors.csv");
 
-	Character* kek = new MeleeCharacter("KEK");
-	kek->setDamage(696969);
-	kek->equipWeapon(new Weapon(6969, 100, false, " "));
-	kek->equipArmor(new Armor(6, 9, 6, 9, false, " "));
-	kek->setPortrait("test");
-	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), kek);
+	//Character* kek = new MeleeCharacter("KEK");
+	//kek->setDamage(696969);
+	//kek->equipWeapon(new Weapon(6969, 100, false, " "));
+	//kek->equipArmor(new Armor(6, 9, 6, 9, false, " "));
+	//kek->setPortrait("test");
+	//PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), kek);
 	
 	selectedPos.Set(-47, 52.5f, 0);
 	currentScreen = CURR_SCREEN_SELECT_OPTION;
@@ -193,6 +193,10 @@ void PartySelectScene::Update(double dt)
 				currentScreen = CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER;
 				selectedPos.Set(-60, 40, 0);
 				i_selectedUnitsCounter = 0;
+			}
+			else if (i_selectedOptionCounter == 3) // Change equipment
+			{
+				SceneManager::GetInstance()->SetActiveScene("GameState");
 			}
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
