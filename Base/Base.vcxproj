@@ -40,6 +40,7 @@
     <ClCompile Include="Source\OptionState.cpp" />
     <ClCompile Include="Source\PartySelectScene.cpp" />
     <ClCompile Include="Source\PlayerInfo.cpp" />
+    <ClCompile Include="Source\RecruitScene.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneGraph.cpp" />
     <ClCompile Include="Source\SceneGraph\SceneNode.cpp" />
     <ClCompile Include="Source\SceneGraph\Transform.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="Source\OptionState.h" />
     <ClInclude Include="Source\PartySelectScene.h" />
     <ClInclude Include="Source\PlayerInfo.h" />
+    <ClInclude Include="Source\RecruitScene.h" />
     <ClInclude Include="Source\SceneGraph\SceneGraph.h" />
     <ClInclude Include="Source\SceneGraph\SceneNode.h" />
     <ClInclude Include="Source\SceneGraph\Transform.h" />

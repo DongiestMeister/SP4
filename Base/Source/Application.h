@@ -14,6 +14,7 @@
 #include "BattleScene.h"
 #include "PartySelectScene.h"
 #include "WarMapScene.h"
+#include "RecruitScene.h"
 
 class ShaderProgram;
 struct GLFWwindow;

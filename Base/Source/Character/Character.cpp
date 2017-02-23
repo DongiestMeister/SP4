@@ -14,7 +14,7 @@ Character::Character() : i_strBoostFromTerrain(0), i_dexBoostFromTerrain(0), i_l
 	i_LUK = 0;
 	character3DMesh = nullptr;
 	character2DMesh = nullptr;
-	characterPortrait = nullptr;
+	characterPortrait = "";
 	weapon = nullptr;
 	armor = nullptr;
 
@@ -47,11 +47,6 @@ Character::~Character()
 	{
 		//delete character2DMesh;
 		//character2DMesh = nullptr;
-	}
-	if (characterPortrait)
-	{
-		//delete characterPortrait;
-		//characterPortrait = nullptr;
 	}
 	if (FSM)
 	{
@@ -110,9 +105,7 @@ Mesh* Character::get2DMesh()
 
 Mesh* Character::getPortrait()
 {
-	if (characterPortrait)
-		return characterPortrait;
-	return nullptr;
+	return MeshBuilder::GetInstance()->GetMesh(characterPortrait);
 }
 
 Weapon* Character::getWeapon()
@@ -174,9 +167,9 @@ void Character::set2DMesh(Mesh* newMesh)
 	character2DMesh = newMesh;
 }
 
-void Character::setPortrait(Mesh* newMesh)
+void Character::setPortrait(string meshName)
 {
-	characterPortrait = newMesh;
+	characterPortrait = meshName;
 }
 
 void Character::takeDamage(int dmg)

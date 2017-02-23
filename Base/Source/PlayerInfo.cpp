@@ -11,36 +11,33 @@ PlayerInfo::PlayerInfo()
 
 PlayerInfo::~PlayerInfo()
 {
-	for (CharactersList::iterator it = party.begin(); it != party.end(); it++)
+	party.clear();
+	
+	for (CharactersList::iterator it = availableUnits.begin(); it != availableUnits.end();)
 	{
-		delete (*it);
-		(*it) = nullptr;
+		if (*it)
+		{
+			delete (*it);
+			it = availableUnits.erase(it);
+		}
 	}
-	for (CharactersList::iterator it = availableUnits.begin(); it != availableUnits.end(); it++)
+	for (CharactersList::iterator it = enemies.begin(); it != enemies.end();)
 	{
-		delete (*it);
-		(*it) = nullptr;
+		if (*it)
+		{
+			delete (*it);
+			it = enemies.erase(it);
+		}
 	}
-	for (CharactersList::iterator it = enemies.begin(); it != enemies.end(); it++)
+	for (ItemList::iterator it = inventory.begin(); it != inventory.end();)
 	{
-		delete (*it);
-		(*it) = nullptr;
+		if (*it)
+		{
+			delete (*it);
+			it = inventory.erase(it);
+		}
 	}
-	for (ItemList::iterator it = inventory.begin(); it != inventory.end(); it++)
-	{
-		delete (*it);
-		(*it) = nullptr;
-	}
-	//if (player)
-	//{
-	//	delete player;
-	//	player = nullptr;
-	//}
-	//if (enemy)
-	//{
-	//	delete enemy;
-	//	enemy = nullptr;
-	//}
+
 }
 
 bool PlayerInfo::addCharacterToParty(Vector2 pos, Character* newUnit, int key)
@@ -111,6 +108,11 @@ void PlayerInfo::loadWeaponsFromCSV(const string filepath)
 			string aLineOfText = "";
 			getline(file, aLineOfText);
 
+			size_t pos = aLineOfText.find("/");
+			if (pos != string::npos)
+			{
+				aLineOfText = aLineOfText.substr(0, pos);
+			}
 			if (aLineOfText.empty())
 				continue;
 			Weapon* weapon = new Weapon();
@@ -131,7 +133,7 @@ void PlayerInfo::loadWeaponsFromCSV(const string filepath)
 				else if (token == "TRUE")
 					weapon->b_isEquippedToSomeone = true;
 
-				weapon->itemPortrait = MeshBuilder::GetInstance()->GetMesh("swordPortrait");
+				weapon->itemPortrait = "swordPortrait";
 			}
 			addItem(weapon);
 		}
@@ -150,6 +152,11 @@ void PlayerInfo::loadArmorFromCSV(const string filepath)
 			getline(file, aLineOfText);
 
 
+			size_t pos = aLineOfText.find("/");
+			if (pos != string::npos)
+			{
+				aLineOfText = aLineOfText.substr(0, pos);
+			}
 			if (aLineOfText.empty())
 				continue;
 
@@ -175,7 +182,7 @@ void PlayerInfo::loadArmorFromCSV(const string filepath)
 				else if (token == "TRUE")
 					armor->b_isEquippedToSomeone = true;
 			}
-			armor->itemPortrait = MeshBuilder::GetInstance()->GetMesh("armorPortrait");
+			armor->itemPortrait = "armorPortrait";
 			addItem(armor);
 		}
 	}

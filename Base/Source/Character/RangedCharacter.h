@@ -8,6 +8,7 @@ public:
 	RangedCharacter(string name);
 	virtual ~RangedCharacter();
 	virtual bool attack(Character* opponent);
+	virtual RangedCharacter* clone();
 };
 
 #endif RANGEDCHARACTER_H

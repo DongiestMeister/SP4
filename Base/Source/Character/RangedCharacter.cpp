@@ -41,3 +41,8 @@ bool RangedCharacter::attack(Character* opponent)
 	}
 	return false;
 }
+
+RangedCharacter* RangedCharacter::clone()
+{
+	return new RangedCharacter(*this);
+}

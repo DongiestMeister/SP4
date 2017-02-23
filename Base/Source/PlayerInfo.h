@@ -42,6 +42,7 @@ public:
 	void addItem(Item* itemToAdd);
 	void loadWeaponsFromCSV(const string filepath);
 	void loadArmorFromCSV(const string filepath);
+	void loadCharactersFromCSV(const string filepath);
 	void saveInventoryToCSV(const string filepath);
 protected:
 

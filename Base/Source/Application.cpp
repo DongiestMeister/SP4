@@ -182,6 +182,7 @@ void Application::Init()
 	SceneManager::GetInstance()->AddScene("BattleState", new BattleScene());
 	SceneManager::GetInstance()->AddScene("PartySelect", new PartySelectScene());
 	SceneManager::GetInstance()->AddScene("WarMap", new WarMapScene());
+	SceneManager::GetInstance()->AddScene("RecruitState", new RecruitScene());
 	//
 	SceneManager::GetInstance()->SetActiveScene("IntroState");
 }

@@ -6,6 +6,7 @@
 #include "MyMath.h"
 #include "Mesh.h"
 #include "Vector2.h"
+#include "MeshBuilder.h"
 #include <string>
 #include <vector>
 
@@ -54,7 +55,7 @@ public:
 	void setHP(int newHP);
 	void set3DMesh(Mesh* newMesh);
 	void set2DMesh(Mesh* newMesh);
-	void setPortrait(Mesh* newMesh);
+	void setPortrait(string meshName);
 	void setPos(Vector2 newPos);
 
 	int i_movementCost;
@@ -90,7 +91,7 @@ protected:
 	string s_Name; 
 	Mesh* character3DMesh; // For battle uses
 	Mesh* character2DMesh; // For rendering on the tilemap
-	Mesh* characterPortrait; // For rendering on the status screen
+	string characterPortrait; // For rendering on the status screen
 };
 
 typedef std::vector<Character*> CharactersList;

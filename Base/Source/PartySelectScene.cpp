@@ -113,66 +113,16 @@ void PartySelectScene::Init()
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
 	float fontSize = 25.0f;
 	float halfFontSize = fontSize / 2.0f;
-	//for (int i = 0; i < 6; ++i)
-	//{
-	//	textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,1.0f,0.0f));
-	//}
-	//textObj[0]->SetPosition(Vector3(halfWindowWidth * 0.75 - fontSize * 2, -halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
-	//textObj[0]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
-
-	//textObj[3]->SetPosition(Vector3(-halfWindowWidth * 0.25 - fontSize * 2, halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
-	//textObj[3]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
-
-	//textObj[4]->SetPosition(Vector3(-halfWindowWidth * 0.15 - fontSize * 2, halfWindowHeight * 0.65 + fontSize + halfFontSize, 0.0f));
-
-	//textObj[5]->SetPosition(Vector3(-halfWindowWidth * 0.9 - fontSize * 2, -halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
-	//textObj[5]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
 	PlayerInfo::GetInstance()->loadWeaponsFromCSV("Image//Weapons.csv");
 	PlayerInfo::GetInstance()->loadArmorFromCSV("Image//Armors.csv");
+
 	Character* kek = new MeleeCharacter("KEK");
 	kek->setDamage(696969);
-	kek->setPortrait(MeshBuilder::GetInstance()->GetMesh("test"));
+	kek->equipWeapon(new Weapon(6969, 100, false, " "));
+	kek->equipArmor(new Armor(6, 9, 6, 9, false, " "));
+	kek->setPortrait("test");
 	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), kek);
 	
-
-	Character* derp = new MeleeCharacter("DERP69KEK");
-	derp->setDamage(696969);
-	derp->setPortrait(MeshBuilder::GetInstance()->GetMesh("selected"));
-	derp->equipWeapon(new Weapon(6969, 100, false, "69 swordz"));
-	derp->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
-	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), derp);
-
-	Character* d = new MeleeCharacter("d");
-	d->setDamage(696969);
-	d->setPortrait(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
-	d->equipWeapon(new Weapon(6969, 100, false, "69 swordz"));
-	d->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
-	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), d);
-
-	Character* dik = new MeleeCharacter("deek");
-	dik->setDamage(696969);
-	dik->setPortrait(MeshBuilder::GetInstance()->GetMesh("test"));
-	dik->equipWeapon(new Weapon(6969, 100, false, "69 swordz"));
-	dik->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
-	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), dik);
-
-	Character* a = new MeleeCharacter("derpina");
-	a->setDamage(696969);
-	a->setPortrait(MeshBuilder::GetInstance()->GetMesh("selected"));
-	a->equipWeapon(new Weapon(6969, 100, false, "69 swordz"));
-	a->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
-	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), a);
-
-	for (int i = 0; i < 10; i++)
-	{
-		Character* a = new MeleeCharacter("derpina");
-		a->setDamage(696969);
-		a->setPortrait(MeshBuilder::GetInstance()->GetMesh("test"));
-		a->equipWeapon(new Weapon(6969, 100, false, "69 swordz"));
-		a->equipArmor(new Armor(6, 9, 6, 9, false, "69 armorz"));
-		PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), a);
-	}
-
 	selectedPos.Set(-47, 52.5f, 0);
 	currentScreen = CURR_SCREEN_SELECT_OPTION;
 	i_selectedOptionCounter = 0;
@@ -184,6 +134,7 @@ void PartySelectScene::Init()
 	i_selectedEquipmentCounter = 0;
 	b_equipmentCursor = 0;
 	equipmentCursorPos.Set(30, -40, 0);
+	showArrowAtEQs = false;
 }
 
 void PartySelectScene::Update(double dt)
@@ -227,9 +178,6 @@ void PartySelectScene::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 		lights[0]->position.y += (float)(10.f * dt);
 
-	if (KeyboardController::GetInstance()->IsKeyDown('M'))
-		SceneManager::GetInstance()->SetActiveScene("IntroState");
-
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
@@ -245,10 +193,6 @@ void PartySelectScene::Update(double dt)
 				currentScreen = CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER;
 				selectedPos.Set(-60, 40, 0);
 				i_selectedUnitsCounter = 0;
-			}
-			else if (i_selectedOptionCounter == 3) // Idk what this is
-			{
-				SceneManager::GetInstance()->SetActiveScene("GameState");
 			}
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
@@ -598,7 +542,7 @@ void PartySelectScene::Update(double dt)
 			else if (i_selectedOptionCounter == -1)
 				i_selectedOptionCounter = 3;
 		}
-		if (currentScreen == CURR_SCREEN_SELECT_UNITS)
+		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
 		{
 			selectedPos.y += 30;
 			if (selectedPos.y > -10)
@@ -873,9 +817,15 @@ void PartySelectScene::Render()
 		// This character's Movement Range
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_movementCost), Vector3(65.f, 37, 1), 10.f, Color(1, 1, 1));
 		// This character's weapon's name
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getWeapon()->s_Name), Vector3(65.f, 20, 1), 10.f, Color(1, 1, 1));
+		if (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getWeapon() == nullptr)
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), " ", Vector3(65.f, 20, 1), 10.f, Color(1, 1, 1));
+		else
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getWeapon()->s_Name), Vector3(65.f, 20, 1), 10.f, Color(1, 1, 1));
 		// This character's armor's name
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getArmor()->s_Name), Vector3(65.f, 3, 1), 10.f, Color(1, 1, 1));
+		if (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getArmor() == nullptr)
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), " ", Vector3(65.f, 20, 1), 10.f, Color(1, 1, 1));
+		else
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getArmor()->s_Name), Vector3(65.f, 3, 1), 10.f, Color(1, 1, 1));
 		// This character's name
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getName()), Vector3(-75, 69, 1), 15.f, Color(1, 1, 1));
 	}
@@ -974,7 +924,7 @@ void PartySelectScene::Render()
 				modelStack.PushMatrix();
 				modelStack.Translate(-80 + (x * 20), (y * 31) + 10, 0);
 				modelStack.Scale(15, 15 * 16 / 9, 1);
-				RenderHelper::RenderMesh(PlayerInfo::GetInstance()->inventory.at(counter)->itemPortrait);
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter)->itemPortrait));
 				modelStack.PopMatrix();
 				counter++;
 				if (counter >= PlayerInfo::GetInstance()->inventory.size())
@@ -1001,6 +951,6 @@ void PartySelectScene::Exit()
 	//	}
 
 	// Delete the lights
-	//GraphicsManager::GetInstance()->RemoveLight("lights[0]");
-	//GraphicsManager::GetInstance()->RemoveLight("lights[1]");
+//	delete lights[0];
+	//delete lights[1];
 }

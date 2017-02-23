@@ -177,6 +177,9 @@
     <ClCompile Include="Source\WarMapScene.cpp">
       <Filter>GameStateManagement</Filter>
     </ClCompile>
+    <ClCompile Include="Source\RecruitScene.cpp">
+      <Filter>GameStateManagement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -321,6 +324,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\WarMapScene.h">
+      <Filter>GameStateManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RecruitScene.h">
       <Filter>GameStateManagement</Filter>
     </ClInclude>
   </ItemGroup>
