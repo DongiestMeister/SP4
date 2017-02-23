@@ -1,6 +1,7 @@
 #include "AI_DefenceFSM.h"
 #include "../AStar/AStar.h"
 #include "SceneManager.h"
+#include "../PlayerInfo.h"
 
 AI_DefenceFSM::AI_DefenceFSM(Character *character)
 {
@@ -73,9 +74,11 @@ void AI_DefenceFSM::Chase(double dt)
 	if (!b_foundEnemyPath)
 	{
 		b_foundEnemyPath = SearchForPath();
-
-		map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-		map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+		if (b_foundEnemyPath)
+		{
+			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+			map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+		}
 	}
 
 	//if unit != took action, = current unit to move

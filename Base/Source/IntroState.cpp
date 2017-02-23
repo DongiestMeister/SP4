@@ -61,9 +61,9 @@ void CIntroState::Update(double dt)
 	if ((timer -= dt) <= 0)
 	{
 		cout << "Loading Menustate" << endl;
-		SceneManager::GetInstance()->SetActiveScene("GameState");
-		//SceneManager::GetInstance()->SetActiveScene("MenuState");
-	//	SceneManager::GetInstance()->SetActiveScene("PartySelect");
+		//SceneManager::GetInstance()->SetActiveScene("GameState");
+		SceneManager::GetInstance()->SetActiveScene("MenuState");
+		//SceneManager::GetInstance()->SetActiveScene("WarMap");
 	}
 	float screenwidth = Application::GetInstance().GetWindowWidth();
 

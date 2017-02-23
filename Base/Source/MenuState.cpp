@@ -91,12 +91,12 @@ void CMenuState::Update(double dt)
 		arrow->SetPosition(Vector3(halfWindowWidth / 2 + 250, halfWindowHeight - 70 - (int)state * 210, 0.1f));
 	}
 
-	if (KeyboardController::GetInstance()->IsKeyReleased(VK_RETURN))
+	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (state == PLAY)
 		{
 			cout << "Loading LevelSelect" << endl;
-			SceneManager::GetInstance()->SetActiveScene("GameState");
+			SceneManager::GetInstance()->SetActiveScene("WarMap");
 		}
 		/*else if (state == OPTIONS)
 		{

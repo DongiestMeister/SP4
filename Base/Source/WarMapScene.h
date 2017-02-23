@@ -11,13 +11,12 @@
 #include <vector>
 #include "Sounds/Music.h"
 #include "Lua\LuaInterface.h"
-#include "TileMap.h"
-#include "AStar\AStar.h"
-#include "Controls\MapController.h"
+#include "Level.h"
 
 class ShaderProgram;
 class SceneManager;
 class TextEntity;
+class SpriteEntity;
 class Light;
 
 using std::vector;
@@ -36,6 +35,17 @@ public:
 	virtual void Resume();
 
 private:
+	enum BUTTONS
+	{
+		PLAY,
+		OPTIONS,
+		RECRUIT,
+		B_TOTAL
+	};
+
+	BUTTONS currentButton;
+	SpriteEntity *select;
+
 	ShaderProgram* currProg;
 	FPSCamera camera;
 	TextEntity* fps;
@@ -44,15 +54,23 @@ private:
 
 	ISound* BGM;
 
-	void LightMouseControl(double dt);
+	void MouseControl(double dt);
 
 	void RenderBackground();
+	void RenderButtons();
+	void RenderLevels();
+	float f_buttonXoffset;
 
 	enum CURRENT_COUNTRY
 	{
 		SINGAPORE,
 		C_TOTAL
 	};
+
+	vector<Level> levelList;
+	unsigned int levelIterator;
+
+	void RandomLevels();
 
 	CURRENT_COUNTRY country;
 };

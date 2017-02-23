@@ -182,25 +182,23 @@ void GameplayScene::Init()
 
 	controller.Init(&gameMap, &camera,&b_playerTurn);
 
-	Character *knight = new MeleeCharacter("K1");
-	Character *knight1 = new MeleeCharacter("K2");
-	Character *knight2 = new MeleeCharacter("K3");
-	Character *knight3 = new MeleeCharacter("K4");
-	Character *knight4 = new MeleeCharacter("K5");
+	//Character *knight = new MeleeCharacter("K1");
+	//Character *knight1 = new MeleeCharacter("K2");
+	//Character *knight2 = new MeleeCharacter("K3");
+	//Character *knight3 = new MeleeCharacter("K4");
+	//Character *knight4 = new MeleeCharacter("K5");
 
-	knight->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
-	knight1->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
-	knight2->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
-	knight3->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
-	knight4->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	//knight->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	//knight1->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	//knight2->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	//knight3->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
+	//knight4->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
 
-	knight->equipWeapon(new Weapon(10, 50, false, "Xcalibur"));
-
-	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
-	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
-	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 3), knight1);
-	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
-	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);
+	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
+	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
+	//PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 3), knight1);
+	//PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
+	//PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);
 
 	gameMap.Init(200, 200, 10, 10); // Must be last line
 
@@ -211,6 +209,10 @@ void GameplayScene::Init()
 
 	DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
 	b_renderWin = false;
+	if (PlayerInfo::GetInstance()->level)
+	{
+		condition = PlayerInfo::GetInstance()->level->condition;
+	}
 }
 
 void GameplayScene::Update(double dt)
@@ -329,6 +331,11 @@ void GameplayScene::Update(double dt)
 
 	controller.Update(dt);
 
+	if (b_renderWin && winPos.y > 0)
+	{
+		winPos = winPos + Vector2(0, -100 * dt);
+	}
+
 	GraphicsManager::GetInstance()->UpdateLights(dt);
 
 	// Update the 2 text object values. NOTE: Can do this in their own class but i'm lazy to do it now :P
@@ -406,6 +413,9 @@ void GameplayScene::LightMouseControl(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
 	{
+		SceneManager::GetInstance()->SetActiveScene("WarMap");
+		PlayerInfo::GetInstance()->level->b_completed = true;
+		PlayerInfo::GetInstance()->level->b_win = true;
 	}
 
 	// if the left mouse button was released
@@ -449,16 +459,18 @@ void GameplayScene::Render()
 	// Setup 2D pipeline then render 2D
 
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
-	GraphicsManager::GetInstance()->DetachCamera();
+	GraphicsManager::GetInstance()->DetachCamera(); 
+
+	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	//
-	//if (b_renderWin)
-	//{
-	//	modelStack.PushMatrix();
-	//	modelStack.Translate(winPos.x, winPos.y, 3);
-	//	modelStack.Scale(100, 70, 1);
-	//	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Win"));
-	//	modelStack.PopMatrix();
-	//}
+	if (b_renderWin)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(winPos.x, winPos.y, 3);
+		modelStack.Scale(100, 70, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Win"));
+		modelStack.PopMatrix();
+	}
 
 	controller.RenderUI();
 	EntityManager::GetInstance()->RenderUI();

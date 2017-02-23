@@ -15,11 +15,13 @@
 #include "TileMap.h"
 #include "AStar\AStar.h"
 #include "Controls\MapController.h"
+#include "Level.h"
 
 class ShaderProgram;
 class SceneManager;
 class TextEntity;
 class Light;
+
 
 using std::vector;
 
@@ -35,7 +37,6 @@ public:
 	virtual void Exit();
 	virtual void Pause();
 	virtual void Resume();
-
 private:
 	float f_timeDelay;
 
@@ -71,13 +72,6 @@ private:
 	bool b_textRunning;
 
 	int i_enemyIterator;
-
-	enum VICTORY_CONDITION
-	{
-		KILL,
-		SURVIVE,
-		CAPTURE
-	};
 
 	VICTORY_CONDITION condition;
 };

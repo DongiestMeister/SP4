@@ -23,8 +23,8 @@ struct Item // All items to inherit from this class
 	int i_damageValue;
 	int i_weaponAccuracy;
 
-	Item() : s_ownerName(""){ itemPortrait = nullptr;}
-	virtual ~Item(){ if (itemPortrait){ delete itemPortrait; itemPortrait = nullptr; } }
+	Item() : s_ownerName(""){ itemPortrait = nullptr; }
+	virtual ~Item(){ if (itemPortrait){ itemPortrait = nullptr; } }
 
 };
 

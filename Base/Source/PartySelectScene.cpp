@@ -227,6 +227,9 @@ void PartySelectScene::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 		lights[0]->position.y += (float)(10.f * dt);
 
+	if (KeyboardController::GetInstance()->IsKeyDown('M'))
+		SceneManager::GetInstance()->SetActiveScene("IntroState");
+
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
@@ -242,6 +245,10 @@ void PartySelectScene::Update(double dt)
 				currentScreen = CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER;
 				selectedPos.Set(-60, 40, 0);
 				i_selectedUnitsCounter = 0;
+			}
+			else if (i_selectedOptionCounter == 3) // Idk what this is
+			{
+				SceneManager::GetInstance()->SetActiveScene("GameState");
 			}
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
@@ -994,6 +1001,6 @@ void PartySelectScene::Exit()
 	//	}
 
 	// Delete the lights
-	delete lights[0];
-	delete lights[1];
+	//GraphicsManager::GetInstance()->RemoveLight("lights[0]");
+	//GraphicsManager::GetInstance()->RemoveLight("lights[1]");
 }

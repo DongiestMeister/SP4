@@ -6,6 +6,7 @@
 #include "RenderHelper.h"
 #include "MeshBuilder.h"
 #include "AI\AI_DefenceFSM.h"
+#include "PlayerInfo.h"
 
 
 using namespace std;

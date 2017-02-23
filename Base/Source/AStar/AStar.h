@@ -47,6 +47,7 @@ public:
 	Node* AStar::getFromCloseList(Node* succ);
 
 	vector<Vector2> bestPath;
+	TileMap *map;
 };
 
 #endif

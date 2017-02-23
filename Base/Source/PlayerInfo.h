@@ -4,7 +4,7 @@
 #include "SingletonTemplate.h"
 #include "Character/Character.h"
 #include "Character/Item.h"
-#include "MeshBuilder.h"
+#include "Level.h"
 
 #include <string>
 #include <vector>
@@ -32,6 +32,7 @@ public:
 	Character *player;
 	Character *enemy;
 	ItemList inventory; // Vector of items that the player has. Includes Weapons, Armors, Recovery Items etc...
+	Level *level;
 
 	bool b_attacking;
 	bool addCharacterToParty(Vector2 pos, Character* newUnit, int key);

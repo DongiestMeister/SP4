@@ -5,6 +5,7 @@ PlayerInfo::PlayerInfo()
 	player = nullptr;
 	enemy = nullptr; 
 	b_attacking = true;
+	level = nullptr;
 }
 
 PlayerInfo::~PlayerInfo()

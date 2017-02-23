@@ -6,7 +6,6 @@ using std::endl;
 
 #define MIN_COST (float) 1.0		// Minimum Permissible Cost	For Heuristics	
 #define ALPHA    (float) 0.5		// Scaling Factor For Heuristics
-#define MAX_COST (float) 20.0
 
 // Declare Structure Representing Neighborhood Of A Node
 const struct { int x, y; } succ[4] = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
@@ -27,6 +26,7 @@ AStar::AStar(int sx, int sy, int gx, int gy, TileMap *map)
 	this->grid = map->theScreenMap;
 	this->ROWS = map->numTilesHeight;
 	this->COLS = map->numTilesWidth;
+	this->map = map;
 }
 
 // Get Best ( Minimum f ) Node From Open List
@@ -66,7 +66,7 @@ float AStar::Compute_g(Node* n){
 	float tempG;
 	if (n->parent != NULL) tempG = n->parent->g;
 	else tempG = n->g;
-	return (float)(1.0 + ALPHA * (tempG - 1.0));
+	return (float)((map->GetObstacle(n->x, n->y).cost + 1.0) + ALPHA * (tempG - 1.0));
 }
 
 // Calculate Cost From Start 'n' to Goal Node Using 'Manhattan' Distance Formula

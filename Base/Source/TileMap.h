@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "Vector3.h"
-#include "PlayerInfo.h"
+#include "Character\Character.h"
 
 using std::vector;
 using std::string;
