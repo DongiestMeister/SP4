@@ -166,7 +166,7 @@ void BattleScene::Init()
 	f_SceneIntroDelay = 1;
 
 	b_isClashed = true;	//on start clash is true (clashed)
-	b_bonusRush = false; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
+	b_bonusRush = true; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
 
 	b_spamLock = false; //Should not be touched. Automatically locks if not bonus + clashed once
 
@@ -209,8 +209,18 @@ void BattleScene::Update(double dt)
 	}
 
 	//animation always running
-	if (player)
+	
+
+	if (PlayerInfo::GetInstance()->b_attacking)
+	{
 		RunBattleAnimation(dt, false, player->getDamage());
+	}
+	else
+	{
+		RunBattleAnimation(dt, false, enemy->getDamage());
+	}
+
+
 
 	LightMouseControl(dt);
 	
@@ -441,14 +451,27 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			{
 				b_isClashed = true;
 
-				enemy->attack(player);
-				f_textDelayOnScreen = 5;
+				if (enemy->attack(player))
+				{
+					f_textDelayOnScreen = 5;
 
-				DamageText* tempdmg = new DamageText();
-				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
-				storeDmgTxt.push_back(tempdmg);
+					DamageText* tempdmg = new DamageText();
+					tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
+					storeDmgTxt.push_back(tempdmg);
+					i_totaldmg_txt += dmgvalue;
+				}
+				else if (!enemy->attack(player))
+				{
+					f_textDelayOnScreen = 5;
 
-				i_totaldmg_txt += dmgvalue;
+					DamageText* tempdmg = new DamageText();
+					tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), "MISS", Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
+					storeDmgTxt.push_back(tempdmg);
+				}
+
+
+
+				//i_totaldmg_txt += dmgvalue;
 				TotalDamage->SetText("TOTAL DAMAGE:" + std::to_string(i_totaldmg_txt));
 				TotalDamage->SetScale(Vector3(23, 35, 20));
 

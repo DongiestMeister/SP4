@@ -6,13 +6,12 @@
 class AI_DefenceFSM : public AI_FSM
 {
 public:
-	AI_DefenceFSM(Character *character);
-	~AI_DefenceFSM();
+
 	enum Defence_Strategy
 	{
 		//HEAL_MEMBER,
 		//DEFEND_POINT,
-		
+
 		IDLE,
 		CHASE_DEF,
 		ATTACK,
@@ -22,9 +21,14 @@ public:
 		DEFEND_CAPTURE,
 	};
 
-	Defence_Strategy state;
+	AI_DefenceFSM(Character *character, AI_DefenceFSM::Defence_Strategy init_state);
+	~AI_DefenceFSM();
+	
 
-	void Idle(bool is_stationary);	//Detect closest player
+	Defence_Strategy state;
+	Defence_Strategy originalState;
+
+	void Idle(double dt, bool is_stationary);	//Detect closest player
 	void Chase(double dt);
 	void Retreat(double dt);	//Retreats to closest ally
 	void Stationary(double dt);			//only move when enemy close, return to position if player out of range

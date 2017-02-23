@@ -47,7 +47,7 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 		Character* temp = PlayerInfo::GetInstance()->enemies[i]->clone();
 		if (temp->strategy == Character::DEFENCE)
 		{
-			temp->FSM = new AI_DefenceFSM(temp);
+			temp->FSM = new AI_DefenceFSM(temp, AI_DefenceFSM::STATIONARY);
 			temp->FSM->map = this;
 		}
 		else if (temp->strategy == Character::OFFENCE)

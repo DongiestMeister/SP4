@@ -73,17 +73,31 @@ bool AI_FSM::SearchForPath()
 			if (character->i_movementCost >= search.bestPath.size() - 1)
 			{
 				b_reachEnd = true;
+				std::cout << "1" << std::endl;
+			}
+			else
+			{
+				std::cout << "2" << std::endl;
 			}
 			for (int i = 0; i < character->i_movementCost && i < search.bestPath.size() - 1; ++i)
 			{
 				unitPath.push_back(search.bestPath[i]);
+				std::cout << "loop" << std::endl;
 			}
+			std::cout << "3" << std::endl;
 			return true;
+
 		}
 		else
 		{
+			//dies here
+			std::cout << "4" << std::endl;
 			return false;
 		}
+	}
+	else
+	{
+		std::cout << "5" << std::endl;
 	}
 	return false;
 }
@@ -98,6 +112,7 @@ void AI_FSM::Attack()
 
 	b_attack = true;
 	b_isDone = true;
+
 }
 
 void AI_FSM::MoveUnit(double dt)
