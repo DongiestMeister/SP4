@@ -26,17 +26,18 @@ AI_FSM::~AI_FSM()
 void AI_FSM::SearchNearestWithHP()
 {
 	vector<Character*> targetVector;
+	targetVector.clear();
 	//run list of units
 	for (CharactersList::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
 	{
 		float nearestDistance = FLT_MAX;
-
+		
 		Character* enemy = *it;
 		//Check nearest target
 		if ((character->getPos() - enemy->getPos()).Length() < character->i_movementCost
 			&& (character->getPos() - enemy->getPos()).Length() <= nearestDistance)
 		{
-			targetVector.clear();
+			
 			targetVector.push_back(enemy);
 
 			nearestDistance = (character->getPos() - enemy->getPos()).Length();
@@ -53,11 +54,12 @@ void AI_FSM::SearchNearestWithHP()
 	{
 		if (targetVector[i]->getCurrentHP() < maxHP)
 		{
+			targetVector.clear();
 			maxHP = targetVector[i]->getCurrentHP();
 			target = targetVector[i];
 		}
 	}
-
+	std::cout << target->getPos().x << " : " << target->getPos().y << std::endl;
 
 }
 
@@ -73,25 +75,25 @@ bool AI_FSM::SearchForPath()
 			if (character->i_movementCost >= search.bestPath.size() - 1)
 			{
 				b_reachEnd = true;
-				std::cout << "1" << std::endl;
+				//std::cout << "1" << std::endl;
 			}
 			else
 			{
-				std::cout << "2" << std::endl;
+				//std::cout << "2" << std::endl;
 			}
 			for (int i = 0; i < character->i_movementCost && i < search.bestPath.size() - 1; ++i)
 			{
 				unitPath.push_back(search.bestPath[i]);
-				std::cout << "loop" << std::endl;
+				//std::cout << "loop" << std::endl;
 			}
-			std::cout << "3" << std::endl;
+			//std::cout << "3" << std::endl;
 			return true;
 
 		}
 		else
 		{
 			//dies here
-			std::cout << "4" << std::endl;
+			//std::cout << "4" << std::endl;
 			return false;
 		}
 	}

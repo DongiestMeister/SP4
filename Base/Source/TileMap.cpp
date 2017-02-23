@@ -206,7 +206,7 @@ void TileMap::AddEnemy(int x, int y, Character *unit)
 	unit->setPos(Vector2(x, y));
 	if (unit->strategy == Character::DEFENCE)
 	{
-		unit->FSM = new AI_DefenceFSM(unit, AI_DefenceFSM::IDLE);
+		unit->FSM = new AI_DefenceFSM(unit, AI_DefenceFSM::STATIONARY);
 		unit->FSM->map = this;
 	}
 	else if (unit->strategy == Character::OFFENCE)

@@ -115,6 +115,7 @@ void AI_DefenceFSM::Stationary(double dt)
 		{
 			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
 			map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;	
+			
 		}
 		else
 		{
@@ -131,7 +132,7 @@ void AI_DefenceFSM::Stationary(double dt)
 		if (!character->b_tookAction)
 		{
 			//STATIONARY CHASE = hardcoded fixed values so units dont move out of defending range
-			if ((character->getPos() - target->getPos()).Length() <= 2)
+			if ((character->getPos() - target->getPos()).Length() <= 3)
 			{
 				//must be called AFTER setting unitPath
 				MoveUnit(dt); 
@@ -164,7 +165,7 @@ void AI_DefenceFSM::Stationary(double dt)
 				b_foundEnemyPath = false;
 				state = IDLE;
 				b_isDone = true;
-				//std::cout << "Once" << std::endl;
+				std::cout << target->getPos().x << " : " << target->getPos().y << std::endl;
 			}
 		}
 	}

@@ -185,22 +185,22 @@ void GameplayScene::Init()
 
 	controller.Init(&gameMap, &camera,&b_playerTurn);
 
-	//Character *knight = new MeleeCharacter("K1");
+	Character *knight = new MeleeCharacter("K1");
 	Character *knight1 = new MeleeCharacter("K2");
 	Character *knight2 = new MeleeCharacter("K3");
 	Character *knight3 = new MeleeCharacter("K4");
-	//Character *knight4 = new MeleeCharacter("K5");
+	Character *knight4 = new MeleeCharacter("K5");
 
 
-	/*knight->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
-	knight1->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
-	knight2->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
-	knight3->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));
-	knight4->setPortrait(MeshBuilder::GetInstance()->GetMesh("Knight"));*/
+	knight->setPortrait(("Knight"));
+	knight1->setPortrait(("Knight"));
+	knight2->setPortrait(("Knight"));
+	knight3->setPortrait(("Knight"));
+	knight4->setPortrait(("Knight"));
 
 
-	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
-	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
+	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
+	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
 	gameMap.AddEnemy(1, 3, knight1);
 	gameMap.AddEnemy(1, 2, knight2);
 	gameMap.AddEnemy(1, 4, knight3);
