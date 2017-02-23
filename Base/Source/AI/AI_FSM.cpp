@@ -37,7 +37,7 @@ void AI_FSM::SearchNearestWithHP()
 		if ((character->getPos() - enemy->getPos()).Length() < character->i_movementCost
 			&& (character->getPos() - enemy->getPos()).Length() <= nearestDistance)
 		{
-			
+			//targetVector.clear();
 			targetVector.push_back(enemy);
 
 			nearestDistance = (character->getPos() - enemy->getPos()).Length();
