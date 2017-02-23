@@ -1,6 +1,7 @@
 #ifndef AI_FSM_H
 #define AI_FSM_H
 #include "../TileMap.h"
+#include "../PlayerInfo.h"
 
 class AI_FSM
 {
