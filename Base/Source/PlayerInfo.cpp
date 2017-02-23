@@ -1,4 +1,5 @@
 #include "PlayerInfo.h"
+#include "MeshBuilder.h"
 
 PlayerInfo::PlayerInfo()
 {
