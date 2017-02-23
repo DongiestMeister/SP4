@@ -62,9 +62,10 @@ private:
 	void DisplayText(string text,Vector3 color);
 
 
-	void DisplayWin();
+	void DisplayWin(bool win);
 	bool b_renderWin;
-	Vector2 winPos;
+	bool b_renderLose;
+	Vector2 bannerPos;
 
 
 	void LightMouseControl(double dt);

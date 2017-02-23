@@ -53,6 +53,9 @@ public:
 	void AddObstacle(int x, int y, int type, int cost);
 	Obstacle GetObstacle(int x, int y);
 	void ClearCharacters();
+
+	void RemovePlayer(Character *character);
+	void RemoveEnemy(Character *character);
 private:
 	
 };

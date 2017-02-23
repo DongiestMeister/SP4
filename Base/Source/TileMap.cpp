@@ -198,6 +198,14 @@ Character* TileMap::GetCharacter(int x, int y)
 void TileMap::AddEnemy(int x, int y, Character *unit)
 {
 	unit->setPos(Vector2(x, y));
+	if (unit->strategy == Character::DEFENCE)
+	{
+		unit->FSM = new AI_DefenceFSM(unit);
+		unit->FSM->map = this;
+	}
+	else if (unit->strategy == Character::OFFENCE)
+	{
+	}
 	enemies.push_back(unit);
 }
 
@@ -266,4 +274,33 @@ Obstacle TileMap::GetObstacle(int x, int y)
 	}
 
 	return Obstacle(x, y, 0, 0);
+}
+
+void TileMap::RemovePlayer(Character* character)
+{
+	for (vector<Character*>::iterator it = characters.begin(); it != characters.end(); ++it)
+	{
+		Character* temp = *it;
+		if (temp == character)
+		{
+			delete *it;
+			characters.erase(it);
+			break;
+		}
+	}
+}
+
+void TileMap::RemoveEnemy(Character* character)
+{
+	for (vector<Character*>::iterator it = enemies.begin(); it != enemies.end(); ++it)
+	{
+		Character* temp = *it;
+		if (temp == character)
+		{
+			theScreenMap[temp->getPos().y][temp->getPos().x] = 0;
+			delete *it;
+			enemies.erase(it);
+			break;
+		}
+	}
 }

@@ -147,6 +147,9 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Win", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Win")->textureID = LoadTGA("Image//youwin.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Lose", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Lose")->textureID = LoadTGA("Image//youwin.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("Frame", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Frame")->textureID = LoadTGA("Image//frame.tga");
 
@@ -198,9 +201,9 @@ void GameplayScene::Init()
 
 	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
 	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
-	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 3), knight1);
-	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 2), knight2);
-	PlayerInfo::GetInstance()->addCharacterToEnemies(Vector2(1, 4), knight3);
+	gameMap.AddEnemy(1, 3, knight1);
+	gameMap.AddEnemy(1, 2, knight2);
+	gameMap.AddEnemy(1, 4, knight3);
 
 	gameMap.Init(200, 200, 10, 10); // Must be last line
 
@@ -228,87 +231,100 @@ void GameplayScene::Update(double dt)
 	// Update the player position and other details based on keyboard and mouse inputs
 	//playerInfo->Update(dt);
 
-	if (!b_textRunning)
+	if (!b_renderWin || !b_renderLose)
 	{
-		if (b_playerTurn)
+		if (!b_textRunning)
 		{
-			bool b_done = true;
-			for (int i = 0; i < gameMap.characters.size(); ++i)
+			if (b_playerTurn)
 			{
-				if (!gameMap.characters[i]->b_tookAction)
+				bool b_done = true;
+				for (int i = 0; i < gameMap.characters.size(); ++i)
 				{
-					b_done = false;
-				}
-			}
-			if (b_done)
-			{
-				b_playerTurn = false;
-				gameMap.ResetCharacters();
-				if (!b_textRunning)
-					DisplayText("Enemy Turn", Vector3(1, 0, 0));
-			}
-		}
-		else
-		{
-			bool b_done = true;
-			for (int i = 0; i < gameMap.enemies.size(); ++i)
-			{
-				if (!gameMap.enemies[i]->b_tookAction)
-				{
-					b_done = false;
-				}
-			}
-			if (b_done)
-			{
-				b_playerTurn = true;
-				gameMap.ResetEnemies();
-				i_turn++;
-				controller.selectedTile = gameMap.characters[0]->getPos();
-				if (!b_textRunning)
-					DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
-			}
-		}
-	}
-
-	if (b_textRunning)
-	{	
-		if (turnDisplay->GetPosition().x > 0 - 50 && turnDisplay->GetPosition().x < 0 - 40)
-		{
-			turnDisplay->SetPosition(turnDisplay->GetPosition() + Vector3(5, 0, 0) * dt);
-		}
-		else
-		{
-			turnDisplay->SetPosition(turnDisplay->GetPosition() + Vector3(150, 0, 0) * dt);
-		}
-
-		if (turnDisplay->GetPosition().x > 100)
-		{
-			EntityManager::GetInstance()->RemoveEntity(turnDisplay);
-			turnDisplay = nullptr;
-			b_textRunning = false;
-		}
-	}
-	else
-	{
-		// Enemies movement
-		if (!b_playerTurn)
-		{
-			controller.selectedTile = gameMap.enemies[i_enemyIterator]->getPos();
-			if ((f_timeDelay -= dt) < 0)
-			{
-				if (gameMap.enemies[i_enemyIterator]->FSM && !gameMap.enemies[i_enemyIterator]->b_tookAction)
-				{
-					if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
+					if (!gameMap.characters[i]->b_tookAction)
 					{
-						if (gameMap.enemies[i_enemyIterator]->FSM->b_attack)
+						b_done = false;
+					}
+				}
+				if (b_done)
+				{
+					b_playerTurn = false;
+					gameMap.ResetCharacters();
+					if (!b_textRunning)
+						DisplayText("Enemy Turn", Vector3(1, 0, 0));
+				}
+			}
+			else
+			{
+				bool b_done = true;
+				for (int i = 0; i < gameMap.enemies.size(); ++i)
+				{
+					if (!gameMap.enemies[i]->b_tookAction)
+					{
+						b_done = false;
+					}
+				}
+				if (b_done)
+				{
+					b_playerTurn = true;
+					gameMap.ResetEnemies();
+					i_turn++;
+					controller.selectedTile = gameMap.characters[0]->getPos();
+					if (!b_textRunning)
+						DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
+				}
+			}
+		}
+
+		if (b_textRunning)
+		{
+			if (turnDisplay->GetPosition().x > 0 - 50 && turnDisplay->GetPosition().x < 0 - 40)
+			{
+				turnDisplay->SetPosition(turnDisplay->GetPosition() + Vector3(5, 0, 0) * dt);
+			}
+			else
+			{
+				turnDisplay->SetPosition(turnDisplay->GetPosition() + Vector3(150, 0, 0) * dt);
+			}
+
+			if (turnDisplay->GetPosition().x > 100)
+			{
+				EntityManager::GetInstance()->RemoveEntity(turnDisplay);
+				turnDisplay = nullptr;
+				b_textRunning = false;
+			}
+		}
+		else
+		{
+			// Enemies movement
+			if (!b_playerTurn)
+			{
+				controller.selectedTile = gameMap.enemies[i_enemyIterator]->getPos();
+				if ((f_timeDelay -= dt) < 0)
+				{
+					if (gameMap.enemies[i_enemyIterator]->FSM && !gameMap.enemies[i_enemyIterator]->b_tookAction)
+					{
+						if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
 						{
-							gameMap.enemies[i_enemyIterator]->FSM->b_attack = false;
-							controller.b_cameraTransition = true;
+							if (gameMap.enemies[i_enemyIterator]->FSM->b_attack)
+							{
+								gameMap.enemies[i_enemyIterator]->FSM->b_attack = false;
+								controller.b_cameraTransition = true;
+							}
+							else
+							{
+								gameMap.enemies[i_enemyIterator]->b_tookAction = true;
+							}
+							i_enemyIterator++;
+							f_timeDelay = 1.f;
+							if (i_enemyIterator == gameMap.enemies.size())
+							{
+								i_enemyIterator = 0;
+							}
 						}
-						else
-						{
-							gameMap.enemies[i_enemyIterator]->b_tookAction = true;
-						}
+					}
+					else
+					{
+						gameMap.enemies[i_enemyIterator]->b_tookAction = true;
 						i_enemyIterator++;
 						f_timeDelay = 1.f;
 						if (i_enemyIterator == gameMap.enemies.size())
@@ -317,25 +333,29 @@ void GameplayScene::Update(double dt)
 						}
 					}
 				}
-				else
-				{
-					gameMap.enemies[i_enemyIterator]->b_tookAction = true;
-					i_enemyIterator++;
-					f_timeDelay = 1.f;
-					if (i_enemyIterator == gameMap.enemies.size())
-					{
-						i_enemyIterator = 0;
-					}
-				}
 			}
 		}
+
+		controller.Update(dt);
 	}
 
-	controller.Update(dt);
-
-	if (b_renderWin && winPos.y > 0)
+	if (condition == KILL && !b_renderWin)
 	{
-		winPos = winPos + Vector2(0, -100 * dt);
+		if (gameMap.enemies.size() == 0)
+		{
+			DisplayWin(true);
+		}
+	}
+	else if (gameMap.characters.size() == 0)
+	{
+		DisplayWin(false);
+	}
+
+	
+
+	if ((b_renderWin || b_renderLose) && bannerPos.y > 0)
+	{
+		bannerPos = bannerPos + Vector2(0, -100 * dt);
 	}
 
 	GraphicsManager::GetInstance()->UpdateLights(dt);
@@ -413,11 +433,28 @@ void GameplayScene::LightMouseControl(double dt)
 	//if (KeyboardController::GetInstance()->IsKeyDown('P'))
 	//	lights[0]->position.y += (float)(10.f * dt);
 
+	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
+	{
+		if (b_renderWin)
+		{
+			SceneManager::GetInstance()->SetActiveScene("WarMap");
+			PlayerInfo::GetInstance()->level->b_completed = true;
+			PlayerInfo::GetInstance()->level->b_win = true;
+		}
+		else if (b_renderLose)
+		{
+			SceneManager::GetInstance()->SetActiveScene("WarMap");
+			PlayerInfo::GetInstance()->level->b_completed = true;
+			PlayerInfo::GetInstance()->level->b_win = false;
+		}
+	}
+
 	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
 	{
-		SceneManager::GetInstance()->SetActiveScene("WarMap");
-		PlayerInfo::GetInstance()->level->b_completed = true;
-		PlayerInfo::GetInstance()->level->b_win = true;
+		if (gameMap.characters.size() > 0)
+		{
+			gameMap.RemovePlayer(gameMap.characters[0]);
+		}
 	}
 
 	// if the left mouse button was released
@@ -432,6 +469,7 @@ void GameplayScene::LightMouseControl(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
 	{
 		//cout << "Middle Mouse Button was released!" << endl;
+		DisplayWin(true);
 	}
 	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
 	{
@@ -468,7 +506,7 @@ void GameplayScene::Render()
 	if (b_renderWin)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(winPos.x, winPos.y, 3);
+		modelStack.Translate(bannerPos.x, bannerPos.y, 3);
 		modelStack.Scale(100, 70, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Win"));
 		modelStack.PopMatrix();
@@ -544,6 +582,10 @@ void GameplayScene::Resume()
 		if (PlayerInfo::GetInstance()->player)
 		{
 			PlayerInfo::GetInstance()->player->b_tookAction = true;
+			if (PlayerInfo::GetInstance()->enemy->getCurrentHP() <= 0)
+			{
+				gameMap.RemoveEnemy(PlayerInfo::GetInstance()->enemy);
+			}
 			for (int i = 0; i < gameMap.characters.size(); ++i)
 			{
 				if (gameMap.characters[i]->b_tookAction == false)
@@ -559,6 +601,10 @@ void GameplayScene::Resume()
 		if (PlayerInfo::GetInstance()->enemy)
 		{
 			PlayerInfo::GetInstance()->enemy->b_tookAction = true;
+			if (PlayerInfo::GetInstance()->player->getCurrentHP() <= 0)
+			{
+				gameMap.RemovePlayer(PlayerInfo::GetInstance()->player);
+			}
 		}
 	}
 }
@@ -569,8 +615,9 @@ void GameplayScene::DisplayText(string text,Vector3 color)
 	turnDisplay = Create::Text2DObject("text", Vector3(-120, 0, 1.0f), text, Vector3(10, 10, 10), Color(color.x, color.y, color.z));
 }
 
-void GameplayScene::DisplayWin()
+void GameplayScene::DisplayWin(bool win)
 {
-	b_renderWin = true;
-	winPos = Vector2(0, 100);
+	b_renderWin = win;
+	b_renderLose = !win;
+	bannerPos = Vector2(0, 100);
 }

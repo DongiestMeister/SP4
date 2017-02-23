@@ -158,7 +158,7 @@ void BattleScene::Init()
 	f_SceneIntroDelay = 1;
 
 	b_isClashed = true;	//on start clash is true (clashed)
-	b_bonusRush = true; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
+	b_bonusRush = false; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
 
 	b_spamLock = false; //Should not be touched. Automatically locks if not bonus + clashed once
 

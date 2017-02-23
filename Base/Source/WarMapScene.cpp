@@ -225,7 +225,7 @@ void WarMapScene::MouseControl(double dt)
 		//cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
 	}
 
-	if (KeyboardController::GetInstance()->IsKeyPressed('Z'))
+	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (currentButton == PLAY)
 		{
