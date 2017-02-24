@@ -41,6 +41,7 @@ public:
 
 	// Stuff added for in-loop movement
 	bool b_foundEnemyPath;
+	bool b_foundReturnPath;
 
 private:
 	//Original Position set for Stationary units

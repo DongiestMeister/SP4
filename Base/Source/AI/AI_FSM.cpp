@@ -26,18 +26,20 @@ AI_FSM::~AI_FSM()
 void AI_FSM::SearchNearestWithHP()
 {
 	vector<Character*> targetVector;
-	targetVector.clear();
+	//targetVector.clear();
+	float nearestDistance = FLT_MAX;
+
 	//run list of units
 	for (CharactersList::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
 	{
-		float nearestDistance = FLT_MAX;
+		
 		
 		Character* enemy = *it;
 		//Check nearest target
 		if ((character->getPos() - enemy->getPos()).Length() < character->i_movementCost
-			&& (character->getPos() - enemy->getPos()).Length() <= nearestDistance)
+			&& (character->getPos() - enemy->getPos()).Length() < nearestDistance)
 		{
-			//targetVector.clear();
+			targetVector.clear();
 			targetVector.push_back(enemy);
 
 			nearestDistance = (character->getPos() - enemy->getPos()).Length();
@@ -59,48 +61,41 @@ void AI_FSM::SearchNearestWithHP()
 			target = targetVector[i];
 		}
 	}
-	std::cout << target->getPos().x << " : " << target->getPos().y << std::endl;
+	
 
 }
 
-bool AI_FSM::SearchForPath()
+bool AI_FSM::SearchForPath(int move_cost, Vector2 targetPosition)
 {
+	unitPath.clear();
+
 	if (target) // != null
 	{
-		unitPath.clear();
 		// Astar Search(curr pos , desired dist ,  )
-		AStar search((int)character->getPos().x, (int)character->getPos().y, (int)target->getPos().x, (int)target->getPos().y, map);
+		AStar search((int)character->getPos().x, (int)character->getPos().y, (int)targetPosition.x, (int)targetPosition.y, map);
 		if (search.Search())//search.Search() = Finds the nearest path between parameters
 		{
-			if (character->i_movementCost >= search.bestPath.size() - 1)
+			if (move_cost >= search.bestPath.size() - 1)
 			{
 				b_reachEnd = true;
 				//std::cout << "1" << std::endl;
 			}
-			else
-			{
-				//std::cout << "2" << std::endl;
-			}
-			for (int i = 0; i < character->i_movementCost && i < search.bestPath.size() - 1; ++i)
+		
+			for (int i = 0; i < move_cost && i < search.bestPath.size() - 1; ++i)
 			{
 				unitPath.push_back(search.bestPath[i]);
-				//std::cout << "loop" << std::endl;
+				//std::cout << "UnitPath : " << unitPath[i].x << " , " << unitPath[i].y << std::endl;
 			}
-			//std::cout << "3" << std::endl;
+			//std::cout << "new path" << std::endl;
 			return true;
 
 		}
 		else
 		{
-			//dies here
-			//std::cout << "4" << std::endl;
 			return false;
 		}
 	}
-	else
-	{
-		std::cout << "5" << std::endl;
-	}
+	
 	return false;
 }
 
@@ -126,6 +121,7 @@ void AI_FSM::MoveUnit(double dt)
 		Vector2 tempStep = (unitPath[0] - character->getPos()).Normalized();
 		//add temp to curr unit pos for new pos
 		character->setPos(character->getPos() + (tempStep *dt*f_speed));
+		//std::cout << "loop1111" << std::endl;
 	}
 	//if value too low, snap character to "perfect" pos of unitPath
 	if ((unitPath[0] - character->getPos()).Length() < 0.1f)
@@ -133,5 +129,8 @@ void AI_FSM::MoveUnit(double dt)
 		character->setPos(unitPath[0]);
 		//delete 1st unitpath, unitPath[1] become unitPath[0]
 		unitPath.erase(unitPath.begin());
+
+		//????
+		//std::cout << "loop22222" << std::endl;
 	}
 }

@@ -13,7 +13,7 @@ public:
 	Character *character;
 	virtual bool Update(double dt) { return false; }
 
-	bool SearchForPath();
+	bool SearchForPath(int move_cost, Vector2 targetPosition);
 	
 
 	/*Search_funts sets :
