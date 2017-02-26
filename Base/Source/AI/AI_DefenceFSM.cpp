@@ -118,10 +118,6 @@ void AI_DefenceFSM::Stationary(double dt)
 		}
 		else
 		{
-			b_foundEnemyPath = false;
-			
-
-			//std::cout << "ROUTE CANNOT BE FOUND" << std::endl;
 			if (!(character->getPos() == originalPosition))
 			{
 				/*ReturnToPosition(dt);*/
@@ -129,15 +125,9 @@ void AI_DefenceFSM::Stationary(double dt)
 			}
 			else
 			{
+				state = IDLE;
 				b_isDone = true;
 			}
-			
-			
-		}
-		else
-		{
-			state = IDLE;
-			b_isDone = true;
 		}
 	}
 
