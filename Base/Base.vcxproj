@@ -25,6 +25,7 @@
     <ClCompile Include="Source\Character\Weapon.cpp" />
     <ClCompile Include="Source\Controls\MapController.cpp" />
     <ClCompile Include="Source\DamageText.cpp" />
+    <ClCompile Include="Source\Enemy\EnemySpawner.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
     <ClCompile Include="Source\FPSCamera.cpp" />
     <ClCompile Include="Source\GameplayScene.cpp" />

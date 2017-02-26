@@ -69,6 +69,7 @@ bool TileMap::LoadMap(const string mapName)
 {
 	int theLineCounter = numTilesHeight - 1;
 	int theMaxNumOfColumns = 0;
+	enemySpawnPoints.clear();
 
 	ifstream file(mapName.c_str());
 	if (file.is_open())
@@ -90,18 +91,23 @@ bool TileMap::LoadMap(const string mapName)
 			{
 				if (atoi(token.c_str()) == 3) // Forest tile
 				{
-					theScreenMap[theLineCounter][theColumnCounter++] = 0;
 					AddObstacle(theColumnCounter, theLineCounter, 3, 1);
+					theScreenMap[theLineCounter][theColumnCounter++] = 0;
 				}
 				else if (atoi(token.c_str()) == 4) // Ocean tile
 				{
-					theScreenMap[theLineCounter][theColumnCounter++] = 0;
 					AddObstacle(theColumnCounter, theLineCounter, 4, 2);
+					theScreenMap[theLineCounter][theColumnCounter++] = 0;
 				}
 				else if (atoi(token.c_str()) == 5) // Goal tile
 				{
-					theScreenMap[theLineCounter][theColumnCounter++] = 0;
 					AddObstacle(theColumnCounter, theLineCounter, 5, 0);
+					theScreenMap[theLineCounter][theColumnCounter++] = 0;		
+				}
+				else if (atoi(token.c_str()) == 10)
+				{
+					enemySpawnPoints.push_back(Vector2(theColumnCounter, theLineCounter));
+					theScreenMap[theLineCounter][theColumnCounter++] = 0;
 				}
 				else if (theScreenMap[theLineCounter][theColumnCounter] != 2)
 				{
@@ -222,6 +228,7 @@ Character* TileMap::GetCharacter(int x, int y)
 void TileMap::AddEnemy(int x, int y, Character *unit)
 {
 	unit->setPos(Vector2(x, y));
+	theScreenMap[y][x] = 2;
 	if (unit->strategy == Character::DEFENCE)
 	{
 		unit->FSM = new AI_DefenceFSM(unit, AI_DefenceFSM::STATIONARY);

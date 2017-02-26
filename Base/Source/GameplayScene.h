@@ -16,6 +16,7 @@
 #include "AStar\AStar.h"
 #include "Controls\MapController.h"
 #include "Level.h"
+#include "Enemy\EnemySpawner.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -58,6 +59,7 @@ private:
 	ISound* BGM;
 
 	TileMap gameMap;
+	EnemySpawner spawner;
 
 	void DisplayText(string text,Vector3 color);
 

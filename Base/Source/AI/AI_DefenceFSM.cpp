@@ -88,7 +88,7 @@ void AI_DefenceFSM::Idle(double dt, bool is_stationary)
 		}
 		//std::cout << "r11" << std::endl;
 	}
-	else if (is_stationary)
+	else if (is_stationary && target != nullptr)
 	{
 		//state = STATIONARY;
 		Stationary(dt);

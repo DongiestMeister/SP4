@@ -38,6 +38,8 @@ public:
 	vector<Obstacle> obstacleList;
 	vector<Vector2> movePath;
 
+	vector<Vector2> enemySpawnPoints;
+
 	bool LoadMap(const string mapName);
 	void Render();
 

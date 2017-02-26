@@ -190,6 +190,18 @@ void GameplayScene::Init()
 	//textObj[5]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
 
 	controller.Init(&gameMap, &camera,&b_playerTurn);
+	spawner.Init(&gameMap);
+
+	spawner.AddToSpawnList(Enemy(Enemy::DEFENCE, 1));
+	spawner.AddToSpawnList(Enemy(Enemy::DEFENCE, 1));
+	spawner.AddToSpawnList(Enemy(Enemy::DEFENCE, 1));
+
+	gameMap.Init(200, 200, 10, 10);
+
+	if (gameMap.LoadMap("Image//MapDesign.csv"))
+	{
+		cout << "Succesfully loaded map!" << endl;
+	}
 
 	//Character *knight = new MeleeCharacter("K1");
 	Character *knight1 = new MeleeCharacter("K2");
@@ -208,13 +220,6 @@ void GameplayScene::Init()
 	gameMap.AddEnemy(5, 4, knight1);
 	gameMap.AddEnemy(6, 4, knight2);
 	gameMap.AddEnemy(7, 4, knight3);
-
-	gameMap.Init(200, 200, 10, 10);
-
-	if (gameMap.LoadMap("Image//MapDesign.csv"))
-	{
-		cout << "Succesfully loaded map!" << endl;
-	}
 
 	DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
 	b_renderWin = false;
@@ -265,6 +270,7 @@ void GameplayScene::Update(double dt)
 					b_playerTurn = false;
 					gameMap.ResetCharacters();
 					i_enemyIterator = 0;
+					spawner.SpawnWave(i_turn);
 					if (!b_textRunning)
 						DisplayText("Enemy Turn", Vector3(1, 0, 0));
 				}
