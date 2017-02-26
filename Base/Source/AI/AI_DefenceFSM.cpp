@@ -134,6 +134,11 @@ void AI_DefenceFSM::Stationary(double dt)
 			
 			
 		}
+		else
+		{
+			state = IDLE;
+			b_isDone = true;
+		}
 	}
 
 

@@ -71,6 +71,7 @@
     <ClInclude Include="Source\Character\Weapon.h" />
     <ClInclude Include="Source\Controls\MapController.h" />
     <ClInclude Include="Source\DamageText.h" />
+    <ClInclude Include="Source\Enemy\EnemySpawner.h" />
     <ClInclude Include="Source\EntityManager.h" />
     <ClInclude Include="Source\FPSCamera.h" />
     <ClInclude Include="Source\GameplayScene.h" />

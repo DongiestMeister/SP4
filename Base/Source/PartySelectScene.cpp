@@ -152,32 +152,6 @@ void PartySelectScene::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyDown('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	if (KeyboardController::GetInstance()->IsKeyDown('5'))
-	{
-		lights[0]->type = Light::LIGHT_POINT;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
-	{
-		lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
-	{
-		lights[0]->type = Light::LIGHT_SPOT;
-	}
-
-	if (KeyboardController::GetInstance()->IsKeyDown('I'))
-		lights[0]->position.z -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('K'))
-		lights[0]->position.z += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('J'))
-		lights[0]->position.x -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('L'))
-		lights[0]->position.x += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('O'))
-		lights[0]->position.y -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('P'))
-		lights[0]->position.y += (float)(10.f * dt);
-
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
@@ -263,6 +237,7 @@ void PartySelectScene::Update(double dt)
 	{
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
 		{
+			SceneManager::GetInstance()->SetActiveScene("WarMap");
 			// go back to level select
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)

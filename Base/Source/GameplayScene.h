@@ -75,6 +75,7 @@ private:
 	int i_enemyIterator;
 
 	VICTORY_CONDITION condition;
+	int i_surviveTurns;
 };
 
 #endif

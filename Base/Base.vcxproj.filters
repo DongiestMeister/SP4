@@ -49,6 +49,9 @@
     <Filter Include="AI">
       <UniqueIdentifier>{07dbec7f-af31-4fa6-b260-9040bf381596}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Enemy">
+      <UniqueIdentifier>{8dceac26-5a5a-46e1-9a7b-0dbb0da48c40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -328,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="Source\RecruitScene.h">
       <Filter>GameStateManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy\EnemySpawner.h">
+      <Filter>Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

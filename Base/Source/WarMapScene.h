@@ -64,12 +64,14 @@ private:
 	enum CURRENT_COUNTRY
 	{
 		SINGAPORE,
+		RUSSIA,
 		C_TOTAL
 	};
-
 	vector<Level> levelList;
 	unsigned int levelIterator;
+	int i_numCompleted;
 
+	void FinishWar();
 	void RandomLevels();
 
 	CURRENT_COUNTRY country;

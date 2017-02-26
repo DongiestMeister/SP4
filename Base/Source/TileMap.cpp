@@ -38,33 +38,29 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 	for (int i = 0; i < numTilesHeight; ++i)
 		theScreenMap[i].resize(numTilesWidth);
 
+	for (int i = 0; i < numTilesHeight; ++i)
+	{
+		for (int j = 0; j < numTilesWidth; ++j)
+		{
+			theScreenMap[i][j] = 0;
+		}
+	}
+
 	for (int i = 0; i < PlayerInfo::GetInstance()->party.size(); ++i)
 	{
 		characters.push_back(PlayerInfo::GetInstance()->party[i]->clone());
 	}
-	for (int i = 0; i < PlayerInfo::GetInstance()->enemies.size(); ++i)
-	{
-		Character* temp = PlayerInfo::GetInstance()->enemies[i]->clone();
-		if (temp->strategy == Character::DEFENCE)
-		{
-			temp->FSM = new AI_DefenceFSM(temp, AI_DefenceFSM::STATIONARY);
-			temp->FSM->map = this;
-		}
-		else if (temp->strategy == Character::OFFENCE)
-		{
-			temp->FSM = new AI_OffenceFSM(temp);
-			temp->FSM->map = this;
-		}
-		enemies.push_back(temp);
-	}
 
 	for (int i = 0; i < characters.size(); ++i)
 	{
-		theScreenMap[(int)characters[i]->getPos().y][(int)characters[i]->getPos().x] = 2;
+		characters[i]->setPos(Vector2(i, 0));
+		theScreenMap[0][i] = 2;
 	}
 
+	cout << enemies.size() << endl;
 	for (int i = 0; i < enemies.size(); ++i)
 	{
+		cout << enemies[i]->getPos() << endl;
 		theScreenMap[(int)enemies[i]->getPos().y][(int)enemies[i]->getPos().x] = 2;
 	}
 }
@@ -97,9 +93,23 @@ bool TileMap::LoadMap(const string mapName)
 					theScreenMap[theLineCounter][theColumnCounter++] = 0;
 					AddObstacle(theColumnCounter, theLineCounter, 3, 1);
 				}
+				else if (atoi(token.c_str()) == 4) // Ocean tile
+				{
+					theScreenMap[theLineCounter][theColumnCounter++] = 0;
+					AddObstacle(theColumnCounter, theLineCounter, 4, 2);
+				}
+				else if (atoi(token.c_str()) == 5) // Goal tile
+				{
+					theScreenMap[theLineCounter][theColumnCounter++] = 0;
+					AddObstacle(theColumnCounter, theLineCounter, 5, 0);
+				}
 				else if (theScreenMap[theLineCounter][theColumnCounter] != 2)
 				{
 					theScreenMap[theLineCounter][theColumnCounter++] = atoi(token.c_str()); // theScreenMap[y][x]
+				}
+				else
+				{
+					theColumnCounter++;
 				}
 			}
 			theLineCounter--;
@@ -135,7 +145,7 @@ void TileMap::Render()
 		Character *unit = (*it);
 		
 		modelStack.PushMatrix();
-		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.2, unit->getPos().y * tileSizeY + tileSizeY / 2);
+		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.4, unit->getPos().y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
@@ -147,7 +157,7 @@ void TileMap::Render()
 		Character *unit = (*it);
 
 		modelStack.PushMatrix();
-		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.2, unit->getPos().y * tileSizeY + tileSizeY / 2);
+		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.4, unit->getPos().y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
@@ -176,6 +186,14 @@ void TileMap::Render()
 		if (obstacleList[i].type == 3)
 		{
 			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Forest"));
+		}
+		else if (obstacleList[i].type == 4)
+		{
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Ocean"));
+		}
+		else if (obstacleList[i].type == 5)
+		{
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Flag"));
 		}
 		modelStack.PopMatrix();
 	}

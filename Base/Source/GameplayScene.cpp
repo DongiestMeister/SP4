@@ -128,6 +128,9 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Selected", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Selected")->textureID = LoadTGA("Image//selected.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("RedSelected", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("RedSelected")->textureID = LoadTGA("Image//redselected.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("SelectedArrow", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("SelectedArrow")->textureID = LoadTGA("Image//selectarrow.tga");
 
@@ -144,11 +147,14 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Forest", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Forest")->textureID = LoadTGA("Image//forest.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Flag", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Flag")->textureID = LoadTGA("Image//flag.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("Win", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Win")->textureID = LoadTGA("Image//youwin.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("Lose", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("Lose")->textureID = LoadTGA("Image//youwin.tga");
+	MeshBuilder::GetInstance()->GetMesh("Lose")->textureID = LoadTGA("Image//youlose.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("Frame", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Frame")->textureID = LoadTGA("Image//frame.tga");
@@ -185,27 +191,25 @@ void GameplayScene::Init()
 
 	controller.Init(&gameMap, &camera,&b_playerTurn);
 
-	Character *knight = new MeleeCharacter("K1");
+	//Character *knight = new MeleeCharacter("K1");
 	Character *knight1 = new MeleeCharacter("K2");
 	Character *knight2 = new MeleeCharacter("K3");
 	Character *knight3 = new MeleeCharacter("K4");
-	Character *knight4 = new MeleeCharacter("K5");
+	//Character *knight4 = new MeleeCharacter("K5");
 
 
-	knight->setPortrait(("Knight"));
-	knight1->setPortrait(("Knight"));
-	knight2->setPortrait(("Knight"));
-	knight3->setPortrait(("Knight"));
-	knight4->setPortrait(("Knight"));
+	knight1->setPortrait("Knight");
+	knight2->setPortrait("Knight");
+	knight3->setPortrait("Knight");
 
 
-	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
-	PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
-	gameMap.AddEnemy(1, 3, knight1);
-	gameMap.AddEnemy(1, 2, knight2);
-	gameMap.AddEnemy(1, 4, knight3);
+	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
+	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
+	gameMap.AddEnemy(5, 4, knight1);
+	gameMap.AddEnemy(6, 4, knight2);
+	gameMap.AddEnemy(7, 4, knight3);
 
-	gameMap.Init(200, 200, 10, 10); // Must be last line
+	gameMap.Init(200, 200, 10, 10);
 
 	if (gameMap.LoadMap("Image//MapDesign.csv"))
 	{
@@ -218,6 +222,10 @@ void GameplayScene::Init()
 	if (PlayerInfo::GetInstance()->level)
 	{
 		condition = PlayerInfo::GetInstance()->level->condition;
+		if (condition == SURVIVE)
+		{
+			i_surviveTurns = 10;
+		}
 	}
 }
 
@@ -229,8 +237,6 @@ void GameplayScene::Update(double dt)
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
 	LightMouseControl(dt);
 	// <THERE>
-	// Update the player position and other details based on keyboard and mouse inputs
-	//playerInfo->Update(dt);
 
 	if (!b_renderWin && !b_renderLose)
 	{
@@ -245,11 +251,20 @@ void GameplayScene::Update(double dt)
 					{
 						b_done = false;
 					}
+					if (condition == CAPTURE)
+					{
+						Vector2 pos = gameMap.characters[i]->getPos();
+						if (gameMap.GetObstacle(pos.x, pos.y).type == 5)
+						{
+							DisplayWin(true);
+						}
+					}
 				}
 				if (b_done)
 				{
 					b_playerTurn = false;
 					gameMap.ResetCharacters();
+					i_enemyIterator = 0;
 					if (!b_textRunning)
 						DisplayText("Enemy Turn", Vector3(1, 0, 0));
 				}
@@ -270,6 +285,7 @@ void GameplayScene::Update(double dt)
 					gameMap.ResetEnemies();
 					i_turn++;
 					controller.selectedTile = gameMap.characters[0]->getPos();
+					controller.b_forceCamera = false;
 					if (!b_textRunning)
 						DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
 				}
@@ -300,26 +316,26 @@ void GameplayScene::Update(double dt)
 			if (!b_playerTurn)
 			{
 				controller.selectedTile = gameMap.enemies[i_enemyIterator]->getPos();
+				controller.b_forceCamera = true;
 				if ((f_timeDelay -= dt) < 0)
 				{
 					if (gameMap.enemies[i_enemyIterator]->FSM && !gameMap.enemies[i_enemyIterator]->b_tookAction)
 					{
-						if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
+						if (!controller.b_cameraTransition)
 						{
-							if (gameMap.enemies[i_enemyIterator]->FSM->b_attack)
+							if (gameMap.enemies[i_enemyIterator]->FSM->Update(dt))
 							{
-								gameMap.enemies[i_enemyIterator]->FSM->b_attack = false;
-								controller.b_cameraTransition = true;
-							}
-							else
-							{
-								gameMap.enemies[i_enemyIterator]->b_tookAction = true;
-							}
-							i_enemyIterator++;
-							f_timeDelay = 1.f;
-							if (i_enemyIterator == gameMap.enemies.size())
-							{
-								i_enemyIterator = 0;
+								if (gameMap.enemies[i_enemyIterator]->FSM->b_attack)
+								{
+									gameMap.enemies[i_enemyIterator]->FSM->b_attack = false;
+									controller.b_cameraTransition = true;
+									camera.SetCameraPos(Vector3(controller.selectedTile.x * gameMap.tileSizeX + gameMap.tileSizeX / 2, camera.GetCameraPos().y, controller.selectedTile.y * gameMap.tileSizeY + gameMap.tileSizeY / 2));
+									camera.SetCameraTarget(Vector3(controller.selectedTile.x * gameMap.tileSizeX + gameMap.tileSizeX / 2, camera.GetCameraTarget().y, controller.selectedTile.y * gameMap.tileSizeY + gameMap.tileSizeY / 2));
+								}
+								else
+								{
+									gameMap.enemies[i_enemyIterator]->b_tookAction = true;
+								}
 							}
 						}
 					}
@@ -350,6 +366,21 @@ void GameplayScene::Update(double dt)
 		{
 			DisplayWin(false);
 		}
+	}
+	else if (condition == SURVIVE && (!b_renderWin && !b_renderLose))
+	{
+		if (i_turn > i_surviveTurns)
+		{
+			DisplayWin(true);
+		}
+		else if (gameMap.characters.size() == 0)
+		{
+			DisplayWin(false);
+		}
+	}
+	else if (gameMap.characters.size() == 0)
+	{
+		DisplayWin(false);
 	}
 
 
@@ -400,41 +431,6 @@ void GameplayScene::Update(double dt)
 
 void GameplayScene::LightMouseControl(double dt)
 {
-	if (KeyboardController::GetInstance()->IsKeyDown('1'))
-		glEnable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('2'))
-		glDisable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('3'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (KeyboardController::GetInstance()->IsKeyDown('4'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	if (KeyboardController::GetInstance()->IsKeyDown('5'))
-	{
-		lights[0]->type = Light::LIGHT_POINT;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
-	{
-		lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
-	{
-		lights[0]->type = Light::LIGHT_SPOT;
-	}
-
-	//if (KeyboardController::GetInstance()->IsKeyDown('I'))
-	//	lights[0]->position.z -= (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('K'))
-	//	lights[0]->position.z += (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('J'))
-	//	lights[0]->position.x -= (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('L'))
-	//	lights[0]->position.x += (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('O'))
-	//	lights[0]->position.y -= (float)(10.f * dt);
-	//if (KeyboardController::GetInstance()->IsKeyDown('P'))
-	//	lights[0]->position.y += (float)(10.f * dt);
-
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (b_renderWin)
@@ -601,6 +597,8 @@ void GameplayScene::Resume()
 				if (gameMap.characters[i]->b_tookAction == false)
 				{
 					controller.selectedTile = gameMap.characters[i]->getPos();
+					camera.SetCameraPos(Vector3(controller.selectedTile.x * gameMap.tileSizeX + gameMap.tileSizeX / 2, camera.GetCameraPos().y, controller.selectedTile.y * gameMap.tileSizeY + gameMap.tileSizeY / 2));
+					camera.SetCameraTarget(Vector3(controller.selectedTile.x * gameMap.tileSizeX + gameMap.tileSizeX / 2, camera.GetCameraTarget().y, controller.selectedTile.y * gameMap.tileSizeY + gameMap.tileSizeY / 2));
 					break;
 				}
 			}
@@ -627,7 +625,10 @@ void GameplayScene::DisplayText(string text,Vector3 color)
 
 void GameplayScene::DisplayWin(bool win)
 {
-	b_renderWin = win;
-	b_renderLose = !win;
-	bannerPos = Vector2(0, 100);
+	if (!b_renderWin && !b_renderLose)
+	{
+		b_renderWin = win;
+		b_renderLose = !win;
+		bannerPos = Vector2(0, 100);
+	}
 }

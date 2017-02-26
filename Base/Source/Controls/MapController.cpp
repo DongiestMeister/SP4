@@ -8,6 +8,16 @@
 
 MapController::MapController()
 {
+
+}
+
+MapController::~MapController()
+{
+
+}
+
+void MapController::Init(TileMap *map, FPSCamera *camera,bool *b_playerTurn)
+{
 	selectedTile.Set(0, 0);
 	selectedUnit = nullptr;
 	b_movingUnit = false;
@@ -24,18 +34,11 @@ MapController::MapController()
 	enemyIterator = 0;
 	b_cameraTransition = false;
 	tempOrtho = 100.f;
-}
 
-MapController::~MapController()
-{
-
-}
-
-void MapController::Init(TileMap *map, FPSCamera *camera,bool *b_playerTurn)
-{
 	this->map = map;
 	this->camera = camera;
 	this->b_playerTurn = b_playerTurn;
+	this->b_forceCamera = false;
 }
 
 void MapController::Update(double dt)
@@ -69,6 +72,7 @@ void MapController::Update(double dt)
 		}
 		else if (b_attacking)
 		{
+			b_forceCamera = false;
 			b_attacking = false;
 			//selectedUnit->b_tookAction = true;
 			PlayerInfo::GetInstance()->enemy = selectedEnemy;
@@ -139,25 +143,69 @@ void MapController::Update(double dt)
 	{
 		Vector2 currentPos(camera->GetCameraPos().x, camera->GetCameraPos().z);
 		Vector2 targetPos(selectedTile.x * map->tileSizeX + map->tileSizeX / 2, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
-		float Length = (currentPos - targetPos).Length();
-		if (Length > 3)
+		//float Length = (currentPos - targetPos).Length();
+		//if (Length > 50)
+		//{
+		//	if (Length > 3)
+		//	{
+		//		PanTo(camera->f_OrthoSize, targetPos, dt);
+		//	}
+		//	else
+		//	{
+		//		camera->SetCameraPos(Vector3(targetPos.x, camera->GetCameraPos().y, targetPos.y)); // Snapping the camera to the grid
+		//		camera->SetCameraTarget(Vector3(targetPos.x, camera->GetCameraTarget().y, targetPos.y)); // Snapping the camera to the grid
+		//	}
+		//}
+		if (!b_forceCamera)
 		{
-			PanTo(camera->f_OrthoSize, targetPos, dt);
+			if (abs(currentPos.y - targetPos.y) > 30) // Distance to start panning camera
+			{
+				Vector2 newTarget;
+				if (currentPos.y - targetPos.y < 0)
+				{
+					newTarget = Vector2(camera->GetCameraPos().x, camera->GetCameraPos().z - (currentPos.y - targetPos.y + 30));
+				}
+				else
+				{
+					newTarget = Vector2(camera->GetCameraPos().x, camera->GetCameraPos().z - (currentPos.y - targetPos.y - 30));
+				}
+				PanTo(camera->f_OrthoSize, newTarget, dt);
+			}
+			if (abs(currentPos.x - targetPos.x) > 30) // Distance to start panning camera
+			{
+				Vector2 newTarget;
+				if (currentPos.x - targetPos.x < 0)
+				{
+					newTarget = Vector2(camera->GetCameraPos().x - (currentPos.x - targetPos.x + 30), camera->GetCameraPos().z);
+				}
+				else
+				{
+					newTarget = Vector2(camera->GetCameraPos().x - (currentPos.x - targetPos.x - 30), camera->GetCameraPos().z);
+				}
+				PanTo(camera->f_OrthoSize, newTarget, dt);
+			}
 		}
 		else
 		{
-			camera->SetCameraPos(Vector3(targetPos.x, camera->GetCameraPos().y, targetPos.y)); // Snapping the camera to the grid
-			camera->SetCameraTarget(Vector3(targetPos.x, camera->GetCameraTarget().y, targetPos.y)); // Snapping the camera to the grid
+			PanTo(camera->f_OrthoSize * 2, targetPos, dt);
 		}
 	}
 }
 
 void MapController::PanTo(float speed, Vector2 pos, double dt)
 {
-	Vector3 targetPos(selectedTile.x * map->tileSizeX + map->tileSizeX / 2, 0, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
+	Vector3 targetPos(pos.x, 0, pos.y);
 	Vector3 vel = (targetPos - camera->GetCameraPos()).Normalized() * speed * (float)dt;
-	camera->SetCameraPos(camera->GetCameraPos() + vel);
-	camera->SetCameraTarget(camera->GetCameraTarget() + vel);
+	if ((camera->GetCameraPos() - targetPos).LengthSquared() < 3 * 3)
+	{
+		camera->SetCameraPos(Vector3(targetPos.x,camera->GetCameraPos().y,targetPos.z));
+		camera->SetCameraTarget(Vector3(targetPos.x, camera->GetCameraTarget().y, targetPos.z));
+	}
+	else
+	{
+		camera->SetCameraPos(camera->GetCameraPos() + Vector3(vel.x, 0, vel.z));
+		camera->SetCameraTarget(camera->GetCameraTarget() + Vector3(vel.x, 0, vel.z));
+	}
 }
 
 void MapController::GetUnitPath()
@@ -217,6 +265,7 @@ void MapController::MoveUnit(float speed, double dt)
 	{
 		if (unitPath.size() > 0)
 		{
+			b_forceCamera = true;
 			if (!(unitPath[0] - selectedUnit->getPos()).IsZero())
 			{
 				Vector2 vel = (unitPath[0] - selectedUnit->getPos()).Normalized() * speed * dt;
@@ -232,6 +281,7 @@ void MapController::MoveUnit(float speed, double dt)
 		}
 		else
 		{
+			b_forceCamera = false;
 			b_movingUnit = false;
 			map->movePath.clear();
 			OpenButtons();
@@ -342,12 +392,14 @@ void MapController::MovementControls(double dt)
 void MapController::OpenButtons()
 {
 	selectedButton = CTRL_TOTAL;
-
+	atkRangeIndicator.clear();
 	attackableUnits.clear();
+
 	{
 		const struct { int x, y; } succ[4] = { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } };
 		for (int i = 0; i < 4; ++i)
 		{
+			atkRangeIndicator.push_back(Vector2(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y));
 			if (map->GetEnemy(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y))
 			{
 				attackableUnits.push_back(map->GetEnemy(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y));
@@ -360,6 +412,7 @@ void MapController::OpenButtons()
 		const struct { int x, y; } succ[8] = { { -1, -1 }, { 1, 1 }, { 1, -1 }, { -1, 1 }, { -2, 0 }, { 2, 0 }, { 0, -2 }, { 0, 2 } };
 		for (int i = 0; i < 8; ++i)
 		{
+			atkRangeIndicator.push_back(Vector2(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y));
 			if (map->GetEnemy(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y))
 			{
 				attackableUnits.push_back(map->GetEnemy(selectedUnit->getPos().x + succ[i].x, selectedUnit->getPos().y + succ[i].y));
@@ -411,6 +464,7 @@ void MapController::CloseButtons()
 	}
 	else if (selectedButton == ATTACK)
 	{
+		b_forceCamera = true;
 		b_attacking = true;
 		selectedTile = attackableUnits[0]->getPos();
 		selectedEnemy = attackableUnits[0];
@@ -515,11 +569,27 @@ void MapController::Render()
 	if (!b_movingUnit)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(selectedTile.x * map->tileSizeX + map->tileSizeX / 2, -0.3, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
+		modelStack.Translate(selectedTile.x * map->tileSizeX + map->tileSizeX / 2, -1, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(map->tileSizeX, map->tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SelectedArrow"));
 		modelStack.PopMatrix();
+	}
+
+	if (b_attacking)
+	{
+		for (int i = 0; i < atkRangeIndicator.size(); ++i)
+		{
+			if (atkRangeIndicator[i].x >= 0 && atkRangeIndicator[i].x < map->numTilesWidth && atkRangeIndicator[i].y >= 0 && atkRangeIndicator[i].y < map->numTilesHeight)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(atkRangeIndicator[i].x * map->tileSizeX + map->tileSizeX / 2, -0.2, atkRangeIndicator[i].y * map->tileSizeY + map->tileSizeY / 2);
+				modelStack.Rotate(90, 1, 0, 0);
+				modelStack.Scale(map->tileSizeX, map->tileSizeY, 1);
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("RedSelected"));
+				modelStack.PopMatrix();
+			}
+		}
 	}
 }
 
@@ -556,7 +626,7 @@ void MapController::RenderUI()
 		}
 	}
 
-	if (selectedUnit && selectedButton == MOVE)
+	if (selectedUnit && selectedButton == MOVE && !b_movingUnit)
 	{
 		string textdisplay;
 		if (map->movePath.size() - 1 <= selectedUnit->i_movementCost && b_canPlace)

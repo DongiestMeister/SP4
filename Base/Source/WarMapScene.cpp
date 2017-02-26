@@ -113,6 +113,9 @@ void WarMapScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Singapore", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Singapore")->textureID = LoadTGA("Image//singapore.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Russia", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Russia")->textureID = LoadTGA("Image//russia.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("Ocean", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Ocean")->textureID = LoadTGA("Image//ocean.tga");
 
@@ -166,6 +169,20 @@ void WarMapScene::Update(double dt)
 	ss << "FPS: " << fps2;
 	//ss << "FPS: " << camera.GetCameraPos();
 	fps->SetText(ss.str());
+
+	i_numCompleted = 0;
+	for (int i = 0; i < levelList.size(); ++i)
+	{
+		if (levelList[i].b_completed)
+		{
+			i_numCompleted++;
+		}
+	}
+
+	if (i_numCompleted == levelList.size())
+	{
+		FinishWar();
+	}
 
 	switch (currentButton)
 	{
@@ -229,7 +246,18 @@ void WarMapScene::MouseControl(double dt)
 	{
 		if (currentButton == PLAY)
 		{
-			currentButton = B_TOTAL;
+			if (PlayerInfo::GetInstance()->availableUnits.size() != 0)
+			{
+				currentButton = B_TOTAL;
+			}
+		}
+		else if (currentButton == OPTIONS)
+		{
+
+		}
+		else if (currentButton == RECRUIT)
+		{
+			SceneManager::GetInstance()->SetActiveScene("RecruitState", true);
 		}
 
 		else if (currentButton == B_TOTAL)
@@ -375,14 +403,15 @@ void WarMapScene::Render()
 	//	modelStack.PopMatrix();
 	//}
 
-	modelStack.PushMatrix();
-	modelStack.Translate(-15, 0, 0.1);
-	modelStack.Scale(160, 200, 200);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Singapore"));
-	modelStack.PopMatrix();
+
+
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Battles Completed:" + to_string(i_numCompleted) + "/" + to_string(levelList.size()), Vector3(-25, 80, 0.2), 10, Color(1, 1, 1));
+
 	RenderBackground();
 	RenderLevels();
 	RenderButtons();
+
+
 
 	EntityManager::GetInstance()->RenderUI();
 }
@@ -473,7 +502,7 @@ void WarMapScene::RenderButtons()
 void WarMapScene::RandomLevels()
 {
 	int numberOfLevels = Math::RandIntMinMax(4, 6);
-
+	levelList.clear();
 	float distance = 20;
 	for (int i = 0; i < numberOfLevels; ++i)
 	{
@@ -555,4 +584,15 @@ void WarMapScene::RenderLevels()
 			}
 		}
 	}
+
+	modelStack.PushMatrix();
+	modelStack.Translate(-15, 0, 0.1);
+	modelStack.Scale(160, 200, 200);
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Singapore"));
+	modelStack.PopMatrix();
+}
+
+void WarMapScene::FinishWar()
+{
+	RandomLevels();
 }

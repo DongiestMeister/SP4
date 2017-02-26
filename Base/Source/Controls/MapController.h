@@ -20,6 +20,7 @@ public:
 	Character *selectedUnit;
 
 	bool b_cameraTransition;
+	bool b_forceCamera;
 	float tempOrtho;
 
 	bool *b_playerTurn;
@@ -43,6 +44,8 @@ private:
 	vector<Character*> attackableUnits; // units within range of enemy
 	Character *selectedEnemy; // the enemy that is selected to attack
 	int enemyIterator;
+
+	vector<Vector2> atkRangeIndicator;
 
 	enum CTRLBUTTONS
 	{
