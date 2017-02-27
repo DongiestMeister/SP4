@@ -1,16 +1,16 @@
-//Attack Type,Name,BaseSTR,BaseDEX,BaseLUK,Movement,AttRange,characterPortrait,2DMesh
-Melee,Lucy,10,5,2,3,1,Knight,Knight
-Melee,Rasis,15,2,2,3,1,Knight,Knight
-Melee,Corrine,6,5,6,3,1,Knight,Knight
-Melee,Paul,10,1,6,3,1,Knight,Knight
-Melee,Bob,5,12,2,3,1,Knight,Knight
-Melee,Ossas,17,0,0,3,1,Knight,Knight
-Ranged,Sinon,10,10,4,3,2,Knight,Knight
-Ranged,DeathGun,15,5,8,3,2,Knight,Knight
-Ranged,Asada,3,15,1,3,2,Knight,Knight
-Ranged,Ray,1,1,1,1,2,Knight,Knight
-Ranged,Sam,10,5,2,3,2,Knight,Knight
-Melee,Kirito,20,6,7,3,1,Knight,Knight
-Melee,Kaneki,20,5,6,3,1,Knight,Knight
-Melee,Eren,20,5,2,3,1,Knight,Knight
-Ranged,Tohka,15,6,3,3,2,Knight,Knight
+//Attack Type,Name,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,AttRange,characterPortrait,2DMesh
+Melee,Lucy,50,10,5,2,3,1,Lucy,Knight
+Melee,Rasis,50,15,2,2,3,1,Rasis,Knight
+Melee,Corrine,50,6,5,6,3,1,Corrine,Knight
+Melee,Paul,50,10,1,6,3,1,Knight,Knight
+Melee,Bob,50,5,12,2,3,1,Knight,Knight
+Melee,Ossas,50,17,0,0,3,1,Knight,Knight
+Ranged,Sinon,50,10,10,4,3,2,Sinon,Knight
+Ranged,DeathGun,50,15,5,8,3,2,Knight,Knight
+Ranged,Strea,50,3,15,1,3,2,Knight,Knight
+Ranged,Ray,50,1,1,1,1,2,Knight,Knight
+Ranged,Sam,50,10,5,2,3,2,Knight,Knight
+Melee,Kirito,50,20,6,7,3,1,Knight,Knight
+Melee,Kaneki,50,20,5,6,3,1,Knight,Knight
+Melee,Eren,50,20,5,2,3,1,Knight,Knight
+Ranged,Tohka,50,15,6,3,3,2,Knight,Knight

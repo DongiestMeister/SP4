@@ -186,6 +186,9 @@
     <ClCompile Include="Source\Enemy\EnemySpawner.cpp">
       <Filter>Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SpriteAnimation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -337,6 +340,9 @@
     </ClInclude>
     <ClInclude Include="Source\Enemy\EnemySpawner.h">
       <Filter>Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SpriteAnimation.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

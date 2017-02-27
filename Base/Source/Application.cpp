@@ -109,8 +109,6 @@ void Application::InitDisplay(void)
 
 void Application::Init()
 {
-
-
 	CLuaInterface::GetInstance()->Init();
 
 	m_window_width = CLuaInterface::GetInstance()->getIntValue("width");
@@ -179,6 +177,15 @@ void Application::Init()
 	PlayerInfo::GetInstance()->loadWeaponsFromCSV("Image//Weapons.csv");
 	PlayerInfo::GetInstance()->loadArmorFromCSV("Image//Armors.csv");
 
+	// Load meshs
+	MeshBuilder::GetInstance()->GenerateQuad("Sinon", Color(1, 1, 1));
+	MeshBuilder::GetInstance()->GetMesh("Sinon")->textureID = LoadTGA("Image//Characters//Portraits//Sinon.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Rasis", Color(1, 1, 1));
+	MeshBuilder::GetInstance()->GetMesh("Rasis")->textureID = LoadTGA("Image//Characters//Portraits//Rasis.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Lucy", Color(1, 1, 1));
+	MeshBuilder::GetInstance()->GetMesh("Lucy")->textureID = LoadTGA("Image//Characters//Portraits//Lucy.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Corrine", Color(1, 1, 1));
+	MeshBuilder::GetInstance()->GetMesh("Corrine")->textureID = LoadTGA("Image//Characters//Portraits//Corrine.tga");
 	SceneManager::GetInstance()->AddScene("IntroState", new CIntroState());
 	SceneManager::GetInstance()->AddScene("MenuState", new CMenuState());
 	SceneManager::GetInstance()->AddScene("GameState", new GameplayScene());

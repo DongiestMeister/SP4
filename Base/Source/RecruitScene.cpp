@@ -52,8 +52,14 @@ void RecruitScene::Update(double dt)
 				if (b_showObtainedUnit == false)
 				{
 					b_showObtainedUnit = true;
-					int result = Math::RandIntMinMax(0, PlayerInfo::GetInstance()->unitsNotOwned.size());
+					PlayerInfo::GetInstance()->gold -= 100;
+
+					int result = Math::RandIntMinMax(0, PlayerInfo::GetInstance()->unitsNotOwned.size() - 1);
 					newChar = PlayerInfo::GetInstance()->unitsNotOwned.at(result);
+					if (newChar->i_attackRange == 1)
+						attackType = "Melee";
+					else if (newChar->i_attackRange == 2)
+						attackType = "Ranged";
 					PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), newChar);
 					PlayerInfo::GetInstance()->unitsNotOwned.erase(PlayerInfo::GetInstance()->unitsNotOwned.begin() + result);
 				}

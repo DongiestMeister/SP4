@@ -230,24 +230,27 @@ void PlayerInfo::loadCharactersFromCSV(const string filepath)
 					character->setName(token);
 					break;
 				case 3:
-					character->setBaseSTR(std::stoi(token));
+					character->setHP(std::stoi(token));
 					break;
 				case 4:
-					character->setBaseDEX(std::stoi(token));
+					character->setBaseSTR(std::stoi(token));
 					break;
 				case 5:
-					character->setBaseLUK(std::stoi(token));
+					character->setBaseDEX(std::stoi(token));
 					break;
 				case 6:
-					character->i_movementCost = std::stoi(token);
+					character->setBaseLUK(std::stoi(token));
 					break;
 				case 7:
-					character->i_attackRange = std::stoi(token);
+					character->i_movementCost = std::stoi(token);
 					break;
 				case 8:
-					character->setPortrait(token);
+					character->i_attackRange = std::stoi(token);
 					break;
 				case 9:
+					character->setPortrait(token);
+					break;
+				case 10:
 					character->set2DMesh(token);
 					break;
 				}

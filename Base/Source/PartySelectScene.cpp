@@ -115,13 +115,6 @@ void PartySelectScene::Init()
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
 	float fontSize = 25.0f;
 	float halfFontSize = fontSize / 2.0f;
-
-	Character* kek = new MeleeCharacter("KEK");
-	kek->setDamage(696969);
-	kek->equipWeapon(new Weapon(6969, 100, false, " "));
-	kek->equipArmor(new Armor(6, 9, 6, 9, false, " "));
-	kek->setPortrait("test");
-	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), kek);
 	
 	selectedPos.Set(-47, 52.5f, 0);
 	currentScreen = CURR_SCREEN_SELECT_OPTION;
@@ -207,6 +200,10 @@ void PartySelectScene::Update(double dt)
 				i_selectedShopCounter = 0;
 				i_shopCursor = 0;
 			}
+			else if (i_selectedOptionCounter == 3)
+			{
+				SceneManager::GetInstance()->SetActiveScene("GameState");
+			}
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
 		{
@@ -262,9 +259,12 @@ void PartySelectScene::Update(double dt)
 			}
 			else
 			{
-				b_showArrowAtEQs = true;
-				equipmentCursorPos.Set(30, -40, 10);
-				b_equipmentCursor = 0;
+				if (PlayerInfo::GetInstance()->inventory.size() > 0)
+				{
+					b_showArrowAtEQs = true;
+					equipmentCursorPos.Set(30, -40, 10);
+					b_equipmentCursor = 0;
+				}
 			}
 		}
 		else if (currentScreen == CURR_SCREEN_SHOP)
@@ -285,19 +285,26 @@ void PartySelectScene::Update(double dt)
 			}
 			else if (b_showShopItems == true && b_showPlayerItems == false) // buying items
 			{
-				// only can buy if the player has enough gold
-				if (PlayerInfo::GetInstance()->gold >= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price)
+				if (PlayerInfo::GetInstance()->shop.size() > 0)
 				{
-					PlayerInfo::GetInstance()->gold -= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price;
-					PlayerInfo::GetInstance()->addItemToInventory(PlayerInfo::GetInstance()->shop.at(i_shopCursor));
-					PlayerInfo::GetInstance()->shop.erase(PlayerInfo::GetInstance()->shop.begin() + i_shopCursor);
+					// only can buy if the player has enough gold
+					if (PlayerInfo::GetInstance()->gold >= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price)
+					{
+						PlayerInfo::GetInstance()->gold -= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price;
+						PlayerInfo::GetInstance()->addItemToInventory(PlayerInfo::GetInstance()->shop.at(i_shopCursor));
+						PlayerInfo::GetInstance()->shop.erase(PlayerInfo::GetInstance()->shop.begin() + i_shopCursor);
+					}
 				}
+				
 			}
 			else if (b_showShopItems == false && b_showPlayerItems == true) // selling items
 			{
-				// resell back to shop at half price
-				PlayerInfo::GetInstance()->gold += (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_Price >> 1);
-				PlayerInfo::GetInstance()->inventory.erase(PlayerInfo::GetInstance()->inventory.begin() + i_shopCursor);
+				if (PlayerInfo::GetInstance()->inventory.size() > 0)
+				{
+					// resell back to shop at half price
+					PlayerInfo::GetInstance()->gold += (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_Price >> 1);
+					PlayerInfo::GetInstance()->inventory.erase(PlayerInfo::GetInstance()->inventory.begin() + i_shopCursor);
+				}
 			}
 		}
 	}
@@ -1020,23 +1027,31 @@ void PartySelectScene::Render()
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
 		modelStack.PopMatrix();
 
-		
-		for (int y = 1, counter = 0; y >= -3; y--)
+		if (PlayerInfo::GetInstance()->inventory.size() > 0)
 		{
-			for (int x = 0; x < 4; x++)
+			for (int y = 1, counter = 0; y >= -3; y--)
 			{
-				modelStack.PushMatrix();
-				modelStack.Translate(-80 + (x * 20), (y * 31) + 10, 0);
-				modelStack.Scale(15, 15 * 16 / 9, 1);
-				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter)->itemPortrait));
-				modelStack.PopMatrix();
-				counter++;
+				for (int x = 0; x < 4; x++)
+				{
+					modelStack.PushMatrix();
+					modelStack.Translate(-80 + (x * 20), (y * 31) + 10, 0);
+					modelStack.PushMatrix();
+					modelStack.Scale(15, 15 * 16 / 9, 1);
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter)->itemPortrait));
+					modelStack.PopMatrix();
+					modelStack.Translate(3, -6, 1);
+					modelStack.Scale(7, 7 * 16 / 9, 1);
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter)->s_ownerName));
+					modelStack.PopMatrix();
+					counter++;
+					if (counter >= PlayerInfo::GetInstance()->inventory.size())
+						break;
+				}
 				if (counter >= PlayerInfo::GetInstance()->inventory.size())
 					break;
 			}
-			if (counter >= PlayerInfo::GetInstance()->inventory.size())
-				break;
 		}
+		
 	}
 	else if (currentScreen == CURR_SCREEN_SHOP)
 	{
@@ -1057,6 +1072,13 @@ void PartySelectScene::Render()
 
 		if (b_showShopItems == true)
 		{
+
+			modelStack.PushMatrix();
+			modelStack.Translate(-18,10, 10);
+			modelStack.Scale(20, 10, 1);
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
+			modelStack.PopMatrix();
+
 			if (PlayerInfo::GetInstance()->shop.size() > 0)
 			{
 				for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
