@@ -109,25 +109,29 @@ void RecruitScene::Render()
 	modelStack.PopMatrix();
 
 	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), message, Vector3(-30, 50, 2), 15.f, Color(1, 1, 1));
-	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.size()) + "/15", Vector3(65, 80, 2), 15.f, Color(1, 1, 1));
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->gold), Vector3(10, 79, 2), 12.f, Color(1, 1, 0));
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.size()) + "/15", Vector3(70, 79, 2), 12.f, Color(1, 1, 1));
 
 	if (b_showObtainedUnit)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(0, 0, 1);
+		modelStack.Translate(0, -10, 1);
 		modelStack.Scale(90, 90 * 16 / 9, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("newUnit"));
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
-		modelStack.Translate(20, 35, 2);
+		modelStack.Translate(20, 25, 2);
 		modelStack.Scale(20, 20 * 16 / 9, 1);
 		RenderHelper::RenderMesh(newChar->getPortrait());
 		modelStack.PopMatrix();
 
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), newChar->getName(), Vector3(-20, 40, 2), 15.f, Color(1, 1, 1));
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), attackType, Vector3(-20, -10, 2), 15.f, Color(1, 1, 1));
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(newChar->i_movementCost), Vector3(-20, -55, 2), 15.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), newChar->getName(), Vector3(-20, 30, 2), 15.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), attackType, Vector3(-20, -20, 2), 15.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(newChar->i_movementCost), Vector3(-20, -65, 2), 15.f, Color(1, 1, 1));
+
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Press X", Vector3(-87, -50, 2), 15.f, Color(1, 1, 0));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "to go back", Vector3(-87, -65, 2), 15.f, Color(1, 1, 0));
 	}
 
 	glEnable(GL_CULL_FACE);

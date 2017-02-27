@@ -619,6 +619,11 @@ void PartySelectScene::Update(double dt)
 				if (i_shopCursor < PlayerInfo::GetInstance()->shop.size() - 1)
 					i_shopCursor += 1;
 			}
+			else if (b_showPlayerItems == true)
+			{
+				if (i_shopCursor < PlayerInfo::GetInstance()->inventory.size() - 1)
+					i_shopCursor += 1;
+			}
 		}
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_UP))
@@ -724,7 +729,7 @@ void PartySelectScene::Update(double dt)
 				if (i_selectedShopCounter == -1)
 					i_selectedShopCounter = 2;
 			} 
-			else if (b_showShopItems == true)
+			else if (b_showShopItems == true || b_showPlayerItems == true)
 			{
 				if (i_shopCursor > 0)
 					i_shopCursor -= 1;
@@ -1072,15 +1077,14 @@ void PartySelectScene::Render()
 
 		if (b_showShopItems == true)
 		{
-
-			modelStack.PushMatrix();
-			modelStack.Translate(-18,10, 10);
-			modelStack.Scale(20, 10, 1);
-			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
-			modelStack.PopMatrix();
-
 			if (PlayerInfo::GetInstance()->shop.size() > 0)
 			{
+				modelStack.PushMatrix();
+				modelStack.Translate(-18, 10, 10);
+				modelStack.Scale(20, 10, 1);
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
+				modelStack.PopMatrix();
+
 				for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
 				{
 					if (i > PlayerInfo::GetInstance()->shop.size() - 1)
@@ -1103,6 +1107,11 @@ void PartySelectScene::Render()
 		{
 			if (PlayerInfo::GetInstance()->inventory.size() > 0)
 			{
+				modelStack.PushMatrix();
+				modelStack.Translate(-18, 10, 10);
+				modelStack.Scale(20, 10, 1);
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
+				modelStack.PopMatrix();
 				for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
 				{
 					if (i > PlayerInfo::GetInstance()->inventory.size() - 1)
