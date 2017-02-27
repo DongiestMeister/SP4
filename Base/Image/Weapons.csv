@@ -1,8 +1,3 @@
-//Name,Damage,Accuracy,Equipped to?,Equipped by anyone?
-Test,6969,100,No One,FALSE
-Lmao,1234,90,No One,FALSE
-Lmao,1234,90,No One,FALSE
-Lmao,1234,90,No One,FALSE
-Lmao,1234,90,No One,FALSE
-Lmao,1234,90,No One,FALSE
-Lmao,1234,90,No One,FALSE
+//Name,Damage,Accuracy,Equipped to?,Equipped by anyone?,Price
+Test,6969,100,No One,FALSE,100
+Lmao,1234,90,No One,FALSE,69

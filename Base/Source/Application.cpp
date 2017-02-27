@@ -174,6 +174,11 @@ void Application::Init()
 	// Init systems
 	GraphicsManager::GetInstance()->Init();
 
+	// Load all relevant info from csv
+	PlayerInfo::GetInstance()->loadCharactersFromCSV("Image//Characters.csv");
+	PlayerInfo::GetInstance()->loadWeaponsFromCSV("Image//Weapons.csv");
+	PlayerInfo::GetInstance()->loadArmorFromCSV("Image//Armors.csv");
+
 	SceneManager::GetInstance()->AddScene("IntroState", new CIntroState());
 	SceneManager::GetInstance()->AddScene("MenuState", new CMenuState());
 	SceneManager::GetInstance()->AddScene("GameState", new GameplayScene());

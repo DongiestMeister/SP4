@@ -4,16 +4,16 @@ Character::Character() : i_strBoostFromTerrain(0), i_dexBoostFromTerrain(0), i_l
 {
 	strategy = DEFENCE;
 
-	i_baseHP = 100;
-	i_currentHP = 100;
-	i_HP = 100;
+	i_baseHP = 50;
+	i_currentHP = 50;
+	i_HP = 50;
 	i_idInParty = -1;
 
 	i_STR = 0;
 	i_DEX = 0;
 	i_LUK = 0;
-	character3DMesh = nullptr;
-	character2DMesh = nullptr;
+	character3DMesh = "";
+	character2DMesh = "";
 	characterPortrait = "";
 	weapon = nullptr;
 	armor = nullptr;
@@ -37,16 +37,6 @@ Character::~Character()
 	{
 		//delete armor;
 		//armor = nullptr;
-	}
-	if (character3DMesh)
-	{
-		//delete character3DMesh;
-		//character3DMesh = nullptr;
-	}
-	if (character2DMesh)
-	{
-		//delete character2DMesh;
-		//character2DMesh = nullptr;
 	}
 	if (FSM)
 	{
@@ -91,16 +81,12 @@ Vector2 Character::getPos()
 
 Mesh* Character::get3DMesh()
 {
-	if (character3DMesh)
-		return character3DMesh;
-	return nullptr;
+	return MeshBuilder::GetInstance()->GetMesh(character3DMesh);
 }
 
 Mesh* Character::get2DMesh()
 {
-	if (character2DMesh)
-		return character2DMesh;
-	return nullptr;
+	return MeshBuilder::GetInstance()->GetMesh(character2DMesh);
 }
 
 Mesh* Character::getPortrait()
@@ -142,6 +128,20 @@ void Character::setLUK(int newLUK)
 	i_LUK = newLUK;
 }
 
+void Character::setBaseSTR(int newSTR)
+{
+	i_baseSTR = newSTR;
+}
+
+void Character::setBaseDEX(int newDEX)
+{
+	i_baseDEX = newDEX;
+}
+
+void Character::setBaseLUK(int newLUK)
+{
+	i_baseLUK = newLUK;
+}
 void Character::setDamage(int newDamage)
 {
 	i_Damage = newDamage;
@@ -157,14 +157,14 @@ void Character::setPos(Vector2 newPos)
 	pos = newPos;
 }
 
-void Character::set3DMesh(Mesh* newMesh)
+void Character::set3DMesh(string meshName)
 {
-	character3DMesh = newMesh;
+	character3DMesh = meshName;
 }
 
-void Character::set2DMesh(Mesh* newMesh)
+void Character::set2DMesh(string meshName)
 {
-	character2DMesh = newMesh;
+	character2DMesh = meshName;
 }
 
 void Character::setPortrait(string meshName)
@@ -172,6 +172,10 @@ void Character::setPortrait(string meshName)
 	characterPortrait = meshName;
 }
 
+void Character::setName(string newName)
+{
+	s_Name = newName;
+}
 void Character::takeDamage(int dmg)
 {
 	i_currentHP -= dmg;
@@ -182,9 +186,18 @@ void Character::calculateStats()
 	if (armor)
 	{
 		i_HP = armor->i_hpBoost + i_baseHP;
+		i_currentHP = i_HP;
 		i_STR = armor->i_strBoost + i_strBoostFromTerrain + i_baseSTR;
 		i_DEX = armor->i_dexBoost + i_dexBoostFromTerrain + i_baseDEX;
 		i_LUK = armor->i_lukBoost + i_lukBoostFromTerrain + i_baseLUK;
+	}
+	else
+	{
+		i_HP = i_baseHP;
+		i_currentHP = i_HP;
+		i_STR = i_strBoostFromTerrain + i_baseSTR;
+		i_DEX = i_dexBoostFromTerrain + i_baseDEX;
+		i_LUK = i_lukBoostFromTerrain + i_baseLUK;
 	}
 	if (weapon)
 	{

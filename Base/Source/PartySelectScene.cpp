@@ -107,21 +107,21 @@ void PartySelectScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("armorPortrait")->textureID = LoadTGA("Image//PartySelect//armorPortrait.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("selectEquip", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("selectEquip")->textureID = LoadTGA("Image//PartySelect//selectEquip.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("shop", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("shop")->textureID = LoadTGA("Image//PartySelect//shop.tga");
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
 	float fontSize = 25.0f;
 	float halfFontSize = fontSize / 2.0f;
-	PlayerInfo::GetInstance()->loadWeaponsFromCSV("Image//Weapons.csv");
-	PlayerInfo::GetInstance()->loadArmorFromCSV("Image//Armors.csv");
 
-	//Character* kek = new MeleeCharacter("KEK");
-	//kek->setDamage(696969);
-	//kek->equipWeapon(new Weapon(6969, 100, false, " "));
-	//kek->equipArmor(new Armor(6, 9, 6, 9, false, " "));
-	//kek->setPortrait("test");
-	//PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), kek);
+	Character* kek = new MeleeCharacter("KEK");
+	kek->setDamage(696969);
+	kek->equipWeapon(new Weapon(6969, 100, false, " "));
+	kek->equipArmor(new Armor(6, 9, 6, 9, false, " "));
+	kek->setPortrait("test");
+	PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), kek);
 	
 	selectedPos.Set(-47, 52.5f, 0);
 	currentScreen = CURR_SCREEN_SELECT_OPTION;
@@ -134,7 +134,13 @@ void PartySelectScene::Init()
 	i_selectedEquipmentCounter = 0;
 	b_equipmentCursor = 0;
 	equipmentCursorPos.Set(30, -40, 0);
-	showArrowAtEQs = false;
+	b_showArrowAtEQs = false;
+
+	i_shopCursor = 0;
+	i_selectedShopCounter = 0;
+
+	b_showShopItems = false;
+	b_showPlayerItems = false;
 }
 
 void PartySelectScene::Update(double dt)
@@ -152,6 +158,32 @@ void PartySelectScene::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyDown('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	if (KeyboardController::GetInstance()->IsKeyDown('5'))
+	{
+		lights[0]->type = Light::LIGHT_POINT;
+	}
+	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
+	{
+		lights[0]->type = Light::LIGHT_DIRECTIONAL;
+	}
+	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
+	{
+		lights[0]->type = Light::LIGHT_SPOT;
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyDown('I'))
+		lights[0]->position.z -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('K'))
+		lights[0]->position.z += (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('J'))
+		lights[0]->position.x -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('L'))
+		lights[0]->position.x += (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('O'))
+		lights[0]->position.y -= (float)(10.f * dt);
+	if (KeyboardController::GetInstance()->IsKeyDown('P'))
+		lights[0]->position.y += (float)(10.f * dt);
+
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
@@ -168,9 +200,12 @@ void PartySelectScene::Update(double dt)
 				selectedPos.Set(-60, 40, 0);
 				i_selectedUnitsCounter = 0;
 			}
-			else if (i_selectedOptionCounter == 3) // Change equipment
+			else if (i_selectedOptionCounter == 2) // Shop
 			{
-				SceneManager::GetInstance()->SetActiveScene("GameState");
+				currentScreen = CURR_SCREEN_SHOP;
+				selectedPos.Set(-63.5f, 62, 0);
+				i_selectedShopCounter = 0;
+				i_shopCursor = 0;
 			}
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
@@ -207,7 +242,7 @@ void PartySelectScene::Update(double dt)
 		}
 		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ)
 		{
-			if (showArrowAtEQs == true)
+			if (b_showArrowAtEQs == true)
 			{
 				if (b_equipmentCursor == 0)
 				{
@@ -222,14 +257,47 @@ void PartySelectScene::Update(double dt)
 				}
 				else
 				{
-					showArrowAtEQs = false;
+					b_showArrowAtEQs = false;
 				}
 			}
 			else
 			{
-				showArrowAtEQs = true;
+				b_showArrowAtEQs = true;
 				equipmentCursorPos.Set(30, -40, 10);
 				b_equipmentCursor = 0;
+			}
+		}
+		else if (currentScreen == CURR_SCREEN_SHOP)
+		{
+			if (b_showShopItems == false && b_showPlayerItems == false)
+			{
+				if (i_selectedShopCounter == 0)
+					b_showShopItems = true;
+				else if (i_selectedShopCounter == 1)
+					b_showPlayerItems = true;
+				else if (i_selectedShopCounter == 2)
+				{
+					// return to pre-battle preparations
+					currentScreen = CURR_SCREEN_SELECT_OPTION;
+					selectedPos.Set(-47, 52.5f, 0);
+					i_selectedOptionCounter = 0;
+				}
+			}
+			else if (b_showShopItems == true && b_showPlayerItems == false) // buying items
+			{
+				// only can buy if the player has enough gold
+				if (PlayerInfo::GetInstance()->gold >= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price)
+				{
+					PlayerInfo::GetInstance()->gold -= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price;
+					PlayerInfo::GetInstance()->addItemToInventory(PlayerInfo::GetInstance()->shop.at(i_shopCursor));
+					PlayerInfo::GetInstance()->shop.erase(PlayerInfo::GetInstance()->shop.begin() + i_shopCursor);
+				}
+			}
+			else if (b_showShopItems == false && b_showPlayerItems == true) // selling items
+			{
+				// resell back to shop at half price
+				PlayerInfo::GetInstance()->gold += (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_Price >> 1);
+				PlayerInfo::GetInstance()->inventory.erase(PlayerInfo::GetInstance()->inventory.begin() + i_shopCursor);
 			}
 		}
 	}
@@ -237,7 +305,6 @@ void PartySelectScene::Update(double dt)
 	{
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
 		{
-			SceneManager::GetInstance()->SetActiveScene("WarMap");
 			// go back to level select
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
@@ -261,14 +328,36 @@ void PartySelectScene::Update(double dt)
 		}
 		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ)
 		{
-			if (showArrowAtEQs == true)
-				showArrowAtEQs = false;
+			if (b_showArrowAtEQs == true)
+				b_showArrowAtEQs = false;
 			else
 			{
 				currentScreen = CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER;
 				selectedPos.Set(-60, 40, 0);
 				i_selectedUnitsCounter = 0;
-				showArrowAtEQs = false;
+				b_showArrowAtEQs = false;
+			}
+		}
+		else if (currentScreen == CURR_SCREEN_SHOP)
+		{
+			if (b_showPlayerItems == false && b_showShopItems == false)
+			{
+				// return to pre-battle preparations
+				currentScreen = CURR_SCREEN_SELECT_OPTION;
+				selectedPos.Set(-47, 52.5f, 0);
+				i_selectedOptionCounter = 0;
+				b_showShopItems = false;
+				b_showPlayerItems = false;
+			}
+			else if (b_showShopItems == true && b_showPlayerItems == false)
+			{
+				b_showShopItems = false;
+				i_shopCursor = 0;
+			}
+			else if (b_showPlayerItems == true && b_showShopItems == false)
+			{
+				b_showPlayerItems = false;
+				i_shopCursor = 0;
 			}
 		}
 	}
@@ -325,7 +414,7 @@ void PartySelectScene::Update(double dt)
 		}
 		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ)
 		{
-			if (showArrowAtEQs == false)
+			if (b_showArrowAtEQs == false)
 			{
 				selectedPos.x += 20;
 				if (selectedPos.x > -20)
@@ -397,7 +486,7 @@ void PartySelectScene::Update(double dt)
 		}
 		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ)
 		{
-			if (showArrowAtEQs == false)
+			if (b_showArrowAtEQs == false)
 			{
 				selectedPos.x -= 20;
 				if (selectedPos.x < -80)
@@ -478,7 +567,7 @@ void PartySelectScene::Update(double dt)
 		}
 		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ)
 		{
-			if (showArrowAtEQs == false)
+			if (b_showArrowAtEQs == false)
 			{
 				selectedPos.y -= 31;
 				if (selectedPos.y < -52)
@@ -504,6 +593,24 @@ void PartySelectScene::Update(double dt)
 				equipmentCursorPos.y -= 30;
 				if (equipmentCursorPos.y < -70)
 					equipmentCursorPos.y = -40;
+			}
+		}
+		else if (currentScreen == CURR_SCREEN_SHOP)
+		{
+			if (b_showShopItems == false && b_showPlayerItems == false)
+			{
+				selectedPos.y -= 61;
+				if (selectedPos.y < -60)
+					selectedPos.y = 62;
+
+				i_selectedShopCounter += 1;
+				if (i_selectedShopCounter == 3)
+					i_selectedShopCounter = 0;
+			}
+			else if (b_showShopItems == true)
+			{
+				if (i_shopCursor < PlayerInfo::GetInstance()->shop.size() - 1)
+					i_shopCursor += 1;
 			}
 		}
 	}
@@ -570,7 +677,7 @@ void PartySelectScene::Update(double dt)
 		}
 		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ)
 		{
-			if (showArrowAtEQs == false)
+			if (b_showArrowAtEQs == false)
 			{
 				selectedPos.y += 31;
 				if (selectedPos.y > 41)
@@ -596,6 +703,24 @@ void PartySelectScene::Update(double dt)
 				equipmentCursorPos.y += 30;
 				if (equipmentCursorPos.y > -10)
 					equipmentCursorPos.y = -70;
+			}
+		}
+		else if (currentScreen == CURR_SCREEN_SHOP)
+		{
+			if (b_showShopItems == false && b_showPlayerItems == false)
+			{
+				selectedPos.y += 61;
+				if (selectedPos.y > 62)
+					selectedPos.y = -60;
+
+				i_selectedShopCounter -= 1;
+				if (i_selectedShopCounter == -1)
+					i_selectedShopCounter = 2;
+			} 
+			else if (b_showShopItems == true)
+			{
+				if (i_shopCursor > 0)
+					i_shopCursor -= 1;
 			}
 		}
 	}
@@ -844,7 +969,7 @@ void PartySelectScene::Render()
 	}
 	else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ)
 	{
-		if (showArrowAtEQs == true)
+		if (b_showArrowAtEQs == true)
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(0, 0, -1);
@@ -911,6 +1036,68 @@ void PartySelectScene::Render()
 			}
 			if (counter >= PlayerInfo::GetInstance()->inventory.size())
 				break;
+		}
+	}
+	else if (currentScreen == CURR_SCREEN_SHOP)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(0, 0, -1);
+		modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("shop"));
+		modelStack.PopMatrix();
+
+		modelStack.PushMatrix();
+		modelStack.Translate(selectedPos.x, selectedPos.y, 1);
+		modelStack.Scale(43, 26.5f * 16 / 9, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
+		modelStack.PopMatrix();
+
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"),std::to_string(PlayerInfo::GetInstance()->gold), Vector3(3, 72, 3), 15.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.size()), Vector3(82.5f, 72, 3), 15.f, Color(1, 1, 1));
+
+		if (b_showShopItems == true)
+		{
+			if (PlayerInfo::GetInstance()->shop.size() > 0)
+			{
+				for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
+				{
+					if (i > PlayerInfo::GetInstance()->shop.size() - 1)
+						break;
+					modelStack.PushMatrix();
+					modelStack.Translate(0, 10 - (counter * 25), 1);
+					modelStack.PushMatrix();
+					modelStack.Scale(15, 15, 1);
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->shop.at(i)->itemPortrait));
+					modelStack.PopMatrix();
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->shop.at(i)->s_Name, Vector3(22, 0, 1), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->shop.at(i)->i_Price), Vector3(65, 0, 1), 15.f, Color(1, 1, 1));
+					modelStack.PopMatrix();
+				}
+			}
+			else
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Nothing to see here", Vector3(-5, -22, 3), 15.f, Color(1, 1, 1));
+		}
+		else if (b_showPlayerItems == true)
+		{
+			if (PlayerInfo::GetInstance()->inventory.size() > 0)
+			{
+				for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
+				{
+					if (i > PlayerInfo::GetInstance()->inventory.size() - 1)
+						break;
+					modelStack.PushMatrix();
+					modelStack.Translate(0, 10 - (counter * 25), 1);
+					modelStack.PushMatrix();
+					modelStack.Scale(15, 15, 1);
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(i)->itemPortrait));
+					modelStack.PopMatrix();
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->inventory.at(i)->s_Name, Vector3(22, 0, 1), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i)->i_Price), Vector3(65, 0, 1), 15.f, Color(1, 1, 1));
+					modelStack.PopMatrix();
+				}
+			}
+			else
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Nothing to see here", Vector3(-5, -22, 3), 15.f, Color(1, 1, 1));
 		}
 	}
 }

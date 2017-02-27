@@ -10,11 +10,10 @@ RangedCharacter::RangedCharacter(string name)
 	i_attackRange = 2; // All ranged characters have a base attack range of 2
 
 	// Damage value of 0, so equivalent to not having a weapon at all
-	weapon = new Weapon(0, 100, true, "Nothing");
+	weapon = nullptr;
 
 	// All stats boosts of 0, equivalent to not having an armor
-	armor = new Armor(0, 0, 0, 0, true, "Nothing");
-	calculateStats();
+	armor = nullptr;
 }
 
 RangedCharacter::~RangedCharacter()

@@ -51,13 +51,18 @@ public:
 	void setSTR(int newSTR);
 	void setDEX(int newDEX);
 	void setLUK(int newLUK);
+	void setBaseSTR(int newSTR);
+	void setBaseDEX(int newDEX);
+	void setBaseLUK(int newLUK);
 	void setDamage(int newDamage);
 	void setHP(int newHP);
-	void set3DMesh(Mesh* newMesh);
-	void set2DMesh(Mesh* newMesh);
+	void set3DMesh(string meshName);
+	void set2DMesh(string meshName);
 	void setPortrait(string meshName);
 	void setPos(Vector2 newPos);
+	void setName(string newName);
 
+	
 	int i_movementCost;
 	int i_stepsTaken;
 	int i_idInParty;
@@ -83,14 +88,14 @@ protected:
 	int i_STR; // Determines the unit's attack power
 	int i_DEX; // Determines the accuracy of the attacks of this unit
 	int i_LUK; // Determines the avoidability of this unit
-
 	int i_baseHP;
-	int i_baseSTR; 
-	int i_baseDEX; 
-	int i_baseLUK; 
+	int i_baseSTR;
+	int i_baseDEX;
+	int i_baseLUK;
+	
 	string s_Name; 
-	Mesh* character3DMesh; // For battle uses
-	Mesh* character2DMesh; // For rendering on the tilemap
+	string character3DMesh; // For battle uses
+	string character2DMesh; // For rendering on the tilemap
 	string characterPortrait; // For rendering on the status screen
 };
 

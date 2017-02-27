@@ -36,7 +36,7 @@ void RecruitScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("newUnit")->textureID = LoadTGA("Image//RecruitScene//newUnit.tga");
 
 	b_showObtainedUnit = false;
-	test = nullptr;
+	newChar = nullptr;
 	message = "";
 	attackType = "";
 }
@@ -45,29 +45,24 @@ void RecruitScene::Update(double dt)
 {
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
-		if (PlayerInfo::GetInstance()->availableUnits.size() < 15)
+		if (PlayerInfo::GetInstance()->gold >= 100)
 		{
-			if (b_showObtainedUnit == false)
+			if (PlayerInfo::GetInstance()->availableUnits.size() < 15)
 			{
-				b_showObtainedUnit = true;
-				int result = Math::RandIntMinMax(1, 2);
-				if (result == 1)
+				if (b_showObtainedUnit == false)
 				{
-					test = new MeleeCharacter("Derp");
-					attackType = "Melee";
+					b_showObtainedUnit = true;
+					int result = Math::RandIntMinMax(0, PlayerInfo::GetInstance()->unitsNotOwned.size());
+					newChar = PlayerInfo::GetInstance()->unitsNotOwned.at(result);
+					PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), newChar);
+					PlayerInfo::GetInstance()->unitsNotOwned.erase(PlayerInfo::GetInstance()->unitsNotOwned.begin() + result);
 				}
-				else if (result == 2)
-				{
-					test = new RangedCharacter("testss");
-					attackType = "Ranged";
-				}
-
-				test->setPortrait("newUnit");
-				PlayerInfo::GetInstance()->addCharacter(Vector2(0, 0), test);
 			}
+			else
+				message = "Cannot obtain any more units!";
 		}
 		else
-			message = "Cannot obtain any more units!";
+			message = "Not Enough Gold!";
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased('X'))
 	{
@@ -121,12 +116,12 @@ void RecruitScene::Render()
 		modelStack.PushMatrix();
 		modelStack.Translate(20, 35, 2);
 		modelStack.Scale(20, 20 * 16 / 9, 1);
-		RenderHelper::RenderMesh(test->getPortrait());
+		RenderHelper::RenderMesh(newChar->getPortrait());
 		modelStack.PopMatrix();
 
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), test->getName(), Vector3(-20, 40, 2), 15.f,Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), newChar->getName(), Vector3(-20, 40, 2), 15.f, Color(1, 1, 1));
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), attackType, Vector3(-20, -10, 2), 15.f, Color(1, 1, 1));
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(test->i_movementCost), Vector3(-20, -55, 2), 15.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(newChar->i_movementCost), Vector3(-20, -55, 2), 15.f, Color(1, 1, 1));
 	}
 
 	glEnable(GL_CULL_FACE);

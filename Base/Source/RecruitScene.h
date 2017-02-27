@@ -29,7 +29,7 @@ private:
 	FPSCamera camera;
 
 	bool b_showObtainedUnit;
-	Character* test;
+	Character* newChar;
 	string attackType;
 	string message;
 };

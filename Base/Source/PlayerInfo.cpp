@@ -7,6 +7,7 @@ PlayerInfo::PlayerInfo()
 	enemy = nullptr; 
 	b_attacking = true;
 	level = nullptr;
+	gold = 500;
 }
 
 PlayerInfo::~PlayerInfo()
@@ -93,7 +94,7 @@ void PlayerInfo::addCharacterToEnemies(Vector2 pos, Character* newUnit)
 	enemies.push_back(newUnit);
 }
 
-void PlayerInfo::addItem(Item* itemToAdd)
+void PlayerInfo::addItemToInventory(Item* itemToAdd)
 {
 	inventory.push_back(itemToAdd);
 }
@@ -132,10 +133,11 @@ void PlayerInfo::loadWeaponsFromCSV(const string filepath)
 					weapon->b_isEquippedToSomeone = false;
 				else if (token == "TRUE")
 					weapon->b_isEquippedToSomeone = true;
-
-				weapon->itemPortrait = "swordPortrait";
+				else if (weapon->i_Price == -1)
+					weapon->i_Price = stoi(token);
 			}
-			addItem(weapon);
+			weapon->itemPortrait = "swordPortrait";
+			shop.push_back(weapon);
 		}
 	}
 	file.close();
@@ -181,9 +183,79 @@ void PlayerInfo::loadArmorFromCSV(const string filepath)
 					armor->b_isEquippedToSomeone = false;
 				else if (token == "TRUE")
 					armor->b_isEquippedToSomeone = true;
+				else if (armor->i_Price == -1)
+					armor->i_Price = stoi(token);
 			}
 			armor->itemPortrait = "armorPortrait";
-			addItem(armor);
+			shop.push_back(armor);
+		}
+	}
+	file.close();
+}
+
+void PlayerInfo::loadCharactersFromCSV(const string filepath)
+{
+	std::ifstream file(filepath);
+	if (file.is_open())
+	{
+		while (file.good())
+		{
+			string aLineOfText = "";
+			getline(file, aLineOfText);
+
+
+			size_t pos = aLineOfText.find("/");
+			if (pos != string::npos)
+			{
+				aLineOfText = aLineOfText.substr(0, pos);
+			}
+			if (aLineOfText.empty())
+				continue;
+
+			Character* character;
+			string token;
+			std::istringstream iss(aLineOfText);
+			int counter = 1;
+			while (getline(iss, token, ','))
+			{
+				switch (counter)
+				{
+				case 1:
+					if (token == "Melee")
+						character = new MeleeCharacter("");
+					else if (token == "Ranged")
+						character = new RangedCharacter("");
+					break;
+				case 2:
+					character->setName(token);
+					break;
+				case 3:
+					character->setBaseSTR(std::stoi(token));
+					break;
+				case 4:
+					character->setBaseDEX(std::stoi(token));
+					break;
+				case 5:
+					character->setBaseLUK(std::stoi(token));
+					break;
+				case 6:
+					character->i_movementCost = std::stoi(token);
+					break;
+				case 7:
+					character->i_attackRange = std::stoi(token);
+					break;
+				case 8:
+					character->setPortrait(token);
+					break;
+				case 9:
+					character->set2DMesh(token);
+					break;
+				}
+				counter += 1;
+			}
+			character->calculateStats();
+			unitsDataBase.push_back(character);
+			unitsNotOwned.push_back(character);
 		}
 	}
 	file.close();

@@ -1,8 +1,3 @@
-//Name,STR,DEX,LUK,HP,Equipped to?,Is equipped to someone
-Test,69,49,49,100,No One,FALSE
-wtf,1234,90,321,123314,No One,FALSE
-wtf,1234,90,321,123314,No One,FALSE
-wtf,1234,90,321,123314,No One,FALSE
-wtf,1234,90,321,123314,No One,FALSE
-wtf,1234,90,321,123314,No One,FALSE
-wtf,1234,90,321,123314,No One,FALSE
+//Name,STR,DEX,LUK,HP,Equipped to?,Is equipped to someone,Price
+Test,69,49,49,100,No One,FALSE,100
+wtf,1234,90,321,123314,No One,FALSE,69

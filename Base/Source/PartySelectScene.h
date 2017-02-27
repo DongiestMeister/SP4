@@ -49,6 +49,7 @@ private:
 		CURR_SCREEN_VIEW_STATUS,
 		CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER,
 		CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ,
+		CURR_SCREEN_SHOP,
 	};
 	CURRENT_SCREEN currentScreen;
 
@@ -57,11 +58,16 @@ private:
 	int i_selectedUnitsCounter; // for units
 	int i_selectedOptionCounter; // for going into screens (select characters/change equipment etc)
 	int i_selectedEquipmentCounter;
+	int i_shopCursor; // The actual items
+	int i_selectedShopCounter; // Buy, sell, or back
 	bool b_statusCursor;
 	bool b_equipmentCursor;
-	bool showArrowAtEQs;
+	bool b_showArrowAtEQs;
+	bool b_showShopItems; // For buying from shop
+	bool b_showPlayerItems; // To sell items to the shop
 	Vector3 statusCursorPos;
 	Vector3 equipmentCursorPos;
+	Vector3 shopCursorPos;
 	ISound* BGM;
 };
 
