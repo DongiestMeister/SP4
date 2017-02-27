@@ -1,5 +1,12 @@
 #include "EnemySpawner.h"
 #include "../Character/MeleeCharacter.h"
+#include "../Character/RangedCharacter.h"
+#include <sstream>
+#include <fstream>
+
+using std::string;
+using std::ifstream;
+using std::istringstream;
 
 EnemySpawner::EnemySpawner()
 {
@@ -29,7 +36,15 @@ void EnemySpawner::SpawnWave(int i_turn)
 				Vector2 spawnPoint = map->enemySpawnPoints[i];
 				if (map->theScreenMap[spawnPoint.y][spawnPoint.x] != 2)
 				{
-					Character *knight = new MeleeCharacter("Knight");
+					Character *knight;
+					if (enemy->c_class == Enemy::MELEE)
+					{
+						knight = new MeleeCharacter(enemy->s_name);
+					}
+					else if (enemy->c_class == Enemy::RANGE)
+					{
+						knight = new RangedCharacter(enemy->s_name);
+					}
 					knight->setPortrait("Knight");
 					map->AddEnemy(spawnPoint.x, spawnPoint.y, knight);
 					it = spawnEnemyList.erase(it);
@@ -51,4 +66,74 @@ void EnemySpawner::SpawnWave(int i_turn)
 void EnemySpawner::AddToSpawnList(Enemy enemy)
 {
 	spawnEnemyList.push_back(enemy);
+}
+
+void EnemySpawner::ClearSpawns()
+{
+	spawnEnemyList.clear();
+}
+
+bool EnemySpawner::LoadSpawns(const string filename)
+{
+	spawnEnemyList.clear();
+
+	ifstream file(filename.c_str());
+	if (file.is_open())
+	{
+		while (file.good())
+		{
+			string aLineOfText = "";
+			getline(file, aLineOfText);
+
+			size_t pos = aLineOfText.find("/");
+			if (pos != string::npos)
+			{
+				aLineOfText = aLineOfText.substr(0, pos);
+			}
+			if (aLineOfText.empty())
+				continue;
+
+			string token;
+			istringstream iss(aLineOfText);
+			int i_typeCounter = 0;
+
+			Enemy enemy;
+
+			while (getline(iss, token, ','))
+			{
+				switch (i_typeCounter)
+				{
+				case 0:
+					enemy.s_name = token;
+					break;
+				case 1:
+					if (token == "DEFENCE")
+					{
+						enemy.type = Enemy::DEFENCE;
+					}
+					break;
+				case 2:
+					enemy.i_Spawnturn = (atoi(token.c_str()));
+					break;
+				case 3:
+					if (token == "MELEE")
+					{
+						enemy.c_class = Enemy::MELEE;
+					}
+					else if (token == "RANGE")
+					{
+						enemy.c_class = Enemy::RANGE;
+					}
+					break;
+				}
+
+				i_typeCounter++;
+			}
+
+			spawnEnemyList.push_back(enemy);
+		}
+	}
+
+	file.close();
+	return true;
 }

@@ -137,6 +137,9 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Knight", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Knight")->textureID = LoadTGA("Image//knight.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("BlueKnight", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("BlueKnight")->textureID = LoadTGA("Image//blueknight.tga");
+
 	MeshBuilder::GetInstance()->GenerateQuad("Attack", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Attack")->textureID = LoadTGA("Image//attack.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("Move", Color(1, 1, 1), 1.f);
@@ -156,14 +159,17 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("Lose", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Lose")->textureID = LoadTGA("Image//youlose.tga");
 
-	MeshBuilder::GetInstance()->GenerateQuad("Frame", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("Frame")->textureID = LoadTGA("Image//frame.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Boulder", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Boulder")->textureID = LoadTGA("Image//boulder.tga");
+
+	MeshBuilder::GetInstance()->GenerateQuad("RockFloor", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("RockFloor")->textureID = LoadTGA("Image//rockfloor.tga");
 
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
-	groundEntity->SetPosition(Vector3(100, 0, 100));
-	groundEntity->SetScale(Vector3(750.0f, 750.0f, 750.0f));
+	groundEntity->SetPosition(Vector3(200, 0, 200));
+	groundEntity->SetScale(Vector3(2000.0f, 2000.0f, 2000.0f));
 	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
 	//playerInfo->SetTerrain(groundEntity);
 
@@ -192,11 +198,9 @@ void GameplayScene::Init()
 	controller.Init(&gameMap, &camera,&b_playerTurn);
 	spawner.Init(&gameMap);
 
-	spawner.AddToSpawnList(Enemy(Enemy::DEFENCE, 1));
-	spawner.AddToSpawnList(Enemy(Enemy::DEFENCE, 1));
-	spawner.AddToSpawnList(Enemy(Enemy::DEFENCE, 1));
+	spawner.LoadSpawns("Image//EnemySpawns.csv");
 
-	gameMap.Init(200, 200, 10, 10);
+	gameMap.Init(400, 400, 20, 20);
 
 	if (gameMap.LoadMap("Image//MapDesign.csv"))
 	{
@@ -541,7 +545,7 @@ void GameplayScene::Exit()
 	groundEntity = nullptr;
 	//playerInfo->DetachCamera();
 	
-
+	spawner.ClearSpawns();
 	gameMap.ClearCharacters();
 //	if (playerInfo->DropInstance() == false)
 //	{

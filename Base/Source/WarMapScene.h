@@ -49,6 +49,7 @@ private:
 	ShaderProgram* currProg;
 	FPSCamera camera;
 	TextEntity* fps;
+	float f_displayText;
 
 	Light* lights[2];
 
@@ -70,6 +71,8 @@ private:
 	vector<Level> levelList;
 	unsigned int levelIterator;
 	int i_numCompleted;
+
+	bool b_displayWin;
 
 	void FinishWar();
 	void RandomLevels();

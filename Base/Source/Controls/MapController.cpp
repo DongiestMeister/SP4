@@ -34,6 +34,8 @@ void MapController::Init(TileMap *map, FPSCamera *camera,bool *b_playerTurn)
 	enemyIterator = 0;
 	b_cameraTransition = false;
 	tempOrtho = 100.f;
+	b_isZoomed = true;
+	b_Zooming = false;
 
 	this->map = map;
 	this->camera = camera;
@@ -93,6 +95,7 @@ void MapController::Update(double dt)
 		if (b_attacking)
 		{
 			b_attacking = false;
+			b_forceCamera = false;
 			selectedTile = selectedUnit->getPos();
 			OpenButtons();
 		}
@@ -108,6 +111,38 @@ void MapController::Update(double dt)
 		{
 			selectedUnit = nullptr;
 			CloseButtons();
+		}
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyPressed('C'))
+	{
+		if (!b_Zooming)
+		{
+			b_Zooming = true;
+			b_isZoomed = !b_isZoomed;
+		}
+	}
+
+	if (!b_cameraTransition)
+	{
+		if (b_Zooming)
+		{
+			if (b_isZoomed)
+			{
+				if ((camera->f_OrthoSize -= 200 * dt) <= 100)
+				{
+					camera->f_OrthoSize = 100.f;
+					b_Zooming = false;
+				}
+			}
+			else if (!b_isZoomed)
+			{
+				if ((camera->f_OrthoSize += 200 * dt) >= 200)
+				{
+					camera->f_OrthoSize = 200.f;
+					b_Zooming = false;
+				}
+			}
 		}
 	}
 
@@ -603,9 +638,9 @@ void MapController::RenderUI()
 		if (b_activeButtons[i])
 		{
 			modelStack.PushMatrix();
-			modelStack.Translate(camera->f_OrthoSize / 5, f_yOffset, 1.f);
-			f_yOffset -= camera->f_OrthoSize / 8;
-			modelStack.Scale(camera->f_OrthoSize / 10 * 4 / 3, camera->f_OrthoSize / 10, 1.f);
+			modelStack.Translate(20, f_yOffset, 1.f);
+			f_yOffset -= 12.5f;
+			modelStack.Scale(10 * 4 / 3, 10, 1.f);
 			if ((int)currentButton == i)
 			{
 				modelStack.Scale(1.5f, 1.5f, 1.f);

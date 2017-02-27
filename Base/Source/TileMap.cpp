@@ -11,8 +11,6 @@
 
 #include "AI\AI_OffenceFSM.h"
 
-
-
 using namespace std;
 
 TileMap::TileMap()
@@ -138,11 +136,21 @@ void TileMap::Render()
 			modelStack.Translate(i * tileSizeX + tileSizeX / 2, -0.1, j * tileSizeY + tileSizeY / 2);
 			modelStack.Rotate(90, 1, 0, 0);
 			modelStack.Scale(tileSizeX, tileSizeY, 1);
-			if (theScreenMap[j][i] == 0 || theScreenMap[j][i] == 2)
+			if (theScreenMap[j][i] == 0 || theScreenMap[j][i] == 2 || theScreenMap[j][i] == 1)
 			{
 				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GEO_GRASS_LIGHTGREEN"));
 			}
 			modelStack.PopMatrix();
+
+			if (theScreenMap[j][i] == 1)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(i * tileSizeX + tileSizeX / 2, -0.11, j * tileSizeY + tileSizeY / 2);
+				modelStack.Rotate(90, 1, 0, 0);
+				modelStack.Scale(tileSizeX, tileSizeY, 1);
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Boulder"));
+				modelStack.PopMatrix();
+			}
 		}
 	}
 
@@ -154,7 +162,7 @@ void TileMap::Render()
 		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.4, unit->getPos().y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BlueKnight"));
 		modelStack.PopMatrix();
 	}
 
@@ -168,19 +176,6 @@ void TileMap::Render()
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
 		modelStack.PopMatrix();
-	}
-
-	if (movePath.size() > 0)
-	{
-		for (int i = 0; i < movePath.size(); ++i)
-		{
-			modelStack.PushMatrix();
-			modelStack.Translate(movePath[i].x * tileSizeX + tileSizeX / 2, -0.2, movePath[i].y * tileSizeY + tileSizeY / 2);
-			modelStack.Rotate(90, 1, 0, 0);
-			modelStack.Scale(tileSizeX, tileSizeY, 1);
-			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Selected"));
-			modelStack.PopMatrix();
-		}
 	}
 
 	for (int i = 0; i < obstacleList.size(); ++i)
@@ -202,6 +197,19 @@ void TileMap::Render()
 			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Flag"));
 		}
 		modelStack.PopMatrix();
+	}
+
+	if (movePath.size() > 0)
+	{
+		for (int i = 0; i < movePath.size(); ++i)
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(movePath[i].x * tileSizeX + tileSizeX / 2, -0.35, movePath[i].y * tileSizeY + tileSizeY / 2);
+			modelStack.Rotate(90, 1, 0, 0);
+			modelStack.Scale(tileSizeX, tileSizeY, 1);
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Selected"));
+			modelStack.PopMatrix();
+		}
 	}
 }
 

@@ -153,7 +153,6 @@ void PlayerInfo::loadArmorFromCSV(const string filepath)
 			string aLineOfText = "";
 			getline(file, aLineOfText);
 
-
 			size_t pos = aLineOfText.find("/");
 			if (pos != string::npos)
 			{

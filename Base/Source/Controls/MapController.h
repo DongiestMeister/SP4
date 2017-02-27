@@ -47,6 +47,9 @@ private:
 
 	vector<Vector2> atkRangeIndicator;
 
+	bool b_isZoomed;
+	bool b_Zooming;
+
 	enum CTRLBUTTONS
 	{
 		ATTACK,

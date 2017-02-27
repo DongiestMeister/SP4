@@ -136,6 +136,9 @@ void WarMapScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("GreenSphere", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("GreenSphere")->textureID = LoadTGA("Image//greensphere.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Frame", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Frame")->textureID = LoadTGA("Image//frame.tga");
+
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
@@ -149,6 +152,10 @@ void WarMapScene::Init()
 
 	RandomLevels();
 	levelIterator = 0;
+
+	b_displayWin = false;
+
+	f_displayText = 0.f;
 }
 
 void WarMapScene::Update(double dt)
@@ -179,9 +186,14 @@ void WarMapScene::Update(double dt)
 		}
 	}
 
+	if (f_displayText > 0)
+	{
+		f_displayText -= dt;
+	}
+
 	if (i_numCompleted == levelList.size())
 	{
-		FinishWar();
+		b_displayWin = true;
 	}
 
 	switch (currentButton)
@@ -244,28 +256,40 @@ void WarMapScene::MouseControl(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
-		if (currentButton == PLAY)
+		if (b_displayWin)
 		{
-			if (PlayerInfo::GetInstance()->availableUnits.size() != 0)
+			b_displayWin = false;
+			FinishWar();
+		}
+		else
+		{
+			if (currentButton == PLAY)
 			{
-				currentButton = B_TOTAL;
+				if (PlayerInfo::GetInstance()->availableUnits.size() != 0)
+				{
+					currentButton = B_TOTAL;
+				}
+				else
+				{
+					f_displayText = 1.f;
+				}
 			}
-		}
-		else if (currentButton == OPTIONS)
-		{
-
-		}
-		else if (currentButton == RECRUIT)
-		{
-			SceneManager::GetInstance()->SetActiveScene("RecruitState", true);
-		}
-
-		else if (currentButton == B_TOTAL)
-		{
-			if (!levelList[levelIterator].b_completed)
+			else if (currentButton == OPTIONS)
 			{
-				PlayerInfo::GetInstance()->level = &levelList[levelIterator];
-				SceneManager::GetInstance()->SetActiveScene("PartySelect", true);
+
+			}
+			else if (currentButton == RECRUIT)
+			{
+				SceneManager::GetInstance()->SetActiveScene("RecruitState", true);
+			}
+
+			else if (currentButton == B_TOTAL)
+			{
+				if (!levelList[levelIterator].b_completed)
+				{
+					PlayerInfo::GetInstance()->level = &levelList[levelIterator];
+					SceneManager::GetInstance()->SetActiveScene("PartySelect", true);
+				}
 			}
 		}
 	}
@@ -394,16 +418,34 @@ void WarMapScene::Render()
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
 	GraphicsManager::GetInstance()->DetachCamera();
 	//
-	//if (b_renderWin)
-	//{
-	//	modelStack.PushMatrix();
-	//	modelStack.Translate(winPos.x, winPos.y, 3);
-	//	modelStack.Scale(100, 70, 1);
-	//	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Win"));
-	//	modelStack.PopMatrix();
-	//}
+	if (b_displayWin)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(0, 0, 3);
+		modelStack.Scale(100, 100, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Frame"));
+		modelStack.PopMatrix();
 
+		int numWon = 0;
+		for (int i = 0; i < levelList.size(); ++i)
+		{
+			if (levelList[i].b_win)
+			{
+				numWon++;
+			}
+		}
 
+		if (numWon > levelList.size() / 2)
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "You won the war!", Vector3(-28, 20, 3.5), 15, Color(0, 1, 0));
+		else
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "You lost the war!", Vector3(-28, 20, 3.5), 15, Color(1, 0, 0));
+
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + to_string(200 * numWon) + " Gold", Vector3(-15, 0, 3.5), 10, Color(1, 1, 0));
+	}
+	if (f_displayText > 0)
+	{
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "You need to recruit units first!", Vector3(-45, 40, 0.5), 10, Color(1, 1, 1));
+	}
 
 	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Battles Completed:" + to_string(i_numCompleted) + "/" + to_string(levelList.size()), Vector3(-25, 80, 0.2), 10, Color(1, 1, 1));
 
@@ -504,6 +546,10 @@ void WarMapScene::RandomLevels()
 	int numberOfLevels = Math::RandIntMinMax(4, 6);
 	levelList.clear();
 	float distance = 20;
+
+	int tempCountry = Math::RandIntMinMax(0, (int)C_TOTAL - 1);
+	country = (CURRENT_COUNTRY)tempCountry;
+
 	for (int i = 0; i < numberOfLevels; ++i)
 	{
 		Level tempLevel;
@@ -588,11 +634,15 @@ void WarMapScene::RenderLevels()
 	modelStack.PushMatrix();
 	modelStack.Translate(-15, 0, 0.1);
 	modelStack.Scale(160, 200, 200);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Singapore"));
+	if (country == SINGAPORE)
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Singapore"));
+	else if (country == RUSSIA)
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Russia"));
 	modelStack.PopMatrix();
 }
 
 void WarMapScene::FinishWar()
 {
+	levelIterator = 0;
 	RandomLevels();
 }
