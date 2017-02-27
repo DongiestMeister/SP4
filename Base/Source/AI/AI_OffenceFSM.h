@@ -30,15 +30,16 @@ public:
 		CHASE_CAPTURETARGET,
 
 	};
+	//AI_FSM *Ai_parent;
 
 	Offence_Strategy state;
 
-	vector<Vector2> unitPath;
+	//vector<Vector2> unitPath;
 
 
 	void Chase(double dt);
 
-
+	bool b_foundEnemyPath = false;
 
 };
 

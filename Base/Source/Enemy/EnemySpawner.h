@@ -14,6 +14,8 @@ struct Enemy
 	enum TYPE
 	{
 		DEFENCE,
+		OFFENCE,
+		NEUTRAL,
 		TYPE_TOTAL
 	};
 

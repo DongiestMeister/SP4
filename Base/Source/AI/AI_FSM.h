@@ -34,6 +34,8 @@ public:
 	bool b_isDone;
 	bool b_reachEnd;
 	bool b_attack;
+
+	Vector2 originalPosition;
 };
 
 

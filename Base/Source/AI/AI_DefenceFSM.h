@@ -13,8 +13,10 @@ public:
 		//DEFEND_POINT,
 
 		IDLE,
+		//Chase Def = Only chase a fix distance, Use STATIONARY for non-movement
 		CHASE_DEF,
 		ATTACK,
+		//Stationary = Only attack adj, Use IDLE to Chase
 		STATIONARY,
 		RETURN_TO_POSITION,
 		RETREAT,
@@ -45,7 +47,7 @@ public:
 
 private:
 	//Original Position set for Stationary units
-	Vector2 originalPosition;
+	
 };
 
 

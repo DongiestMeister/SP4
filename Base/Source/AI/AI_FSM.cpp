@@ -12,6 +12,7 @@ AI_FSM::AI_FSM()
 	b_isDone = false;
 	b_reachEnd = false;
 	b_attack = false;
+
 }
 AI_FSM::~AI_FSM()
 {
@@ -84,9 +85,10 @@ bool AI_FSM::SearchForPath(int move_cost, Vector2 targetPosition)
 			for (int i = 0; i < move_cost && i < search.bestPath.size() - 1; ++i)
 			{
 				unitPath.push_back(search.bestPath[i]);
-				//std::cout << "UnitPath : " << unitPath[i].x << " , " << unitPath[i].y << std::endl;
+				std::cout << "UnitPath : " << unitPath[i].x << " , " << unitPath[i].y << std::endl;
 			}
-			//std::cout << "new path" << std::endl;
+			//std::cout << "UnitpAthSize : " << unitPath.size() << std::endl;
+			std::cout << "new path" << std::endl;
 			return true;
 
 		}
@@ -115,22 +117,25 @@ void AI_FSM::Attack()
 void AI_FSM::MoveUnit(double dt)
 {
 	// if dist btwn 1st pos & unit pos != 0
-	if (!(unitPath[0] - character->getPos()).IsZero())
+	if (unitPath.size() > 0)
 	{
-		//find difference btwm unitPath and unitPos and store as temp
-		Vector2 tempStep = (unitPath[0] - character->getPos()).Normalized();
-		//add temp to curr unit pos for new pos
-		character->setPos(character->getPos() + (tempStep *dt*f_speed));
-		//std::cout << "loop1111" << std::endl;
-	}
-	//if value too low, snap character to "perfect" pos of unitPath
-	if ((unitPath[0] - character->getPos()).Length() < 0.1f)
-	{
-		character->setPos(unitPath[0]);
-		//delete 1st unitpath, unitPath[1] become unitPath[0]
-		unitPath.erase(unitPath.begin());
+		if (!(unitPath[0] - character->getPos()).IsZero())
+		{
+			//find difference btwm unitPath and unitPos and store as temp
+			Vector2 tempStep = (unitPath[0] - character->getPos()).Normalized();
+			//add temp to curr unit pos for new pos
+			character->setPos(character->getPos() + (tempStep *dt*f_speed));
+			//std::cout << "loop1111" << std::endl;
+		}
+		//if value too low, snap character to "perfect" pos of unitPath
+		if ((unitPath[0] - character->getPos()).Length() < 0.1f)
+		{
+			character->setPos(unitPath[0]);
+			//delete 1st unitpath, unitPath[1] become unitPath[0]
+			unitPath.erase(unitPath.begin());
 
-		//????
-		//std::cout << "loop22222" << std::endl;
+			//????
+			//std::cout << "loop22222" << std::endl;
+		}
 	}
 }

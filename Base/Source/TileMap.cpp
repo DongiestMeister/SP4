@@ -239,11 +239,18 @@ void TileMap::AddEnemy(int x, int y, Character *unit)
 	theScreenMap[y][x] = 2;
 	if (unit->strategy == Character::DEFENCE)
 	{
+		unit->FSM = new AI_DefenceFSM(unit, AI_DefenceFSM::IDLE);
+		unit->FSM->map = this;
+	}
+	if (unit->strategy == Character::NEUTRAL)
+	{
 		unit->FSM = new AI_DefenceFSM(unit, AI_DefenceFSM::STATIONARY);
 		unit->FSM->map = this;
 	}
 	else if (unit->strategy == Character::OFFENCE)
 	{
+		unit->FSM = new AI_OffenceFSM(unit);
+		unit->FSM->map = this;
 	}
 	enemies.push_back(unit);
 }

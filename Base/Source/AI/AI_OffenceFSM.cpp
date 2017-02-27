@@ -1,10 +1,16 @@
 #include "AI_OffenceFSM.h"
 #include "../AStar/AStar.h"
+#include "SceneManager.h"
+#include "../PlayerInfo.h"
 
 AI_OffenceFSM::AI_OffenceFSM(Character *character)
 {
 	this->character = character;
+	target = NULL;
+	b_isDone = false;
+	b_foundEnemyPath = false;
 	state = CHASE_ALL;
+	//Ai_parent = new AI_FSM();
 }
 
 
@@ -29,10 +35,17 @@ bool AI_OffenceFSM::Update(double dt)
 			break;
 		case CHASE_MELEE:
 			break;
-
+		case CHASE_CAPTURETARGET:
+			break;
 		default:
 			break;
 		}
+	}
+
+	if (target == NULL || b_isDone)
+	{
+		b_isDone = false;
+		return true;
 	}
 	return false;
 }
@@ -43,25 +56,30 @@ void AI_OffenceFSM::Chase(double dt)
 	//Set target to current unit that is nearest
 	SearchNearestWithHP();
 
+	if (!b_foundEnemyPath)
+	{
+		b_foundEnemyPath = SearchForPath(character->i_movementCost, target->getPos());
+
+		if (b_foundEnemyPath) //&& unitPath.size() > 0)
+		{
+			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+			map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+		}
+		else
+		{
+			b_isDone = true;
+			b_foundEnemyPath = false;
+		}
+	}
+	
+
 	//if unit != took action, = current unit to move
 	if (!character->b_tookAction)
 	{
 		//ATTACK CHASE = if target is out of reach, Keep chasing
 		// if dist btwn 1st pos & unit pos != 0, 
-		if (!(unitPath[0] - character->getPos()).IsZero())
-		{
-			//find difference btwm unitPath and unitPos and store as temp
-			Vector2 tempStep = (unitPath[0] - character->getPos()).Normalized();
-			//add temp to curr unit pos for new pos
-			character->setPos(character->getPos() + (tempStep *dt*f_speed));
-		}
-		//if value too low, snap character to "perfect" pos of unitPath
-		if ((unitPath[0] - character->getPos()).Length() < 0.1f)
-		{
-			character->setPos(unitPath[0]);
-			//delete 1st unitpath, unitPath[1] become unitPath[0]
-			unitPath.erase(unitPath.begin());
-		}
+		MoveUnit(dt);
+
 		if ((unitPath.size() <= 0))
 		{
 			state = ATTACK;

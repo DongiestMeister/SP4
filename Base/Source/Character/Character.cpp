@@ -2,7 +2,7 @@
 
 Character::Character() : i_strBoostFromTerrain(0), i_dexBoostFromTerrain(0), i_lukBoostFromTerrain(0), i_Damage(0)
 {
-	strategy = DEFENCE;
+	strategy = OFFENCE;
 
 	i_baseHP = 50;
 	i_currentHP = 50;

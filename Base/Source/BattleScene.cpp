@@ -76,60 +76,14 @@ void BattleScene::Init()
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
 	// Load all the meshes
-	MeshBuilder::GetInstance()->GenerateAxes("reference");
-	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
-	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("quad")->textureID = LoadTGA("Image//calibri.tga");
+	LoadMeshes();
 
-	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
-	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//grisaiaCustom.tga");
-	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
 
-	MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
-	MeshBuilder::GetInstance()->GetMesh("Chair")->textureID = LoadTGA("Image//chair.tga");
-	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
-	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
-	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 0.5f);
-	MeshBuilder::GetInstance()->GenerateCone("cone", Color(0.5f, 1, 0.3f), 36, 10.f, 10.f);
-	MeshBuilder::GetInstance()->GenerateCube("cube", Color(1.0f, 1.0f, 0.0f), 1.0f);
-	MeshBuilder::GetInstance()->GetMesh("cone")->material.kDiffuse.Set(0.99f, 0.99f, 0.99f);
-	MeshBuilder::GetInstance()->GetMesh("cone")->material.kSpecular.Set(0.f, 0.f, 0.f);
-	MeshBuilder::GetInstance()->GenerateQuad("GRASS_DARKGREEN", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("GRASS_DARKGREEN")->textureID = LoadTGA("Image//Grassydirt.tga");
-	MeshBuilder::GetInstance()->GenerateQuad("GEO_GRASS_LIGHTGREEN", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("GEO_GRASS_LIGHTGREEN")->textureID = LoadTGA("Image//grass_lightgreen.tga");
-	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.0f, 0.64f, 0.0f), 1.0f);
 
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_FRONT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BACK", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_LEFT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_RIGHT", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_TOP", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BOTTOM", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_FRONT")->textureID = LoadTGA("Image//SkyBox//Sunset_Front.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BACK")->textureID = LoadTGA("Image//SkyBox//Sunset_Back.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_LEFT")->textureID = LoadTGA("Image//SkyBox//Sunset_Left.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_RIGHT")->textureID = LoadTGA("Image//SkyBox//Sunset_Right.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_TOP")->textureID = LoadTGA("Image//SkyBox//Sunset_Top.tga");
-	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BOTTOM")->textureID = LoadTGA("Image//SkyBox//Sunset_Bottom.tga");
-	MeshBuilder::GetInstance()->GenerateRay("laser", 10.0f);
-	MeshBuilder::GetInstance()->GenerateQuad("GRIDMESH", Color(1, 1, 1), 1.f);
 
-	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT", "OBJ//iceknight_obj.obj");
-	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT")->textureID = LoadTGA("Image//iceknight_texture.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_RED", "OBJ//iceknight_obj.obj");
-	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_RED")->textureID = LoadTGA("Image//iceknight_red.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_YELLOW", "OBJ//iceknight_obj.obj");
-	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_YELLOW")->textureID = LoadTGA("Image//iceknight_yellow.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_GREEN", "OBJ//iceknight_obj.obj");
-	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_GREEN")->textureID = LoadTGA("Image//iceknight_green.tga");
 
-	MeshBuilder::GetInstance()->GenerateOBJ("BAR_BAR", "OBJ//bar_bar.obj");
 
-	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_TREE", "OBJ//Tree_low.obj");
-	MeshBuilder::GetInstance()->GetMesh("BASIC_TREE")->textureID = LoadTGA("Image//Tree.tga");
-	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_PLANT", "OBJ//Plant_low.obj");
-	MeshBuilder::GetInstance()->GetMesh("BASIC_PLANT")->textureID = LoadTGA("Image//grass_obj.tga");
+
 
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
@@ -164,7 +118,12 @@ void BattleScene::Init()
 	enemy_posx = 120;
 	f_textDelayOnScreen = 0;
 	f_SceneIntroDelay = 1;
+	f_shakedelay = 0;
+	//f_shakedelayReturn = 0;
 
+	i_shakecounter = 0;
+
+	b_shaking = false;
 	b_isClashed = true;	//on start clash is true (clashed)
 	b_bonusRush = true; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
 
@@ -197,6 +156,12 @@ void BattleScene::Update(double dt)
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
 	
 	fps = 1 / dt;
+
+	if (f_shakedelay > 0)
+		f_shakedelay -= dt;
+	/*if (f_shakedelayReturn > 0)
+		f_shakedelayReturn -= dt;*/
+	
 	
 	if (f_SceneIntroDelay > 0)
 		f_SceneIntroDelay -= dt;
@@ -324,6 +289,18 @@ void BattleScene::LightMouseControl(double dt)
 		if (b_bonusRush && b_spamLock)
 			SceneManager::GetInstance()->SetActiveScene("GameState");
 	}
+	if (KeyboardController::GetInstance()->IsKeyDown('P'))
+	{
+		i_shakecounter = 5;
+		TakenHitAnimation(dt);
+		//CameraClash(true, dt);
+	}
+	/*if (KeyboardController::GetInstance()->IsKeyDown('O'))
+	{
+		CameraClashReturn(dt);
+	}*/
+
+
 	//camera.Update(dt);
 
 
@@ -383,12 +360,20 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 		{
 			if (player_posx <= maxdist_forward)		//Move from left to right
 			{
-				player_posx += dt * 50;
+				CameraClash(false, dt);
+				
+				if (player_posx >= maxdist_forward - 10)
+					player_posx += dt * 5;
+				else
+					player_posx += dt * 100;
+
 			}
 			else	//reached right
 			{
 
 				b_isClashed = true;	//clash true
+				i_shakecounter = 5;
+				TakenHitAnimation(dt);
 
 			
 				if (player->attack(enemy))
@@ -424,7 +409,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 		else
 		{
 			//if clash is true
-
+			CameraClashReturn(dt);
 			if (player_posx > 80)		//Return to left from right(original position)
 			{
 				player_posx -= dt * 50;
@@ -445,11 +430,17 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 
 			if (enemy_posx >= ene_maxdist_forward)		//Move from right to left
 			{
-				enemy_posx -= dt * 50;
+				CameraClash(true, dt);
+				if (enemy_posx <= ene_maxdist_forward + 10)
+					enemy_posx -= dt * 5;
+				else
+					enemy_posx -= dt * 100;
 			}
 			else
 			{
 				b_isClashed = true;
+				i_shakecounter = 5;
+				TakenHitAnimation(dt);
 
 				if (enemy->attack(player))
 				{
@@ -486,6 +477,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 		else
 		{
 			
+			CameraClashReturn(dt);
 			if (enemy_posx < 120)		//Return to right from left(original position)
 			{
 				enemy_posx += dt * 50;
@@ -502,30 +494,107 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 	}
 }
 
-void BattleScene::TakenHitAnimation(float& type_pos)
+void BattleScene::TakenHitAnimation(double dt)
 {
 
-	int pos = 1;
-	int neg = -1;
-	int neg_diff = type_pos - 10;
-	int pos_diff = type_pos + 10;
 
-	int shakecounter = 5;
-
-
-	/*if (shakecounter > 0)
-	{
-		if (shakecounter % 2 == 0)
+		if (b_shaking && f_shakedelay <= 0)
 		{
-			if (type_pos )
-			type_pos += 
+			if (camera.GetCameraPos().y >= -21)
+			{
+				camera.SetCameraPos(Vector3(camera.GetCameraPos().x, camera.GetCameraPos().y - (dt * 100), camera.GetCameraPos().z));
+				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, camera.GetCameraTarget().y - (dt * 100), camera.GetCameraTarget().z));
+			}
+			else
+			{
+				/*camera.SetCameraPos(Vector3(camera.GetCameraPos().x, -21, camera.GetCameraPos().z));
+				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, -20, camera.GetCameraTarget().z));*/
+				b_shaking = false;
+			}
 		}
-		else
+		else if (!b_shaking&& f_shakedelay <= 0)
 		{
+			if (camera.GetCameraPos().y <= -19)
+			{
+				camera.SetCameraPos(Vector3(camera.GetCameraPos().x, camera.GetCameraPos().y + (dt * 100), camera.GetCameraPos().z));
+				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, camera.GetCameraTarget().y + (dt * 100), camera.GetCameraTarget().z));
+			}
+			else
+			{
+				/*camera.SetCameraPos(Vector3(camera.GetCameraPos().x, -19, camera.GetCameraPos().z));
+				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, -18, camera.GetCameraTarget().z));*/
+				b_shaking = true;
 
+			}
 		}
-	}*/	
 	
+
+
+	//camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + 5, camera.GetCameraTarget().y, camera.GetCameraTarget().z));
+	//camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + 5, camera.GetCameraTarget().y, camera.GetCameraTarget().z));
+
+
+
+
+
+}
+
+void BattleScene::CameraClash(bool is_player, double dt)
+{
+	//float temp_x = 100;
+	if (is_player)	//Zoom to player
+	{
+		if (camera.GetCameraTarget().x >= (80 + 3))
+		{
+			if (camera.GetCameraTarget().x <= (80 + 8))
+			{
+				camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 3), camera.GetCameraPos().y + (dt * 1), camera.GetCameraPos().z + (dt * 6)));
+				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 3), camera.GetCameraTarget().y + (dt * 1), 100));
+			}
+			else
+			{
+				camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraPos().y + (dt * 20), camera.GetCameraPos().z + (dt * 120)));
+				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
+			}
+		}
+	}		
+	else		//Zoom to Enemy
+	{
+		if (camera.GetCameraTarget().x <= (120 - 3))
+		{
+			if (camera.GetCameraTarget().x >= (120 - 8))
+			{
+				camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 3), camera.GetCameraPos().y + (dt * 1), camera.GetCameraPos().z + (dt * 6)));
+				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 3), camera.GetCameraTarget().y + (dt * 1), 100));
+			}
+			else
+			{
+				camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraPos().y + (dt * 20), camera.GetCameraPos().z + (dt * 120)));
+				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
+			}
+		}
+	}
+}
+
+void BattleScene::CameraClashReturn(double dt)
+{
+	//Return from player zoom
+	if (camera.GetCameraTarget().x < 100 && camera.GetCameraPos().z > -10)
+	{
+		camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraPos().y - (dt * 20), camera.GetCameraPos().z - (dt * 130)));
+		camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraTarget().y - (dt * 20), 100));
+	}
+	//Return from enemy zoom
+	else if (camera.GetCameraTarget().x > 100 && camera.GetCameraPos().z > -10)
+	{
+		camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraPos().y - (dt * 20), camera.GetCameraPos().z - (dt * 130)));
+		camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraTarget().y - (dt * 20), 100));
+	}
+	else
+	{
+		camera.SetCameraPos(Vector3(100, -20, -10));
+		camera.SetCameraTarget(Vector3(100, -19, 100));
+	}
 }
 
 void BattleScene::Render()
@@ -556,7 +625,8 @@ void BattleScene::Render()
 
 	EntityManager::GetInstance()->RenderUI();
 
-	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(fps), Vector3(-200, 180, 10),  10, Color(1, 1, 1));
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(i_shakecounter), Vector3(-200, 180, 10),  10, Color(1, 1, 1));
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Cam:" + std::to_string(camera.GetCameraPos().x) + "," + std::to_string(camera.GetCameraPos().y) + "," + std::to_string(camera.GetCameraPos().z), Vector3(-200, 160, 10), 10, Color(1, 1, 1));
 
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	modelStack.PushMatrix();
@@ -594,7 +664,63 @@ void BattleScene::RenderSkyBox()
 
 }
 
+void BattleScene::LoadMeshes()
+{
+	MeshBuilder::GetInstance()->GenerateAxes("reference");
+	MeshBuilder::GetInstance()->GenerateCrossHair("crosshair");
+	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("quad")->textureID = LoadTGA("Image//calibri.tga");
 
+	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
+	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//grisaiaCustom.tga");
+	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
+
+	MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
+	MeshBuilder::GetInstance()->GetMesh("Chair")->textureID = LoadTGA("Image//chair.tga");
+	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
+	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
+	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 0.5f);
+	MeshBuilder::GetInstance()->GenerateCone("cone", Color(0.5f, 1, 0.3f), 36, 10.f, 10.f);
+	MeshBuilder::GetInstance()->GenerateCube("cube", Color(1.0f, 1.0f, 0.0f), 1.0f);
+	MeshBuilder::GetInstance()->GetMesh("cone")->material.kDiffuse.Set(0.99f, 0.99f, 0.99f);
+	MeshBuilder::GetInstance()->GetMesh("cone")->material.kSpecular.Set(0.f, 0.f, 0.f);
+	MeshBuilder::GetInstance()->GenerateQuad("GRASS_DARKGREEN", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("GRASS_DARKGREEN")->textureID = LoadTGA("Image//Grassydirt.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("GEO_GRASS_LIGHTGREEN", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("GEO_GRASS_LIGHTGREEN")->textureID = LoadTGA("Image//grass_lightgreen.tga");
+	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.0f, 0.64f, 0.0f), 1.0f);
+
+	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_FRONT", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BACK", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_LEFT", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_RIGHT", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_TOP", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_BOTTOM", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("SKYBOX_FRONT")->textureID = LoadTGA("Image//SkyBox//Sunset_Front.tga");
+	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BACK")->textureID = LoadTGA("Image//SkyBox//Sunset_Back.tga");
+	MeshBuilder::GetInstance()->GetMesh("SKYBOX_LEFT")->textureID = LoadTGA("Image//SkyBox//Sunset_Left.tga");
+	MeshBuilder::GetInstance()->GetMesh("SKYBOX_RIGHT")->textureID = LoadTGA("Image//SkyBox//Sunset_Right.tga");
+	MeshBuilder::GetInstance()->GetMesh("SKYBOX_TOP")->textureID = LoadTGA("Image//SkyBox//Sunset_Top.tga");
+	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BOTTOM")->textureID = LoadTGA("Image//SkyBox//Sunset_Bottom.tga");
+	MeshBuilder::GetInstance()->GenerateRay("laser", 10.0f);
+	MeshBuilder::GetInstance()->GenerateQuad("GRIDMESH", Color(1, 1, 1), 1.f);
+
+	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT", "OBJ//iceknight_obj.obj");
+	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT")->textureID = LoadTGA("Image//iceknight_texture.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_RED", "OBJ//iceknight_obj.obj");
+	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_RED")->textureID = LoadTGA("Image//iceknight_red.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_YELLOW", "OBJ//iceknight_obj.obj");
+	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_YELLOW")->textureID = LoadTGA("Image//iceknight_yellow.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_GREEN", "OBJ//iceknight_obj.obj");
+	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_GREEN")->textureID = LoadTGA("Image//iceknight_green.tga");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("BAR_BAR", "OBJ//bar_bar.obj");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_TREE", "OBJ//Tree_low.obj");
+	MeshBuilder::GetInstance()->GetMesh("BASIC_TREE")->textureID = LoadTGA("Image//Tree.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_PLANT", "OBJ//Plant_low.obj");
+	MeshBuilder::GetInstance()->GetMesh("BASIC_PLANT")->textureID = LoadTGA("Image//grass_obj.tga");
+}
 
 void BattleScene::RenderProps()
 {

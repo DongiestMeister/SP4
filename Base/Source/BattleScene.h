@@ -36,12 +36,15 @@ public:
 	virtual void Render();
 	virtual void Exit();
 
+	void LoadMeshes();
 	void RunBattleAnimation(double dt, bool ranged, int dmgvalue);
 	void RenderProps();
 	void RenderUnitsModels(MS& _ms);
-	void TakenHitAnimation(float& type_pos);
+	void TakenHitAnimation(double dt);	//shake it shake it
 	void RenderSkyBox();
 	void LightMouseControl(double dt);
+	void CameraClash(bool is_player, double dt);
+	void CameraClashReturn(double dt);
 
 	/*RenderTextStuff 
 	- runs animation and appearance of Totaldamage Counter and Effects
@@ -65,9 +68,19 @@ private:
 
 	float player_posx;
 	float enemy_posx;
-
+	float f_textDelayOnScreen;
+	float f_SceneIntroDelay;
+	float fps;
 	float f_bonus_time;
+	float f_shakedelay;
+	//float f_shakedelayReturn;
+	
 	bool b_bonus_start;
+	bool b_isClashed;
+	bool b_bonusRush;
+	bool b_spamLock;
+	bool b_shaking;
+
 
 	vector<DamageText*> storeDmgTxt;
 	TextEntity* TotalDamage;
@@ -75,15 +88,11 @@ private:
 	TextEntity* TimerText;
 
 	int i_totaldmg_txt;
-	float f_textDelayOnScreen;
+	int i_shakecounter;
+	
+	
 
-	bool b_isClashed;
-	bool b_bonusRush;
-	bool b_spamLock;
-
-	float f_SceneIntroDelay;
-
-	float fps;
+	
 
 	ISound* BGM;
 };
