@@ -313,6 +313,7 @@ void PartySelectScene::Update(double dt)
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
 		{
 			// go back to level select
+			SceneManager::GetInstance()->SetActiveScene("WarMap");
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
 		{

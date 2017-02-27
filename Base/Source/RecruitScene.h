@@ -10,7 +10,6 @@
 #include "Character/Character.h"
 #include "Character/MeleeCharacter.h"
 #include "Character/RangedCharacter.h"
-#include "Character/FlyingCharacter.h"
 
 class SceneManager;
 

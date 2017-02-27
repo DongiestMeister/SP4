@@ -453,7 +453,7 @@ void WarMapScene::Render()
 	RenderLevels();
 	RenderButtons();
 
-
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Gold:" + to_string(PlayerInfo::GetInstance()->gold), Vector3(-90, 90, 0.2), 8, Color(1, 1, 0));
 
 	EntityManager::GetInstance()->RenderUI();
 }
@@ -644,5 +644,14 @@ void WarMapScene::RenderLevels()
 void WarMapScene::FinishWar()
 {
 	levelIterator = 0;
+	int numWon = 0;
+	for (int i = 0; i < levelList.size(); ++i)
+	{
+		if (levelList[i].b_win)
+		{
+			numWon++;
+		}
+	}
+	PlayerInfo::GetInstance()->gold += numWon * 200;
 	RandomLevels();
 }
