@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "../../Base/Source/SpriteAnimation.h"
 
 // Forward Declaration
 class Mesh;
@@ -34,6 +35,7 @@ public:
 	Mesh* GenerateText(const std::string &meshName, unsigned row, unsigned col);
 	//Mesh* GenerateSkyPlane(const std::string &meshName, Color color, int slices,float PlanetRadius, float AtmosphereRadius, float hTile, float vTile);
 	Mesh* GenerateRay(const std::string &meshName, const float length = 1.0f);
+	SpriteAnimation* GenerateSpriteAnimation(const std::string &meshName, unsigned numRow, unsigned numCol, float length);
 
 	Mesh* GetMesh(const std::string& _meshName);
 	void AddMesh(const std::string& _meshName, Mesh* _newMesh);

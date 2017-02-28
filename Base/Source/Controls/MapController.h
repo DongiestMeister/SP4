@@ -53,6 +53,7 @@ private:
 	enum CTRLBUTTONS
 	{
 		ATTACK,
+		SPECIAL,
 		MOVE,
 		WAIT,
 		CTRL_TOTAL

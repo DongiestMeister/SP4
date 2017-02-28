@@ -3,6 +3,7 @@
 #include "GraphicsManager.h"
 #include "ShaderProgram.h"
 #include "MatrixStack.h"
+#include "../../Base/Source/SpriteAnimation.h"
 
 void RenderHelper::RenderMesh(Mesh* _mesh)
 {

@@ -4,6 +4,7 @@
 #include "Vertex.h"
 
 class Mesh;
+class SpriteAnimation;
 
 class RenderHelper
 {

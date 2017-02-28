@@ -38,6 +38,7 @@ public:
 	ItemList inventory; // Vector of items that the player has. Includes Weapons, Armors, Recovery Items etc...
 	ItemList shop;
 	Level *level;
+	bool b_bonus;
 
 	int gold; // amount the gold the player has
 	bool b_attacking;

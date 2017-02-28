@@ -27,6 +27,7 @@ void MapController::Init(TileMap *map, FPSCamera *camera,bool *b_playerTurn)
 	b_activeButtons[0] = false;
 	b_activeButtons[1] = false;
 	b_activeButtons[2] = false;
+	b_activeButtons[3] = false;
 	currentButton = ATTACK;
 	selectedButton = CTRL_TOTAL;
 	b_attacking = false;
@@ -74,6 +75,18 @@ void MapController::Update(double dt)
 		}
 		else if (b_attacking)
 		{
+			if (selectedButton == SPECIAL)
+			{
+				PlayerInfo::GetInstance()->b_bonus = true;
+				selectedUnit->i_specialMeter = 0;
+			}
+			else
+			{
+				if (selectedUnit->i_specialMeter + 20 <= 100)
+					selectedUnit->i_specialMeter += 20;
+				else
+					selectedUnit->i_specialMeter = 100;
+			}
 			b_forceCamera = false;
 			b_attacking = false;
 			//selectedUnit->b_tookAction = true;
@@ -86,6 +99,7 @@ void MapController::Update(double dt)
 			tempOrtho = camera->f_OrthoSize;
 			b_cameraTransition = true;
 			enemyIterator = 0;
+
 			//SceneManager::GetInstance()->SetActiveScene("BattleState", true);
 		}
 	}
@@ -204,7 +218,7 @@ void MapController::Update(double dt)
 				{
 					newTarget = Vector2(camera->GetCameraPos().x, camera->GetCameraPos().z - (currentPos.y - targetPos.y - 30));
 				}
-				PanTo(camera->f_OrthoSize, newTarget, dt);
+				PanTo(100, newTarget, dt);
 			}
 			if (abs(currentPos.x - targetPos.x) > 30) // Distance to start panning camera
 			{
@@ -217,12 +231,17 @@ void MapController::Update(double dt)
 				{
 					newTarget = Vector2(camera->GetCameraPos().x - (currentPos.x - targetPos.x - 30), camera->GetCameraPos().z);
 				}
-				PanTo(camera->f_OrthoSize, newTarget, dt);
+				PanTo(100, newTarget, dt);
 			}
 		}
 		else
 		{
-			PanTo(camera->f_OrthoSize * 2, targetPos, dt);
+			float dist = 0;
+			if (!(Vector2(camera->GetCameraPos().x, camera->GetCameraPos().z) - targetPos).IsZero())
+			{
+				dist = (Vector2(camera->GetCameraPos().x, camera->GetCameraPos().z) - targetPos).Length();
+			}
+			PanTo(camera->f_OrthoSize * 2 + dist, targetPos, dt);
 		}
 	}
 }
@@ -456,6 +475,10 @@ void MapController::OpenButtons()
 		}
 	}
 
+	if (selectedUnit->i_specialMeter >= 100 && b_activeButtons[ATTACK])
+	{
+		b_activeButtons[SPECIAL] = true;
+	}
 
 	if (selectedUnit->i_stepsTaken == 0)
 	{
@@ -467,6 +490,10 @@ void MapController::OpenButtons()
 	if (b_activeButtons[ATTACK])
 	{
 		currentButton = ATTACK;
+	}
+	else if (b_activeButtons[SPECIAL])
+	{
+		currentButton = SPECIAL;
 	}
 	else if (b_activeButtons[MOVE])
 	{
@@ -481,6 +508,7 @@ void MapController::OpenButtons()
 void MapController::CloseButtons()
 {
 	b_activeButtons[ATTACK] = false;
+	b_activeButtons[SPECIAL] = false;
 	b_activeButtons[MOVE] = false;
 	b_activeButtons[WAIT] = false;
 
@@ -497,7 +525,7 @@ void MapController::CloseButtons()
 			}
 		}
 	}
-	else if (selectedButton == ATTACK)
+	else if (selectedButton == ATTACK || selectedButton == SPECIAL)
 	{
 		b_forceCamera = true;
 		b_attacking = true;
@@ -516,26 +544,19 @@ void MapController::ButtonControls()
 			{
 				currentButton = WAIT;
 			}
-			else if (currentButton == MOVE)
+			else
 			{
-				if (b_activeButtons[ATTACK])
+				currentButton = (CTRLBUTTONS)(currentButton - 1);
+				while (!b_activeButtons[currentButton])
 				{
-					currentButton = ATTACK;
-				}
-				else
-				{
-					currentButton = WAIT;
-				}
-			}
-			else if (currentButton == WAIT)
-			{
-				if (b_activeButtons[MOVE])
-				{
-					currentButton = MOVE;
-				}
-				else if (b_activeButtons[ATTACK])
-				{
-					currentButton = ATTACK;
+					if (currentButton != ATTACK)
+					{
+						currentButton = (CTRLBUTTONS)(currentButton - 1);
+					}
+					else
+					{
+						currentButton = (CTRLBUTTONS)(CTRL_TOTAL - 1);
+					}
 				}
 			}
 		}
@@ -543,21 +564,22 @@ void MapController::ButtonControls()
 		{
 			if (currentButton == WAIT)
 			{
-				if (b_activeButtons[ATTACK])
-					currentButton = ATTACK;
-				else if (b_activeButtons[MOVE])
-					currentButton = MOVE;
+				currentButton = ATTACK;
 			}
-			else if (currentButton == ATTACK)
+			else
 			{
-				if (b_activeButtons[MOVE])
-					currentButton = MOVE;
+				currentButton = (CTRLBUTTONS)(currentButton + 1);
+			}
+			while (!b_activeButtons[currentButton])
+			{
+				if (currentButton != WAIT)
+				{
+					currentButton = (CTRLBUTTONS)(currentButton + 1);
+				}
 				else
-					currentButton = WAIT;
-			}
-			else if (currentButton == MOVE)
-			{
-				currentButton = WAIT;
+				{
+					currentButton = (CTRLBUTTONS)(0);
+				}
 			}
 		}
 	}
@@ -649,6 +671,10 @@ void MapController::RenderUI()
 			{
 				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Attack"));
 			}
+			else if (i == SPECIAL)
+			{
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Special"));
+			}
 			else if (i == MOVE)
 			{
 				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Move"));
@@ -684,11 +710,13 @@ void MapController::RenderUI()
 			string Name = "Name:" + selectedUnit->getName();
 			string HP = "HP:" + std::to_string(selectedUnit->getCurrentHP()) + "/" + std::to_string(selectedUnit->getMaxHP());
 			string DMG = "DMG:" + std::to_string(selectedUnit->getDamage());
+			string SPL = "Special:" + std::to_string(selectedUnit->i_specialMeter) + "/100";
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(-50, 50, 1), 7.f, Color(0.3, 0.3, 1));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(-50, 40, 1), 5.f, Color(0.3, 0.3, 1));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(-50, 30, 1), 5.f, Color(0.3, 0.3, 1));
-			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(-50, 40, 0.9), Vector3(50, 50, 50), Vector3(0, 0, 0));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), SPL, Vector3(-50, 20, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(-47, 35, 0.9), Vector3(60, 60, 50), Vector3(0, 0, 0));
 			RenderHelper::Render2DMesh(selectedUnit->getPortrait(), Vector3(-62, 40, 1), Vector3(15, 15 * 16 / 9, 20), Vector3(0, 0, 0));
 		}
 		else if (map->GetCharacter(selectedTile.x, selectedTile.y))
@@ -698,11 +726,13 @@ void MapController::RenderUI()
 			string Name = "Name:" + temp->getName();
 			string HP = "HP:" + std::to_string(temp->getCurrentHP()) + "/" + std::to_string(temp->getMaxHP());
 			string DMG = "DMG:" + std::to_string(temp->getDamage());
+			string SPL = "Special:" + std::to_string(temp->i_specialMeter) + "/100";
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(-50, 50, 1), 7.f, Color(0.3, 0.3, 1));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(-50, 40, 1), 5.f, Color(0.3, 0.3, 1));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(-50, 30, 1), 5.f, Color(0.3, 0.3, 1));
-			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(-50, 40, 0.9), Vector3(50, 50, 50), Vector3(0, 0, 0));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), SPL, Vector3(-50, 20, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(-47, 35, 0.9), Vector3(60, 60, 50), Vector3(0, 0, 0));
 			RenderHelper::Render2DMesh(temp->getPortrait(), Vector3(-62, 40, 1), Vector3(15, 15 * 16/9, 20), Vector3(0, 0, 0));
 		}
 
@@ -717,7 +747,7 @@ void MapController::RenderUI()
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(50, 50, 1), 7.f, Color(1, 0.3, 0.3));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(50, 40, 1), 5.f, Color(1, 0.3, 0.3));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(50, 30, 1), 5.f, Color(1, 0.3, 0.3));
-			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(60, 40, 0.9), Vector3(50, 50, 50), Vector3(0, 0, 0));
+			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(65, 35, 0.9), Vector3(60, 60, 50), Vector3(0, 0, 0));
 			RenderHelper::Render2DMesh(temp->getPortrait(), Vector3(68, 40, 1), Vector3(15, 15 * 16 / 9, 20), Vector3(0, 0, 0));
 		}
 	}

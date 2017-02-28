@@ -8,6 +8,7 @@ PlayerInfo::PlayerInfo()
 	b_attacking = true;
 	level = nullptr;
 	gold = 500;
+	b_bonus = false;
 }
 
 PlayerInfo::~PlayerInfo()

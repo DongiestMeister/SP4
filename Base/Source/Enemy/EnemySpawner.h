@@ -4,10 +4,13 @@
 #include <vector>
 #include <string>
 #include "Vector3.h"
-#include "../TileMap.h"
+#include <map>
 
 using std::vector;
 using std::string;
+using std::map;
+
+class TileMap;
 
 struct Enemy
 {
@@ -48,6 +51,8 @@ public:
 	void AddToSpawnList(Enemy enemy);
 	void ClearSpawns();
 	bool LoadSpawns(const string filename);
+	bool LoadEnemies(const string filename);
+	map<int, Enemy> enemyMap;
 private:
 	TileMap *map;
 	vector<Enemy> spawnEnemyList;

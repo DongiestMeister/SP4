@@ -142,6 +142,8 @@ void GameplayScene::Init()
 
 	MeshBuilder::GetInstance()->GenerateQuad("Attack", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Attack")->textureID = LoadTGA("Image//attack.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Special", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Special")->textureID = LoadTGA("Image//special.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("Move", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Move")->textureID = LoadTGA("Image//move.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("Wait", Color(1, 1, 1), 1.f);
@@ -199,8 +201,9 @@ void GameplayScene::Init()
 	spawner.Init(&gameMap);
 
 	spawner.LoadSpawns("Image//EnemySpawns.csv");
+	spawner.LoadEnemies("Image//EnemyTypes.csv");
 
-	gameMap.Init(400, 400, 20, 20);
+	gameMap.Init(400, 400, 20, 20,&spawner);
 
 	if (gameMap.LoadMap("Image//MapDesign.csv"))
 	{
@@ -218,6 +221,9 @@ void GameplayScene::Init()
 	knight2->setPortrait("Knight");
 	knight3->setPortrait("Knight");
 
+	knight1->setAnimation("Image//zombie.tga", 6);
+	knight2->setAnimation("Image//zombie.tga", 6);
+	knight3->setAnimation("Image//zombie.tga", 6);
 
 	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
 	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
@@ -246,6 +252,7 @@ void GameplayScene::Update(double dt)
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
 	LightMouseControl(dt);
 	// <THERE>
+	gameMap.Update(dt);
 
 	if (!b_renderWin && !b_renderLose)
 	{

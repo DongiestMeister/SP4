@@ -23,7 +23,7 @@ TileMap::~TileMap()
 	ClearCharacters();
 }
 
-void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int numTilesWidth)
+void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int numTilesWidth, EnemySpawner *spawner)
 {
 	this->screenHeight = screenHeight;
 	this->screenWidth = screenWidth;
@@ -31,6 +31,7 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 	this->numTilesWidth = numTilesWidth;
 	this->tileSizeX = (float)screenWidth / (float)numTilesWidth;
 	this->tileSizeY = (float)screenHeight / (float)numTilesHeight;
+	this->spawner = spawner;
 
 	theScreenMap.resize(numTilesHeight);
 	for (int i = 0; i < numTilesHeight; ++i)
@@ -109,7 +110,24 @@ bool TileMap::LoadMap(const string mapName)
 				}
 				else if (theScreenMap[theLineCounter][theColumnCounter] != 2)
 				{
-					theScreenMap[theLineCounter][theColumnCounter++] = atoi(token.c_str()); // theScreenMap[y][x]
+					if (spawner->enemyMap.count(atoi(token.c_str())) != 0)
+					{
+						Character *knight;
+						if (spawner->enemyMap[atoi(token.c_str())].c_class == Enemy::MELEE)
+						{
+							knight = new MeleeCharacter(spawner->enemyMap[atoi(token.c_str())].s_name);
+						}
+						else if (spawner->enemyMap[atoi(token.c_str())].c_class == Enemy::RANGE)
+						{
+							knight = new RangedCharacter(spawner->enemyMap[atoi(token.c_str())].s_name);
+						}
+						knight->setPortrait("Knight");
+						AddEnemy(theColumnCounter++, theLineCounter, knight);
+					}
+					else
+					{
+						theScreenMap[theLineCounter][theColumnCounter++] = atoi(token.c_str()); // theScreenMap[y][x]
+					}
 				}
 				else
 				{
@@ -122,6 +140,18 @@ bool TileMap::LoadMap(const string mapName)
 
 	file.close();
 	return true;
+}
+
+void TileMap::Update(double dt)
+{
+	for (vector<Character*>::iterator it = enemies.begin(); it != enemies.end(); ++it)
+	{
+		Character *unit = *it;
+		if (unit->animation)
+		{
+			unit->animation->Update(dt);
+		}
+	}
 }
 
 void TileMap::Render()
@@ -174,7 +204,10 @@ void TileMap::Render()
 		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.4, unit->getPos().y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
+		if (unit->animation)
+			RenderHelper::RenderMesh(unit->animation);
+		else
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Knight"));
 		modelStack.PopMatrix();
 	}
 

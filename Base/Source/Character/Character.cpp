@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "LoadTGA.h"
 
 Character::Character() : i_strBoostFromTerrain(0), i_dexBoostFromTerrain(0), i_lukBoostFromTerrain(0), i_Damage(0)
 {
@@ -8,6 +9,7 @@ Character::Character() : i_strBoostFromTerrain(0), i_dexBoostFromTerrain(0), i_l
 	i_currentHP = 50;
 	i_HP = 50;
 	i_idInParty = -1;
+	i_specialMeter = 0;
 
 	i_STR = 0;
 	i_DEX = 0;
@@ -24,6 +26,7 @@ Character::Character() : i_strBoostFromTerrain(0), i_dexBoostFromTerrain(0), i_l
 	s_Name = "";
 
 	FSM = nullptr;
+	animation = nullptr;
 }
 
 Character::~Character()
@@ -42,6 +45,12 @@ Character::~Character()
 	{
 		delete FSM;
 		FSM = nullptr;
+	}
+
+	if (animation)
+	{
+		delete animation;
+		animation = nullptr;
 	}
 }
 
@@ -165,6 +174,18 @@ void Character::set3DMesh(string meshName)
 void Character::set2DMesh(string meshName)
 {
 	character2DMesh = meshName;
+}
+
+void Character::setAnimation(string filename,int frames)
+{
+	animation = MeshBuilder::GetInstance()->GenerateSpriteAnimation("Animation", 1, frames, 1);
+	animation->textureID = LoadTGA("Image//zombie.tga");
+
+	if (animation)
+	{
+		animation->m_anim = new Animation();
+		animation->m_anim->Set(0, frames - 1, 1, 1.5f, true);
+	}
 }
 
 void Character::setPortrait(string meshName)

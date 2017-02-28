@@ -5,6 +5,7 @@
 #include <string>
 #include "Vector3.h"
 #include "Character\Character.h"
+#include "Enemy\EnemySpawner.h"
 
 using std::vector;
 using std::string;
@@ -26,7 +27,8 @@ public:
 	TileMap();
 	~TileMap();
 	
-	void Init(int screenHeight, int screenWidth, int numTilesHeight, int numTilesWidth);
+	void Init(int screenHeight, int screenWidth, int numTilesHeight, int numTilesWidth, EnemySpawner *spawner);
+	void Update(double dt);
 
 	int screenHeight, screenWidth, numTilesHeight, numTilesWidth;
 	float tileSizeX, tileSizeY;
@@ -59,7 +61,7 @@ public:
 	void RemovePlayer(Character *character);
 	void RemoveEnemy(Character *character);
 private:
-	
+	EnemySpawner *spawner;
 };
 
 

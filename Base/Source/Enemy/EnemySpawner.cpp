@@ -3,6 +3,7 @@
 #include "../Character/RangedCharacter.h"
 #include <sstream>
 #include <fstream>
+#include "../TileMap.h"
 
 using std::string;
 using std::ifstream;
@@ -131,6 +132,67 @@ bool EnemySpawner::LoadSpawns(const string filename)
 			}
 
 			spawnEnemyList.push_back(enemy);
+		}
+	}
+
+	file.close();
+	return true;
+}
+
+bool EnemySpawner::LoadEnemies(const string filename)
+{
+	enemyMap.clear();
+
+	ifstream file(filename.c_str());
+	if (file.is_open())
+	{
+		while (file.good())
+		{
+			string aLineOfText = "";
+			getline(file, aLineOfText);
+
+			size_t pos = aLineOfText.find("/");
+			if (pos != string::npos)
+			{
+				aLineOfText = aLineOfText.substr(0, pos);
+			}
+			if (aLineOfText.empty())
+				continue;
+
+			string token;
+			istringstream iss(aLineOfText);
+			int i_typeCounter = 0;
+
+			Enemy enemy;
+
+			while (getline(iss, token, ','))
+			{
+				switch (i_typeCounter)
+				{
+				case 0:
+					enemy.s_name = token;
+					break;
+				case 1:
+					if (token == "DEFENCE")
+					{
+						enemy.type = Enemy::DEFENCE;
+					}
+					break;
+				case 2:
+					if (token == "MELEE")
+					{
+						enemy.c_class = Enemy::MELEE;
+					}
+					else if (token == "RANGE")
+					{
+						enemy.c_class = Enemy::RANGE;
+					}
+					break;
+				case 3:
+					enemyMap[atoi(token.c_str())] = enemy;
+				}
+				i_typeCounter++;
+			}
 		}
 	}
 

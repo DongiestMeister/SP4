@@ -127,7 +127,12 @@ void BattleScene::Init()
 	shake_dir = false;
 
 	b_isClashed = true;	//on start clash is true (clashed)
-	b_bonusRush = true; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
+	b_bonusRush = PlayerInfo::GetInstance()->b_bonus; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
+
+	if (b_bonusRush)
+	{
+		PlayerInfo::GetInstance()->b_bonus = false;
+	}
 
 	b_spamLock = false; //Should not be touched. Automatically locks if not bonus + clashed once
 

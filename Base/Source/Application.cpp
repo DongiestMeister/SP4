@@ -8,6 +8,7 @@
 #include "EntityManager.h"
 #include "MeshBuilder.h"
 #include "LoadTGA.h"
+#include "SpriteAnimation.h"
 
 //Include GLEW
 #include <GL/glew.h>
@@ -104,6 +105,8 @@ void Application::InitDisplay(void)
 
 	currProg->UpdateInt("numLights", 0);
 	currProg->UpdateInt("textEnabled", 0);
+
+	MeshBuilder::GetInstance()->GenerateSpriteAnimation("Zombie", 1, 6, 1)->textureID = LoadTGA("Image//zombie.tga");
 }
 
 

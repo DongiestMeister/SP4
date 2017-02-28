@@ -61,6 +61,7 @@ public:
 	void setPortrait(string meshName);
 	void setPos(Vector2 newPos);
 	void setName(string newName);
+	void setAnimation(string filename,int frames);
 
 	
 	int i_movementCost;
@@ -76,7 +77,10 @@ public:
 	int i_dexBoostFromTerrain;
 	int i_lukBoostFromTerrain;
 
+	int i_specialMeter;
+
 	STRATEGY strategy;
+	SpriteAnimation *animation;
 protected:
 	Weapon* weapon;
 	Armor* armor;
