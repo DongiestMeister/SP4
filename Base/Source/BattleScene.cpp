@@ -124,6 +124,8 @@ void BattleScene::Init()
 	i_shakecounter = 0;
 
 	b_shaking = false;
+	shake_dir = false;
+
 	b_isClashed = true;	//on start clash is true (clashed)
 	b_bonusRush = true; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
 
@@ -136,7 +138,6 @@ void BattleScene::Init()
 	TotalDamage = Create::Text2DObject(("text"), Vector3(-180, 160, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
 	TotalDmgCheer = Create::Text2DObject(("text"), Vector3(-180, 140, 1), " ", Vector3(20, 20, 20), Color(0, 0, 0));
 	TimerText = Create::Text2DObject(("text"), Vector3(-180, 120, 1), " ", Vector3(15, 15, 15), Color(0.7, 0.7, 1));
-	
 
 	fps = 0.f;
 	
@@ -167,12 +168,26 @@ void BattleScene::Update(double dt)
 		f_SceneIntroDelay -= dt;
 	else
 	{
-		if (!b_bonusRush && !b_spamLock)
+		if (PlayerInfo::GetInstance()->b_attacking)
 		{
-			b_isClashed = false;
+			if ((!b_bonusRush && !b_spamLock))
+			{
+				b_isClashed = false;
+			}
+		}
+		else
+		{
+			if ((!b_bonusRush || !b_spamLock))
+			{
+				b_isClashed = false;
+			}
 		}
 	}
 
+	/*if (b_shaking)
+	{*/
+		TakenHitAnimation(dt);
+	//}
 	//animation always running
 	
 
@@ -189,6 +204,7 @@ void BattleScene::Update(double dt)
 
 	LightMouseControl(dt);
 	
+
 
 	//camera.Update(dt);
 
@@ -271,7 +287,7 @@ void BattleScene::LightMouseControl(double dt)
 		if (!b_spamLock)
 			b_isClashed = false;	//when m = no clash, start clashing
 
-		if (!b_bonus_start && b_bonusRush)
+		if (!b_bonus_start && b_bonusRush && PlayerInfo::GetInstance()->b_attacking)
 		{
 			b_bonus_start = true;
 			f_bonus_time = 5;
@@ -291,8 +307,11 @@ void BattleScene::LightMouseControl(double dt)
 	}
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 	{
-		i_shakecounter = 5;
-		TakenHitAnimation(dt);
+		f_shakedelay = 0.3f;
+		//b_shaking = true;
+
+		//i_shakecounter = 5;
+		//TakenHitAnimation(dt);
 		//CameraClash(true, dt);
 	}
 	/*if (KeyboardController::GetInstance()->IsKeyDown('O'))
@@ -363,7 +382,12 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				CameraClash(false, dt);
 				
 				if (player_posx >= maxdist_forward - 10)
-					player_posx += dt * 5;
+				{
+					if (b_bonusRush)
+						player_posx += dt * 100;
+					else
+						player_posx += dt * 5;
+				}
 				else
 					player_posx += dt * 100;
 
@@ -372,9 +396,9 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			{
 
 				b_isClashed = true;	//clash true
-				i_shakecounter = 5;
-				TakenHitAnimation(dt);
-
+				/*i_shakecounter = 5;
+				TakenHitAnimation(dt);*/
+				f_shakedelay = 0.2f;
 			
 				if (player->attack(enemy))
 				{
@@ -409,7 +433,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 		else
 		{
 			//if clash is true
-			CameraClashReturn(dt);
+			//CameraClashReturn(dt);
 			if (player_posx > 80)		//Return to left from right(original position)
 			{
 				player_posx -= dt * 50;
@@ -439,8 +463,9 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			else
 			{
 				b_isClashed = true;
-				i_shakecounter = 5;
-				TakenHitAnimation(dt);
+				/*i_shakecounter = 5;
+				TakenHitAnimation(dt);*/
+				f_shakedelay = 0.2f;
 
 				if (enemy->attack(player))
 				{
@@ -469,7 +494,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				//PlayerInfo::GetInstance()->enemy->attack();
 				//TakenHitAnimation(player_posx);
 
-				if (!b_bonusRush)
+				//if (!b_bonusRush)
 					b_spamLock = true;
 				
 			}
@@ -477,7 +502,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 		else
 		{
 			
-			CameraClashReturn(dt);
+			//CameraClashReturn(dt);
 			if (enemy_posx < 120)		//Return to right from left(original position)
 			{
 				enemy_posx += dt * 50;
@@ -485,10 +510,12 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			
 			else
 			{
-				if (!b_bonusRush && b_spamLock)
+				//SceneManager::GetInstance()->SetActiveScene("GameState");
+				if (b_spamLock)
 				{
 					SceneManager::GetInstance()->SetActiveScene("GameState");
 				}
+				//std::cout << "do something" << std::endl;
 			}
 		}
 	}
@@ -497,41 +524,41 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 void BattleScene::TakenHitAnimation(double dt)
 {
 
-
-		if (b_shaking && f_shakedelay <= 0)
+	
+	if (f_shakedelay > 0)
+	{
+		if (!shake_dir)
 		{
-			if (camera.GetCameraPos().y >= -21)
+			camera.SetCameraPos(Vector3(camera.GetCameraPos().x, camera.GetCameraPos().y - (dt * 100), camera.GetCameraPos().z));
+			camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, camera.GetCameraTarget().y - (dt * 100), camera.GetCameraTarget().z));
+
+			if (camera.GetCameraPos().y <= -22)
 			{
-				camera.SetCameraPos(Vector3(camera.GetCameraPos().x, camera.GetCameraPos().y - (dt * 100), camera.GetCameraPos().z));
-				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, camera.GetCameraTarget().y - (dt * 100), camera.GetCameraTarget().z));
-			}
-			else
-			{
-				/*camera.SetCameraPos(Vector3(camera.GetCameraPos().x, -21, camera.GetCameraPos().z));
-				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, -20, camera.GetCameraTarget().z));*/
-				b_shaking = false;
+				shake_dir = true;
 			}
 		}
-		else if (!b_shaking&& f_shakedelay <= 0)
-		{
-			if (camera.GetCameraPos().y <= -19)
-			{
-				camera.SetCameraPos(Vector3(camera.GetCameraPos().x, camera.GetCameraPos().y + (dt * 100), camera.GetCameraPos().z));
-				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, camera.GetCameraTarget().y + (dt * 100), camera.GetCameraTarget().z));
-			}
-			else
-			{
-				/*camera.SetCameraPos(Vector3(camera.GetCameraPos().x, -19, camera.GetCameraPos().z));
-				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, -18, camera.GetCameraTarget().z));*/
-				b_shaking = true;
 
+		if (shake_dir)
+		{
+			camera.SetCameraPos(Vector3(camera.GetCameraPos().x, camera.GetCameraPos().y + (dt * 100), camera.GetCameraPos().z));
+			camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x, camera.GetCameraTarget().y + (dt * 100), camera.GetCameraTarget().z));
+
+			if (camera.GetCameraPos().y >= -18)
+			{
+				shake_dir = false;
 			}
 		}
+	}
+	if (f_shakedelay <= 0 && b_isClashed)
+	{
+		CameraClashReturn(dt);
+	}
 	
 
 
-	//camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + 5, camera.GetCameraTarget().y, camera.GetCameraTarget().z));
-	//camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + 5, camera.GetCameraTarget().y, camera.GetCameraTarget().z));
+
+
+
 
 
 
@@ -625,19 +652,19 @@ void BattleScene::Render()
 
 	EntityManager::GetInstance()->RenderUI();
 
-	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(i_shakecounter), Vector3(-200, 180, 10),  10, Color(1, 1, 1));
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(fps), Vector3(-200, 180, 10),  10, Color(1, 1, 1));
 	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Cam:" + std::to_string(camera.GetCameraPos().x) + "," + std::to_string(camera.GetCameraPos().y) + "," + std::to_string(camera.GetCameraPos().z), Vector3(-200, 160, 10), 10, Color(1, 1, 1));
 
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 	modelStack.PushMatrix();
 	modelStack.Translate(-130, -150, 10);
-	modelStack.Scale(player->getCurrentHP()*0.5, 10, 5);
+	modelStack.Scale(player->getCurrentHP(), 10, 5);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
 	modelStack.Translate(80, -150, 10);
-	modelStack.Scale(enemy->getCurrentHP()*0.5, 10, 5);
+	modelStack.Scale(enemy->getCurrentHP(), 10, 5);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
 	modelStack.PopMatrix();
 
@@ -813,7 +840,7 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 	}
 
 
-	if (!b_bonus_start && b_bonusRush)
+	if (!b_bonus_start && b_bonusRush && PlayerInfo::GetInstance()->b_attacking)
 	{
 		
 		TotalDmgCheer->SetPosition(Vector3(-100, 130, 0));
@@ -886,24 +913,27 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 			TotalDmgCheer->SetText(" ");
 			
 		}
+		
 
 	}
 	
 
-	if (i_totaldmg_txt >= (dmgvalue*10))
+	if (i_totaldmg_txt >= (dmgvalue*10) && f_textDelayOnScreen > 0)
 	{
-
-		TotalDamage->SetColor(Color(1, 0, 0));
-		TotalDmgCheer->SetColor(Color(1, 0, 0));
-		TotalDmgCheer->SetScale(TotalDamage->GetScale());
-		TotalDmgCheer->SetText("GOOD");
-		if (i_totaldmg_txt >= (dmgvalue*20))
+		if (dmgvalue > 0)
 		{
-
-			TotalDamage->SetColor(Color(1, 1, 0));
-			TotalDmgCheer->SetColor(Color(1, 1, 0));
+			TotalDamage->SetColor(Color(1, 0, 0));
+			TotalDmgCheer->SetColor(Color(1, 0, 0));
 			TotalDmgCheer->SetScale(TotalDamage->GetScale());
-			TotalDmgCheer->SetText("EXCELLENT");
+			TotalDmgCheer->SetText("GOOD");
+			if (i_totaldmg_txt >= (dmgvalue * 20))
+			{
+
+				TotalDamage->SetColor(Color(1, 1, 0));
+				TotalDmgCheer->SetColor(Color(1, 1, 0));
+				TotalDmgCheer->SetScale(TotalDamage->GetScale());
+				TotalDmgCheer->SetText("EXCELLENT");
+			}
 		}
 	}
 

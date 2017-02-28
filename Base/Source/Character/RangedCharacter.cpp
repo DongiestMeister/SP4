@@ -22,8 +22,21 @@ RangedCharacter::~RangedCharacter()
 
 bool RangedCharacter::attack(Character* opponent)
 {
-	float distanceToEnemy = (pos - opponent->getPos()).Length();
-	int hitRate = (i_DEX + weapon->i_weaponAccuracy - opponent->getLUK()) - (int)(distanceToEnemy);
+	float distanceToEnemy = 0;
+	int hitRate = 0;
+	if (!(pos - opponent->getPos()).IsZero())
+	{
+		distanceToEnemy = (pos - opponent->getPos()).Length();
+	}
+
+	if (weapon != nullptr)
+	{
+		hitRate = (i_DEX + weapon->i_weaponAccuracy - opponent->getLUK()) - (int)(distanceToEnemy);
+	}
+	else
+	{
+		 hitRate = (i_DEX - opponent->getLUK()) - (int)distanceToEnemy;
+	}
 	int hitResult = Math::RandIntMinMax(0, 100);
 	if (hitRate >= hitResult)
 	{

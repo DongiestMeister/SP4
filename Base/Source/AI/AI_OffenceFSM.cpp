@@ -8,7 +8,6 @@ AI_OffenceFSM::AI_OffenceFSM(Character *character)
 	this->character = character;
 	target = NULL;
 	b_isDone = false;
-	b_foundEnemyPath = false;
 	state = CHASE_ALL;
 	//Ai_parent = new AI_FSM();
 }
@@ -31,10 +30,7 @@ bool AI_OffenceFSM::Update(double dt)
 		case CHASE_ALL:
 			Chase(dt);
 			break;
-		case CHASE_RANGED:
-			break;
-		case CHASE_MELEE:
-			break;
+	
 		case CHASE_CAPTURETARGET:
 			break;
 		default:
@@ -53,36 +49,90 @@ bool AI_OffenceFSM::Update(double dt)
 
 void AI_OffenceFSM::Chase(double dt)
 {
-	//Set target to current unit that is nearest
-	SearchNearestWithHP();
-
-	if (!b_foundEnemyPath)
+	//No target & no Path
+	if (target == NULL && !b_foundEnemyPath)
 	{
-		b_foundEnemyPath = SearchForPath(character->i_movementCost, target->getPos());
-
-		if (b_foundEnemyPath) //&& unitPath.size() > 0)
+		SearchNearestWithHP();	//Assigns Target , unitPath
+		if (target != NULL)
 		{
-			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-			map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+			b_foundEnemyPath = true;
+			if (unitPath.size() < character->i_movementCost)
+			{
+				b_reachEnd = true;
+			}
+			//melee
+			if (character->i_attackRange <= 1)
+			{
+				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+				map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+			}
+			//ranged
+			else
+			{
+				if (b_reachEnd)
+				{
+					map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+					map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+				}
+				else
+				{
+					map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+					map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+				}
+			}
 		}
 		else
 		{
 			b_isDone = true;
-			b_foundEnemyPath = false;
 		}
 	}
-	
 
-	//if unit != took action, = current unit to move
-	if (!character->b_tookAction)
+
+	if (target != NULL)
 	{
-		//ATTACK CHASE = if target is out of reach, Keep chasing
-		// if dist btwn 1st pos & unit pos != 0, 
-		MoveUnit(dt);
-
-		if ((unitPath.size() <= 0))
+		if (!character->b_tookAction)
 		{
-			state = ATTACK;
+			//ATTACK CHASE = if target is out of reach, Keep chasing
+			// if dist btwn 1st pos & unit pos != 0, 
+			MoveUnit(dt);
+
+			if (character->i_attackRange == 1)
+			{
+				if (unitPath.size() <= 0)
+				{
+					if (b_reachEnd)
+					{
+						b_reachEnd = false;
+						state = ATTACK;
+					}
+					else
+					{
+						b_foundEnemyPath = false;
+						b_isDone = true;
+						target = NULL;
+					}
+				}
+			}
+			else if (character->i_attackRange >= 2)
+			{
+				if (b_reachEnd)
+				{
+					if (unitPath.size() <= 1)
+					{
+						b_reachEnd = false;
+						state = ATTACK;
+					}
+				}
+				else
+				{
+					if (unitPath.size() <= 0)
+					{
+						b_foundEnemyPath = false;
+						b_isDone = true;
+						target = NULL;
+					}
+				}
+			}
 		}
 	}
 }

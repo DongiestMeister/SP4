@@ -79,7 +79,9 @@ private:
 	bool b_isClashed;
 	bool b_bonusRush;
 	bool b_spamLock;
+
 	bool b_shaking;
+	bool shake_dir;
 
 
 	vector<DamageText*> storeDmgTxt;

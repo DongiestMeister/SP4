@@ -25,8 +25,7 @@ public:
 
 		ATTACK,
 		CHASE_ALL,
-		CHASE_RANGED,
-		CHASE_MELEE,
+
 		CHASE_CAPTURETARGET,
 
 	};
@@ -39,7 +38,7 @@ public:
 
 	void Chase(double dt);
 
-	bool b_foundEnemyPath = false;
+
 
 };
 

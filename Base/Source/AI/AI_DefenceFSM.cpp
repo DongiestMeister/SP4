@@ -7,7 +7,6 @@ AI_DefenceFSM::AI_DefenceFSM(Character *character, AI_DefenceFSM::Defence_Strate
 {
 	this->character = character;
 	target = nullptr;
-	b_foundEnemyPath = false;
 	b_foundReturnPath = false;
 	state = init_state;
 	b_isDone = false;
@@ -75,7 +74,7 @@ void AI_DefenceFSM::Idle(double dt, bool is_stationary)
 
 	if (!is_stationary)
 	{
-		if (target != nullptr)
+		if (target != nullptr && !b_foundEnemyPath)
 		{
 			if (character->getCurrentHP() <= 20)
 			{
@@ -88,7 +87,7 @@ void AI_DefenceFSM::Idle(double dt, bool is_stationary)
 		}
 		//std::cout << "r11" << std::endl;
 	}
-	else if (is_stationary && target != nullptr)
+	else if (is_stationary && target != nullptr && !b_foundEnemyPath)
 	{
 		//state = STATIONARY;
 		Stationary(dt);
@@ -107,78 +106,94 @@ void AI_DefenceFSM::Stationary(double dt)
 	if (!b_foundEnemyPath)
 	{
 
-		b_foundEnemyPath = SearchForPath(character->i_movementCost, target->getPos());	//search path creates unitPath[] elements
-		//std::cout << "1" << std::endl;
-
-		if (b_foundEnemyPath && unitPath.size() <= 1)
+		b_foundEnemyPath = true;
+		//total unit path is less than cost left
+		if (unitPath.size() < character->i_movementCost)
+		{
+			b_reachEnd = true;
+		}
+		//if melee and unitPath is less than 3
+		if (character->i_attackRange <= 1 && unitPath.size() <= 2)
 		{
 			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
 			map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
-
 		}
+		//limit movement for defence unit
+		else if (unitPath.size() <= 2)
+		{
+			if (b_reachEnd)
+			{
+				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+				map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+			}
+			else
+			{
+				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+				map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+			}
+		}
+		//if unitPath over size limit, return to idle
 		else
 		{
-			//if (!(character->getPos() == originalPosition))
-			//{
-			//	/*ReturnToPosition(dt);*/
-			//	state = RETURN_TO_POSITION;
-			//}
-			//else
-			//{
-				state = IDLE;
-				b_isDone = true;
-				b_foundEnemyPath = false;
-			//}
+			b_foundEnemyPath = false;
+			b_isDone = true;
+			state = IDLE;
 		}
 	}
 
 
 
-	if (b_foundEnemyPath)
+
+
+	if (target != NULL)
 	{
-		
-		//if unit != took action, = current unit to move
 		if (!character->b_tookAction)
 		{
-			//must be called AFTER setting unitPath
+
 			MoveUnit(dt);
 
-			if (unitPath.size() <= 0)	//end of unitpath
+			if (character->i_attackRange == 1)
 			{
-				b_foundEnemyPath = false;
+				if (unitPath.size() <= 0)
+				{
+					if (b_reachEnd)
+					{
+						b_reachEnd = false;
+						state = ATTACK;
+					}
+					else
+					{
+						b_foundEnemyPath = false;
+						target = NULL;
+						b_isDone = true;
+					}
+				}
+			}
+			else if (character->i_attackRange >= 2)
+			{
 				if (b_reachEnd)
 				{
-					b_reachEnd = false;
-					state = ATTACK;
+					if (unitPath.size() <= 1)
+					{
+						b_reachEnd = false;
+						state = ATTACK;
+					}
 				}
 				else
 				{
-					b_isDone = true;
-					state = IDLE;
+					if (unitPath.size() <= 0)
+					{
+						b_isDone = true;
+						b_foundEnemyPath = false;
+						target = NULL;
+					}
 				}
 			}
 		}
-		//else if (!(character->getPos() == originalPosition))
-		//{
-		//	/*ReturnToPosition(dt);*/
-		//	state = RETURN_TO_POSITION;
-		//	b_foundEnemyPath = false;
-		//	
-		//	//std::cout << "r2" << std::endl;
-
-		//}
-		else	//reached end of cost/limit allowed to move
-		{
-			b_foundEnemyPath = false;
-			state = IDLE;
-			
-			b_isDone = true;
-			
-		}
 	}
+
 }
 		
-
 void AI_DefenceFSM::ReturnToPosition(double dt)
 {
 	target->setPos(originalPosition);
@@ -186,7 +201,7 @@ void AI_DefenceFSM::ReturnToPosition(double dt)
 	if (!b_foundReturnPath)
 	{
 		//look for return path
-		b_foundReturnPath = SearchForPath(character->i_movementCost, originalPosition);
+		//b_foundReturnPath = SearchForPath(character->i_movementCost, originalPosition);
 		std::cout << "move cost : " << character->i_movementCost << std::endl;
 
 		if (b_foundReturnPath)
@@ -244,54 +259,100 @@ void AI_DefenceFSM::ReturnToPosition(double dt)
 
 void AI_DefenceFSM::Chase(double dt)
 {
-	//check for paths (target is set from searchnearest before this func)
 	if (!b_foundEnemyPath)
 	{
-		b_foundEnemyPath = SearchForPath(character->i_movementCost, target->getPos());	//search path creates unitPath[] elements
 
-		if (b_foundEnemyPath && unitPath.size() <= 3)
+		b_foundEnemyPath = true;
+		//total unit path is less than cost left
+		if (unitPath.size() < character->i_movementCost)
+		{
+			b_reachEnd = true;
+		}
+		//if melee and unitPath is less than 3
+		if (character->i_attackRange <= 1 && unitPath.size() <= 3)
 		{
 			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
 			map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
-
 		}
+		//limit movement for defence unit
+		else if (unitPath.size() <= 3)
+		{
+			if (b_reachEnd)
+			{
+				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+				map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+			}
+			else
+			{
+				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+				map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+			}
+		}
+		//if unitPath over size limit, return to idle
 		else
 		{
-			state = IDLE;
-			b_isDone = true;
 			b_foundEnemyPath = false;
+			b_isDone = true;
+			state = IDLE;
 		}
 	}
+	
 
 
-	//if path exists
-	if (b_foundEnemyPath)
+
+
+	if (target != NULL)
 	{
-		//if unit != took action, = current unit to move
 		if (!character->b_tookAction)
 		{
-			//DEFENCE CHASE = if target is out of reach, return to IDLE state
 
-			//must be called AFTER setting unitpath
 			MoveUnit(dt);
 
-			if (unitPath.size() <= 0)
+			if (character->i_attackRange == 1)
 			{
-				b_foundEnemyPath = false;
+				if (unitPath.size() <= 0)
+				{
+					if (b_reachEnd)
+					{
+						b_reachEnd = false;
+						state = ATTACK;
+					}
+					else
+					{
+						b_foundEnemyPath = false;
+						target = NULL;
+						b_isDone = true;
+					}
+				}
+			}
+			else if (character->i_attackRange >= 2)
+			{
 				if (b_reachEnd)
 				{
-					b_reachEnd = false;
-					state = ATTACK;
+					if (unitPath.size() <= 1)
+					{
+						b_reachEnd = false;
+						state = ATTACK;
+					}
 				}
 				else
 				{
-					b_isDone = true;
-					state = IDLE;
+					if (unitPath.size() <= 0)
+					{
+						b_isDone = true;
+						b_foundEnemyPath = false;
+						target = NULL;
+					}
 				}
 			}
 		}
 	}
+
+
 }
+		
+		
+
 
 
 void AI_DefenceFSM::Retreat(double dt)

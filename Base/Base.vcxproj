@@ -19,7 +19,6 @@
     <ClCompile Include="Source\BattleScene.cpp" />
     <ClCompile Include="Source\Character\Armor.cpp" />
     <ClCompile Include="Source\Character\Character.cpp" />
-    <ClCompile Include="Source\Character\FlyingCharacter.cpp" />
     <ClCompile Include="Source\Character\MeleeCharacter.cpp" />
     <ClCompile Include="Source\Character\RangedCharacter.cpp" />
     <ClCompile Include="Source\Character\Weapon.cpp" />
@@ -66,7 +65,6 @@
     <ClInclude Include="Source\BattleScene.h" />
     <ClInclude Include="Source\Character\Armor.h" />
     <ClInclude Include="Source\Character\Character.h" />
-    <ClInclude Include="Source\Character\FlyingCharacter.h" />
     <ClInclude Include="Source\Character\Item.h" />
     <ClInclude Include="Source\Character\MeleeCharacter.h" />
     <ClInclude Include="Source\Character\RangedCharacter.h" />

@@ -221,8 +221,8 @@ void GameplayScene::Init()
 
 	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
 	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
-	gameMap.AddEnemy(5, 4, knight1);
-	gameMap.AddEnemy(6, 4, knight2);
+	//gameMap.AddEnemy(5, 4, knight1);
+	//gameMap.AddEnemy(6, 4, knight2);
 	gameMap.AddEnemy(7, 4, knight3);
 
 	DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));

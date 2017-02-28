@@ -150,9 +150,6 @@
     <ClCompile Include="Source\Character\Character.cpp">
       <Filter>Character</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Character\FlyingCharacter.cpp">
-      <Filter>Character</Filter>
-    </ClCompile>
     <ClCompile Include="Source\AI\AI_DefenceFSM.cpp">
       <Filter>AI</Filter>
     </ClCompile>
@@ -304,9 +301,6 @@
     </ClInclude>
     <ClInclude Include="Source\Character\RangedCharacter.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Character\FlyingCharacter.h">
-      <Filter>Character</Filter>
     </ClInclude>
     <ClInclude Include="Source\AI\AI_DefenceFSM.h">
       <Filter>AI</Filter>
