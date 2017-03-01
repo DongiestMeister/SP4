@@ -206,7 +206,7 @@ void GameplayScene::Init()
 
 	gameMap.Init(400, 400, 20, 20,&spawner);
 
-	if (gameMap.LoadMap("Image//MapDesign.csv"))
+	if (gameMap.LoadMap("Image//MapDesignR.csv"))
 	{
 		cout << "Succesfully loaded map!" << endl;
 	}
