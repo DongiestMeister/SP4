@@ -109,6 +109,10 @@ void PartySelectScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("selectEquip")->textureID = LoadTGA("Image//PartySelect//selectEquip.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("shop", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("shop")->textureID = LoadTGA("Image//PartySelect//shop.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("shopWeaponStats", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("shopWeaponStats")->textureID = LoadTGA("Image//PartySelect//shopWeaponStats.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("shopArmorStats", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("shopArmorStats")->textureID = LoadTGA("Image//PartySelect//shopArmorStats.tga");
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -131,52 +135,46 @@ void PartySelectScene::Init()
 
 	i_shopCursor = 0;
 	i_selectedShopCounter = 0;
+	i_eqToShow = 0; // (0 to 15) or (16 - 31) , this number should only be 0 or 16
 
 	b_showShopItems = false;
 	b_showPlayerItems = false;
+	b_showItemStatsAtShop = false;
+	b_equipmentPageNumber = 0;
+
+	message = "";
 }
 
 void PartySelectScene::Update(double dt)
 {
 	// Update our entities
 	EntityManager::GetInstance()->Update(dt);
-
-	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
-	if (KeyboardController::GetInstance()->IsKeyDown('1'))
-		glEnable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('2'))
-		glDisable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('3'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (KeyboardController::GetInstance()->IsKeyDown('4'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	if (KeyboardController::GetInstance()->IsKeyDown('5'))
+	if (KeyboardController::GetInstance()->IsKeyReleased('C'))
 	{
-		lights[0]->type = Light::LIGHT_POINT;
+		if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_CHANGE_EQ)
+		{
+			if (PlayerInfo::GetInstance()->inventory.size() > 16)
+			{
+				if (b_equipmentPageNumber == 0)
+				{
+					b_equipmentPageNumber = 1;
+					i_eqToShow = 16;
+				}
+				else
+				{
+					b_equipmentPageNumber = 0;
+					i_eqToShow = 0;
+				}
+			}
+		}
+		else if (currentScreen == CURR_SCREEN_SHOP)
+		{
+			if( (b_showShopItems == true && b_showPlayerItems == false) || (b_showShopItems == false && b_showPlayerItems == true) )
+			{
+				b_showItemStatsAtShop = true;
+			}
+		}
 	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
-	{
-		lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
-	{
-		lights[0]->type = Light::LIGHT_SPOT;
-	}
-
-	if (KeyboardController::GetInstance()->IsKeyDown('I'))
-		lights[0]->position.z -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('K'))
-		lights[0]->position.z += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('J'))
-		lights[0]->position.x -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('L'))
-		lights[0]->position.x += (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('O'))
-		lights[0]->position.y -= (float)(10.f * dt);
-	if (KeyboardController::GetInstance()->IsKeyDown('P'))
-		lights[0]->position.y += (float)(10.f * dt);
-
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
@@ -283,28 +281,45 @@ void PartySelectScene::Update(double dt)
 					selectedPos.Set(-47, 52.5f, 0);
 					i_selectedOptionCounter = 0;
 				}
+				message = "";
 			}
 			else if (b_showShopItems == true && b_showPlayerItems == false) // buying items
 			{
-				if (PlayerInfo::GetInstance()->shop.size() > 0)
+				if (b_showItemStatsAtShop == false)
 				{
-					// only can buy if the player has enough gold
-					if (PlayerInfo::GetInstance()->gold >= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price)
+					if (PlayerInfo::GetInstance()->shop.size() > 0)
 					{
-						PlayerInfo::GetInstance()->gold -= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price;
-						PlayerInfo::GetInstance()->addItemToInventory(PlayerInfo::GetInstance()->shop.at(i_shopCursor));
-						PlayerInfo::GetInstance()->shop.erase(PlayerInfo::GetInstance()->shop.begin() + i_shopCursor);
+						// only can buy if the player has enough gold
+						if (PlayerInfo::GetInstance()->gold >= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price)
+						{
+							PlayerInfo::GetInstance()->gold -= PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_Price;
+							PlayerInfo::GetInstance()->addItemToInventory(PlayerInfo::GetInstance()->shop.at(i_shopCursor));
+							PlayerInfo::GetInstance()->shop.erase(PlayerInfo::GetInstance()->shop.begin() + i_shopCursor);
+							if (i_shopCursor > PlayerInfo::GetInstance()->shop.size() - 1)
+								i_shopCursor = PlayerInfo::GetInstance()->shop.size() - 1;
+						}
 					}
 				}
-				
 			}
 			else if (b_showShopItems == false && b_showPlayerItems == true) // selling items
 			{
-				if (PlayerInfo::GetInstance()->inventory.size() > 0)
+				if (b_showItemStatsAtShop == false)
 				{
-					// resell back to shop at half price
-					PlayerInfo::GetInstance()->gold += (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_Price >> 1);
-					PlayerInfo::GetInstance()->inventory.erase(PlayerInfo::GetInstance()->inventory.begin() + i_shopCursor);
+					if (PlayerInfo::GetInstance()->inventory.size() > 0)
+					{
+						if (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->b_isEquippedToSomeone == false)
+						{
+							// resell back to shop at half price
+							PlayerInfo::GetInstance()->gold += (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_Price >> 1);
+							PlayerInfo::GetInstance()->inventory.erase(PlayerInfo::GetInstance()->inventory.begin() + i_shopCursor);
+							if (i_shopCursor > PlayerInfo::GetInstance()->inventory.size() - 1)
+								i_shopCursor = PlayerInfo::GetInstance()->shop.size() - 1;
+						}
+						else
+						{
+							message = "Unequip the weapon before selling!";
+						}
+					}
 				}
 			}
 		}
@@ -360,13 +375,23 @@ void PartySelectScene::Update(double dt)
 			}
 			else if (b_showShopItems == true && b_showPlayerItems == false)
 			{
-				b_showShopItems = false;
-				i_shopCursor = 0;
+				if (b_showItemStatsAtShop == false)
+				{
+					b_showShopItems = false;
+					i_shopCursor = 0;
+				}
+				else
+					b_showItemStatsAtShop = false;
 			}
 			else if (b_showPlayerItems == true && b_showShopItems == false)
 			{
-				b_showPlayerItems = false;
-				i_shopCursor = 0;
+				if (b_showItemStatsAtShop == false)
+				{
+					b_showPlayerItems = false;
+					i_shopCursor = 0;
+				}
+				else
+					b_showItemStatsAtShop = false;
 			}
 		}
 	}
@@ -738,72 +763,6 @@ void PartySelectScene::Update(double dt)
 			}
 		}
 	}
-
-	// if the left mouse button was released
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
-	{
-		//cout << "Left Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
-	{
-		//cout << "Right Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
-	{
-		//cout << "Middle Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
-	{
-		//cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
-	{
-		//cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
-	}
-	// <THERE>
-
-	// Update the player position and other details based on keyboard and mouse inputs
-	//playerInfo->Update(dt);
-
-	//Music::GetInstance()->SetListener(playerInfo->GetPos(), playerInfo->GetPos() - playerInfo->GetTarget());
-
-	//camera.Update(dt); // Can put the camera into an entity rather than here (Then we don't have to write this)
-
-	GraphicsManager::GetInstance()->UpdateLights(dt);
-
-	// Update the 2 text object values. NOTE: Can do this in their own class but i'm lazy to do it now :P
-	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
-	//std::ostringstream ss;
-	//ss.precision(5);
-	//float fps = (float)(1.f / dt);
-	//ss << "FPS: " << fps;
-	//textObj[1]->SetText(ss.str());
-
-	//std::ostringstream ss1;
-	//ss1.precision(4);
-	//ss1 << "Player:" << playerInfo->GetPos();
-	//textObj[2]->SetText(ss1.str());
-
-	//ss1.str("");
-	//ss1 << playerInfo->GetPrimaryWeapon()->GetMagRound() << "/" << playerInfo->GetPrimaryWeapon()->GetMaxMagRound();
-	//textObj[0]->SetText(ss1.str());
-
-	//if (playerInfo->lives > 0)
-	//{
-	//	ss1.str("");
-	//	ss1 << "LIVES:" << (float)playerInfo->lives;
-	//	textObj[3]->SetText(ss1.str());
-	//	textObj[4]->SetText("");
-	//}
-	//else
-	//{
-	//	textObj[3]->SetText("GAME OVER");
-	//	textObj[4]->SetText("(E TO RESTART)");
-	//}
-
-	//ss1.str("");
-	//ss1 << "Score:" << m_iScore;
-	//textObj[5]->SetText(ss1.str());
 }
 
 void PartySelectScene::Render()
@@ -875,8 +834,8 @@ void PartySelectScene::Render()
 				break;
 		}
 
-		
-		for (int i = 0,counter = 0; i < 5; i++)
+
+		for (int i = 0, counter = 0; i < 5; i++)
 		{
 			if (counter >= PlayerInfo::GetInstance()->party.size())
 				break;
@@ -898,7 +857,7 @@ void PartySelectScene::Render()
 
 		modelStack.PushMatrix();
 		modelStack.Translate(statusCursorPos.x, statusCursorPos.y, 10);
-		modelStack.Scale(20,10,1);
+		modelStack.Scale(20, 10, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
 		modelStack.PopMatrix();
 
@@ -917,7 +876,7 @@ void PartySelectScene::Render()
 		// This character's portrait
 		modelStack.PushMatrix();
 		modelStack.Translate(-camera.f_OrthoSize + 37.5f, 0, 1);
-		modelStack.Scale(50, 50 * 16/9, 1);
+		modelStack.Scale(50, 50 * 16 / 9, 1);
 		RenderHelper::RenderMesh(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getPortrait());
 		modelStack.PopMatrix();
 
@@ -931,19 +890,19 @@ void PartySelectScene::Render()
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getMaxHP()), Vector3(3, 3, 1), 10.f, Color(1, 1, 1));
 
 		// This character's Attack Range
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_attackRange), Vector3(65.f, 54, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_attackRange), Vector3(60, 54, 1), 10.f, Color(1, 1, 1));
 		// This character's Movement Range
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_movementCost), Vector3(65.f, 37, 1), 10.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_movementCost), Vector3(60, 37, 1), 10.f, Color(1, 1, 1));
 		// This character's weapon's name
 		if (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getWeapon() == nullptr)
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), " ", Vector3(65.f, 20, 1), 10.f, Color(1, 1, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), " ", Vector3(60, 20, 1), 10.f, Color(1, 1, 1));
 		else
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getWeapon()->s_Name), Vector3(65.f, 20, 1), 10.f, Color(1, 1, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getWeapon()->s_Name), Vector3(60.f, 20, 1), 10.f, Color(1, 1, 1));
 		// This character's armor's name
 		if (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getArmor() == nullptr)
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), " ", Vector3(65.f, 20, 1), 10.f, Color(1, 1, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), " ", Vector3(60, 20, 1), 10.f, Color(1, 1, 1));
 		else
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getArmor()->s_Name), Vector3(65.f, 3, 1), 10.f, Color(1, 1, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getArmor()->s_Name), Vector3(60.f, 3, 1), 10.f, Color(1, 1, 1));
 		// This character's name
 		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->getName()), Vector3(-75, 69, 1), 15.f, Color(1, 1, 1));
 	}
@@ -988,9 +947,9 @@ void PartySelectScene::Render()
 			modelStack.PushMatrix();
 			modelStack.Translate(0, 0, -1);
 			modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
-			if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->b_isWeapon)
+			if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->b_isWeapon)
 				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("weaponStats"));
-			else if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->b_isArmor)
+			else if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->b_isArmor)
 				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("armorStats"));
 			modelStack.PopMatrix();
 
@@ -1000,20 +959,20 @@ void PartySelectScene::Render()
 			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
 			modelStack.PopMatrix();
 
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->s_Name), Vector3(45, 69, 1), 15.f, Color(1, 1, 1));
-			if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->b_isWeapon)
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->s_Name), Vector3(30, 69, 1), 15.f, Color(1, 1, 1));
+			if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->b_isWeapon)
 			{
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->s_ownerName), Vector3(50, 30.5f, 1), 12.f, Color(1, 1, 1));
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->i_damageValue), Vector3(50, 15.5f, 1), 12.f, Color(1, 1, 1));
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->i_weaponAccuracy), Vector3(50, 0.5f, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->s_ownerName), Vector3(50, 30.5f, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_damageValue), Vector3(50, 15.5f, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_weaponAccuracy), Vector3(50, 0.5f, 1), 12.f, Color(1, 1, 1));
 			}
-			else if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->b_isArmor)
+			else if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->b_isArmor)
 			{
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->s_ownerName), Vector3(50, 52, 1), 12.f, Color(1, 1, 1));
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->i_strBoost), Vector3(50, 39.5f, 1), 12.f, Color(1, 1, 1));
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->i_dexBoost), Vector3(50, 27, 1), 12.f, Color(1, 1, 1));
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->i_lukBoost), Vector3(50, 14.5f, 1), 12.f, Color(1, 1, 1));
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->i_hpBoost), Vector3(50, 2, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->s_ownerName), Vector3(50, 52, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_strBoost), Vector3(50, 39.5f, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_dexBoost), Vector3(50, 27, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_lukBoost), Vector3(50, 14.5f, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_hpBoost), Vector3(50, 2, 1), 12.f, Color(1, 1, 1));
 			}
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Equip", Vector3(50.f, -40.f, 1.f), 17.f, Color(1, 1, 1));
@@ -1036,120 +995,183 @@ void PartySelectScene::Render()
 
 		if (PlayerInfo::GetInstance()->inventory.size() > 0)
 		{
-			for (int y = 1, counter = 0; y >= -3; y--)
+			for (int y = 1, counter = 0; y > -4; y--)
 			{
+				if ((counter + i_eqToShow) > PlayerInfo::GetInstance()->inventory.size() - 1 || counter > 15)
+					break;
 				for (int x = 0; x < 4; x++)
 				{
+					if ((counter + i_eqToShow) > PlayerInfo::GetInstance()->inventory.size() - 1 || counter > 15)
+						break;
 					modelStack.PushMatrix();
 					modelStack.Translate(-80 + (x * 20), (y * 31) + 10, 0);
 					modelStack.PushMatrix();
 					modelStack.Scale(15, 15 * 16 / 9, 1);
-					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter)->itemPortrait));
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter + i_eqToShow)->itemPortrait));
 					modelStack.PopMatrix();
 					modelStack.Translate(3, -6, 1);
 					modelStack.Scale(7, 7 * 16 / 9, 1);
-					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter)->s_ownerName));
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter + i_eqToShow)->s_ownerName));
 					modelStack.PopMatrix();
 					counter++;
-					if (counter >= PlayerInfo::GetInstance()->inventory.size())
-						break;
+					
 				}
-				if (counter >= PlayerInfo::GetInstance()->inventory.size())
-					break;
+				
 			}
 		}
 		
 	}
 	else if (currentScreen == CURR_SCREEN_SHOP)
 	{
-		modelStack.PushMatrix();
-		modelStack.Translate(0, 0, -1);
-		modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("shop"));
-		modelStack.PopMatrix();
-
-		modelStack.PushMatrix();
-		modelStack.Translate(selectedPos.x, selectedPos.y, 1);
-		modelStack.Scale(43, 26.5f * 16 / 9, 1);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
-		modelStack.PopMatrix();
-
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"),std::to_string(PlayerInfo::GetInstance()->gold), Vector3(3, 72, 3), 15.f, Color(1, 1, 1));
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.size()), Vector3(82.5f, 72, 3), 15.f, Color(1, 1, 1));
-
-		if (b_showShopItems == true)
+		if (b_showItemStatsAtShop == true)
 		{
-			if (PlayerInfo::GetInstance()->shop.size() > 0)
+			if (b_showShopItems == true && PlayerInfo::GetInstance()->shop.size() > 0)
 			{
 				modelStack.PushMatrix();
-				modelStack.Translate(-18, 10, 10);
-				modelStack.Scale(20, 10, 1);
-				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
+				modelStack.Translate(0, 0, -1);
+				modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
+				if (PlayerInfo::GetInstance()->shop.at(i_shopCursor)->b_isWeapon)
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("shopWeaponStats"));
+				else if (PlayerInfo::GetInstance()->shop.at(i_shopCursor)->b_isArmor)
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("shopArmorStats"));
 				modelStack.PopMatrix();
 
-				for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
+				modelStack.PushMatrix();
+				modelStack.Translate(-30, 47, 5);
+				modelStack.Scale(60, 35 * 16 / 9, 5);
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->itemPortrait));
+				modelStack.PopMatrix();
+
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->shop.at(i_shopCursor)->s_Name, Vector3(-42, 7, 5), 15.f, Color(1, 1, 1));
+				if (PlayerInfo::GetInstance()->shop.at(i_shopCursor)->b_isWeapon)
 				{
-					if (i > PlayerInfo::GetInstance()->shop.size() - 1)
-						break;
-					modelStack.PushMatrix();
-					modelStack.Translate(0, 10 - (counter * 25), 1);
-					modelStack.PushMatrix();
-					modelStack.Scale(15, 15, 1);
-					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->shop.at(i)->itemPortrait));
-					modelStack.PopMatrix();
-					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->shop.at(i)->s_Name, Vector3(22, 0, 1), 15.f, Color(1, 1, 1));
-					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->shop.at(i)->i_Price), Vector3(65, 0, 1), 15.f, Color(1, 1, 1));
-					modelStack.PopMatrix();
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_damageValue), Vector3(-35, -23, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_weaponAccuracy), Vector3(-35, -38, 5), 15.f, Color(1, 1, 1));
+				}
+				else if (PlayerInfo::GetInstance()->shop.at(i_shopCursor)->b_isArmor)
+				{
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_strBoost), Vector3(-45, -16, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_dexBoost), Vector3(-45, -31, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_lukBoost), Vector3(-45, -46, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_hpBoost), Vector3(-45, -62, 5), 15.f, Color(1, 1, 1));
 				}
 			}
-			else
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Nothing to see here", Vector3(-5, -22, 3), 15.f, Color(1, 1, 1));
+			else if (b_showPlayerItems == true && PlayerInfo::GetInstance()->inventory.size() > 0)
+			{
+				modelStack.PushMatrix();
+				modelStack.Translate(0, 0, -1);
+				modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
+				if (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->b_isWeapon)
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("shopWeaponStats"));
+				else if (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->b_isArmor)
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("shopArmorStats"));
+				modelStack.PopMatrix();
+
+				modelStack.PushMatrix();
+				modelStack.Translate(-30, 47, 5);
+				modelStack.Scale(60, 35 * 16 / 9, 5);
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->itemPortrait));
+				modelStack.PopMatrix();
+
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->s_Name, Vector3(-42, 7, 5), 15.f, Color(1, 1, 1));
+				if (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->b_isWeapon)
+				{
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_damageValue), Vector3(-35, -23, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_weaponAccuracy), Vector3(-35, -38, 5), 15.f, Color(1, 1, 1));
+				}
+				else if (PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->b_isArmor)
+				{
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_strBoost), Vector3(-45, -16, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_dexBoost), Vector3(-45, -31, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_lukBoost), Vector3(-45, -46, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + std::to_string(PlayerInfo::GetInstance()->inventory.at(i_shopCursor)->i_hpBoost), Vector3(-45, -62, 5), 15.f, Color(1, 1, 1));
+				}
+			}
 		}
-		else if (b_showPlayerItems == true)
+		else
 		{
-			if (PlayerInfo::GetInstance()->inventory.size() > 0)
+			modelStack.PushMatrix();
+			modelStack.Translate(0, 0, -1);
+			modelStack.Scale(2 * camera.f_OrthoSize, 2 * camera.f_OrthoSize, 1);
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("shop"));
+			modelStack.PopMatrix();
+
+			modelStack.PushMatrix();
+			modelStack.Translate(selectedPos.x, selectedPos.y, 1);
+			modelStack.Scale(43, 26.5f * 16 / 9, 1);
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
+			modelStack.PopMatrix();
+
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->gold), Vector3(3, 72, 3), 15.f, Color(1, 1, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.size()), Vector3(82.5f, 72, 3), 15.f, Color(1, 1, 1));
+			if (b_showShopItems == true)
 			{
-				modelStack.PushMatrix();
-				modelStack.Translate(-18, 10, 10);
-				modelStack.Scale(20, 10, 1);
-				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
-				modelStack.PopMatrix();
-				for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
+				if (PlayerInfo::GetInstance()->shop.size() > 0)
 				{
-					if (i > PlayerInfo::GetInstance()->inventory.size() - 1)
-						break;
 					modelStack.PushMatrix();
-					modelStack.Translate(0, 10 - (counter * 25), 1);
-					modelStack.PushMatrix();
-					modelStack.Scale(15, 15, 1);
-					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(i)->itemPortrait));
+					modelStack.Translate(-18, 10, 10);
+					modelStack.Scale(20, 10, 1);
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
 					modelStack.PopMatrix();
-					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->inventory.at(i)->s_Name, Vector3(22, 0, 1), 15.f, Color(1, 1, 1));
-					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i)->i_Price), Vector3(65, 0, 1), 15.f, Color(1, 1, 1));
-					modelStack.PopMatrix();
+
+					for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
+					{
+						if (i > PlayerInfo::GetInstance()->shop.size() - 1)
+							break;
+						modelStack.PushMatrix();
+						modelStack.Translate(0, 10 - (counter * 25), 1);
+						modelStack.PushMatrix();
+						modelStack.Scale(15, 15, 1);
+						if (PlayerInfo::GetInstance()->shop.at(i)->b_isWeapon)
+							RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("swordPortrait"));
+						else if (PlayerInfo::GetInstance()->shop.at(i)->b_isArmor)
+							RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("armorPortrait"));
+						modelStack.PopMatrix();
+						RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->shop.at(i)->s_Name, Vector3(19, 0, 1), 13.f, Color(1, 1, 1));
+						RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->shop.at(i)->i_Price), Vector3(65, 0, 1), 13.f, Color(1, 1, 1));
+						modelStack.PopMatrix();
+					}
 				}
+				else
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Nothing to see here", Vector3(-5, -22, 3), 15.f, Color(1, 1, 1));
 			}
-			else
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Nothing to see here", Vector3(-5, -22, 3), 15.f, Color(1, 1, 1));
+			else if (b_showPlayerItems == true)
+			{
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), message, Vector3(-35, 60, 6), 15.f, Color(1, 1, 0));
+				if (PlayerInfo::GetInstance()->inventory.size() > 0)
+				{
+					modelStack.PushMatrix();
+					modelStack.Translate(-18, 10, 10);
+					modelStack.Scale(20, 10, 1);
+					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("rightFacingArrow"));
+					modelStack.PopMatrix();
+					for (int i = i_shopCursor, counter = 0; i < i_shopCursor + 4; i++, counter++)
+					{
+						if (i > PlayerInfo::GetInstance()->inventory.size() - 1)
+							break;
+						modelStack.PushMatrix();
+						modelStack.Translate(0, 10 - (counter * 25), 1);
+						modelStack.PushMatrix();
+						modelStack.Scale(15, 15, 1);
+						if (PlayerInfo::GetInstance()->inventory.at(i)->b_isWeapon)
+							RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("swordPortrait"));
+						else if (PlayerInfo::GetInstance()->inventory.at(i)->b_isArmor)
+							RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("armorPortrait"));
+						modelStack.PopMatrix();
+						RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), PlayerInfo::GetInstance()->inventory.at(i)->s_Name, Vector3(19, 0, 1), 13.f, Color(1, 1, 1));
+						RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i)->i_Price >> 1), Vector3(65, 0, 1), 13.f, Color(1, 1, 1));
+						modelStack.PopMatrix();
+					}
+				}
+				else
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Nothing to see here", Vector3(-5, -22, 3), 15.f, Color(1, 1, 1));
+			}
 		}
 	}
 }
 
 void PartySelectScene::Exit()
 {
-	// Detach camera from other entities
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
-	//playerInfo->DetachCamera();
-
-	//	if (playerInfo->DropInstance() == false)
-	//	{
-	//#if _DEBUGMODE==1
-	//		cout << "Unable to drop PlayerInfo class" << endl;
-	//#endif
-	//	}
-
-	// Delete the lights
-//	delete lights[0];
-	//delete lights[1];
 }
