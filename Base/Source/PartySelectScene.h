@@ -60,11 +60,15 @@ private:
 	int i_selectedEquipmentCounter;
 	int i_shopCursor; // The actual items
 	int i_selectedShopCounter; // Buy, sell, or back
+	int i_eqToShow;
 	bool b_statusCursor;
 	bool b_equipmentCursor;
 	bool b_showArrowAtEQs;
 	bool b_showShopItems; // For buying from shop
 	bool b_showPlayerItems; // To sell items to the shop
+	bool b_equipmentPageNumber;
+	bool b_showItemStatsAtShop;
+	string message;
 	Vector3 statusCursorPos;
 	Vector3 equipmentCursorPos;
 	Vector3 shopCursorPos;

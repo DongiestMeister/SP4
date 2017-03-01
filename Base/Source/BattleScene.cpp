@@ -182,7 +182,7 @@ void BattleScene::Update(double dt)
 		}
 		else
 		{
-			if ((!b_bonusRush || !b_spamLock))
+			if ((!b_bonusRush && !b_spamLock))
 			{
 				b_isClashed = false;
 			}
