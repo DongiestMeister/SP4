@@ -1,9 +1,16 @@
-//Name,STR,DEX,LUK,HP,Equipped to?,Is equipped to someone,Price
-Test,69,49,49,100,No One,FALSE,100
-wtf,1234,90,321,123314,No One,FALSE,69
-wtf,1234,90,321,123314,No One,FALSE,70
-wtf,1234,90,321,123314,No One,FALSE,71
-wtf,1234,90,321,123314,No One,FALSE,72
-wtf,1234,90,321,123314,No One,FALSE,73
-wtf,1234,90,321,123314,No One,FALSE,74
-wtf,1234,90,321,123314,No One,FALSE,75
+//Name,STR,DEX,LUK,HP,Equipped to?,Is equipped to someone,Price,itemPortrait
+RainbowShield,49,41,69,150,default,FALSE,100,RainbowShield
+Seraphim,65,51,16,170,default,FALSE,320,Seraphim
+God's Howl,25,18,18,180,default,FALSE,160,GodsHowl
+ExArmor,66,6,6,666,default,FALSE,666,ExArmor
+Sky God Plate,61,21,22,120,default,FALSE,380,SkyGodPlate
+Onyetenvewve,42,12,8,420,default,FALSE,420,Onyetenvewve
+Sniper Armor,29,62,16,209,default,FALSE,218,SniperArmor
+Death's Cloak,54,44,14,444,default,FALSE,444,DeathCloak
+G. Cloak,56,17,19,260,default,FALSE,100,GCloak
+Rusty Armor,1,1,1,10,default,FALSE,99999,RustyArmor
+BFly Overall,40,30,22,220,default,FALSE,220,BFlyOveralls
+BlackwyrmCoat,59,17,17,208,default,FALSE,170,BlackwyrmCoat
+Von. Gear X,46,24,24,150,default,FALSE,140,VonGearX
+Slime Bubble,9999,9999,9999,9999,default,FALSE,1,SlimeBubble
+Elohim Gibor,72,53,74,145,default,FALSE,1314,ElohimGibor

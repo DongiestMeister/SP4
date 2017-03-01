@@ -66,13 +66,13 @@ private:
 	bool b_showArrowAtEQs;
 	bool b_showShopItems; // For buying from shop
 	bool b_showPlayerItems; // To sell items to the shop
-	bool b_equipmentPageNumber;
 	bool b_showItemStatsAtShop;
-	string message;
+	bool b_equipmentPageNumber;
 	Vector3 statusCursorPos;
 	Vector3 equipmentCursorPos;
 	Vector3 shopCursorPos;
 	ISound* BGM;
+	string message;
 };
 
 #endif

@@ -242,13 +242,13 @@ void PartySelectScene::Update(double dt)
 			{
 				if (b_equipmentCursor == 0)
 				{
-					if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->b_isArmor)
+					if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->b_isArmor)
 					{
-						PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->equipArmor(dynamic_cast<Armor*>(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)));
+						PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->equipArmor(dynamic_cast<Armor*>(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)));
 					}
-					else if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)->b_isWeapon)
+					else if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter+ i_eqToShow)->b_isWeapon)
 					{
-						PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->equipWeapon(dynamic_cast<Weapon*>(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter)));
+						PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->equipWeapon(dynamic_cast<Weapon*>(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)));
 					}
 				}
 				else
@@ -258,7 +258,7 @@ void PartySelectScene::Update(double dt)
 			}
 			else
 			{
-				if (PlayerInfo::GetInstance()->inventory.size() > 0)
+				if (i_selectedEquipmentCounter + i_eqToShow < PlayerInfo::GetInstance()->inventory.size())
 				{
 					b_showArrowAtEQs = true;
 					equipmentCursorPos.Set(30, -40, 10);

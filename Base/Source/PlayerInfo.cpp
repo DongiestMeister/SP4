@@ -8,7 +8,7 @@ PlayerInfo::PlayerInfo()
 	enemy = nullptr; 
 	b_attacking = true;
 	level = nullptr;
-	gold = 500;
+	gold = 100000;
 	b_bonus = false;
 }
 
@@ -121,24 +121,44 @@ void PlayerInfo::loadWeaponsFromCSV(const string filepath)
 			Weapon* weapon = new Weapon();
 			string token;
 			std::istringstream iss(aLineOfText);
+			int counter = 1;
 			while (getline(iss, token, ','))
 			{
-				if (weapon->s_Name == "")
+				switch (counter)
+				{
+				case 1:
 					weapon->s_Name = token;
-				else if (weapon->i_damageValue == -1)
+					break;
+				case 2:
 					weapon->i_damageValue = stoi(token);
-				else if (weapon->i_weaponAccuracy == -1)
+					break;
+				case 3:
 					weapon->i_weaponAccuracy = stoi(token);
-				else if (weapon->s_ownerName == "")
-					weapon->s_ownerName = token;
-				else if (token == "FALSE")
-					weapon->b_isEquippedToSomeone = false;
-				else if (token == "TRUE")
-					weapon->b_isEquippedToSomeone = true;
-				else if (weapon->i_Price == -1)
+					break;
+				case 4:
+					if (token == "default")
+						weapon->s_ownerName = "";
+					else
+						weapon->s_ownerName = token;
+					break;
+				case 5:
+					 if (token == "FALSE")
+						weapon->b_isEquippedToSomeone = false;
+					 else if (token == "TRUE")
+						weapon->b_isEquippedToSomeone = true;
+					break;
+				case 6:
 					weapon->i_Price = stoi(token);
+					break;
+				case 7:
+					if (token == "default")
+						weapon->itemPortrait = "swordPortrait";
+					else
+						weapon->itemPortrait = token;
+					break;
+				}
+				counter += 1;
 			}
-			weapon->itemPortrait = "swordPortrait";
 			shop.push_back(weapon);
 		}
 	}
@@ -166,28 +186,50 @@ void PlayerInfo::loadArmorFromCSV(const string filepath)
 			Armor* armor = new Armor();
 			string token;
 			std::istringstream iss(aLineOfText);
+			int counter = 1;
 			while (getline(iss, token, ','))
 			{
-				if (armor->s_Name == "")
+				switch (counter)
+				{
+				case 1:
 					armor->s_Name = token;
-				else if (armor->i_strBoost == -1)
+					break;
+				case 2:
 					armor->i_strBoost = stoi(token);
-				else if (armor->i_dexBoost == -1)
+					break;
+				case 3:
 					armor->i_dexBoost = stoi(token);
-				else if (armor->i_lukBoost == -1)
+					break;
+				case 4:
 					armor->i_lukBoost = stoi(token);
-				else if (armor->i_hpBoost == -1)
+					break;
+				case 5:
 					armor->i_hpBoost = stoi(token);
-				else if (armor->s_ownerName == "")
-					armor->s_ownerName = token;
-				else if (token == "FALSE")
-					armor->b_isEquippedToSomeone = false;
-				else if (token == "TRUE")
-					armor->b_isEquippedToSomeone = true;
-				else if (armor->i_Price == -1)
+					break;
+				case 6:
+					if (token == "default")
+						armor->s_ownerName = "";
+					else
+						armor->s_ownerName = token;
+					break;
+				case 7:
+					if (token == "FALSE")
+						armor->b_isEquippedToSomeone = false;
+					else if (token == "TRUE")
+						armor->b_isEquippedToSomeone = true;
+					break;
+				case 8:
 					armor->i_Price = stoi(token);
+					break;
+				case 9:
+					if (token == "default")
+						armor->itemPortrait = "armorPortrait";
+					else
+						armor->itemPortrait = token;
+					break;
+				}
+				counter += 1;
 			}
-			armor->itemPortrait = "armorPortrait";
 			shop.push_back(armor);
 		}
 	}
