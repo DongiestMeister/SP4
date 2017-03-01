@@ -69,7 +69,7 @@ private:
 	bool b_renderLose;
 	Vector2 bannerPos;
 
-	
+	bool b_renderQuit;
 
 	void LightMouseControl(double dt);
 

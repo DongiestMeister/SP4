@@ -45,6 +45,7 @@ void GameplayScene::Init()
 {
 	currProg = GraphicsManager::GetInstance()->GetActiveShader();
 
+	b_renderQuit = false;
 	turnDisplay = nullptr;
 	b_textRunning = false;
 	i_turn = 1;
@@ -167,6 +168,9 @@ void GameplayScene::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("RockFloor", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("RockFloor")->textureID = LoadTGA("Image//rockfloor.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Quitting", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Quitting")->textureID = LoadTGA("Image//quitting.tga");
+
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
@@ -208,7 +212,7 @@ void GameplayScene::Init()
 
 	if (gameMap.LoadMap("Image//MapDesignR.csv"))
 	{
-		cout << "Succesfully loaded map!" << endl;
+		//cout << "Succesfully loaded map!" << endl;
 	}
 
 	if (PlayerInfo::GetInstance()->level)
@@ -227,6 +231,7 @@ void GameplayScene::Init()
 	controller.selectedTile = gameMap.characters[0]->getPos();
 	b_renderWin = false;
 	b_renderLose = false;
+	b_playerTurn = true;
 
 }
 
@@ -434,6 +439,11 @@ void GameplayScene::Update(double dt)
 
 void GameplayScene::LightMouseControl(double dt)
 {
+	if (KeyboardController::GetInstance()->IsKeyPressed(VK_ESCAPE))
+	{
+		b_renderQuit = true;
+	}
+
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (b_renderWin)
@@ -447,6 +457,20 @@ void GameplayScene::LightMouseControl(double dt)
 			SceneManager::GetInstance()->SetActiveScene("WarMap");
 			PlayerInfo::GetInstance()->level->b_completed = true;
 			PlayerInfo::GetInstance()->level->b_win = false;
+		}
+		else if (b_renderQuit)
+		{
+			SceneManager::GetInstance()->SetActiveScene("WarMap");
+			PlayerInfo::GetInstance()->level->b_completed = true;
+			PlayerInfo::GetInstance()->level->b_win = false;
+		}
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyReleased('X'))
+	{
+		if (b_renderQuit)
+		{
+			b_renderQuit = false;
 		}
 	}
 
@@ -518,6 +542,14 @@ void GameplayScene::Render()
 		modelStack.Translate(bannerPos.x, bannerPos.y, 3);
 		modelStack.Scale(100, 70, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Lose"));
+		modelStack.PopMatrix();
+	}
+	else if (b_renderQuit)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(bannerPos.x, bannerPos.y, 3);
+		modelStack.Scale(100, 100, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Quitting"));
 		modelStack.PopMatrix();
 	}
 

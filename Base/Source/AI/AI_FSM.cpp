@@ -104,10 +104,10 @@ bool AI_FSM::SearchForPath(int move_cost,  vector<Vector2> searchPath)
 			for (int i = 0; i < move_cost && i < searchPath.size() - 1; ++i)
 			{
 				unitPath.push_back(searchPath[i]);
-				std::cout << "UnitPath : " << unitPath[i].x << " , " << unitPath[i].y << std::endl;
+				//std::cout << "UnitPath : " << unitPath[i].x << " , " << unitPath[i].y << std::endl;
 			}
 			//std::cout << "UnitpAthSize : " << unitPath.size() << std::endl;
-			std::cout << "new path" << std::endl;
+			//std::cout << "new path" << std::endl;
 			return true;
 
 		//else

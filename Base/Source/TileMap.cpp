@@ -50,10 +50,10 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 		characters.push_back(PlayerInfo::GetInstance()->party[i]->clone());
 	}
 
-	cout << enemies.size() << endl;
+	//cout << enemies.size() << endl;
 	for (int i = 0; i < enemies.size(); ++i)
 	{
-		cout << enemies[i]->getPos() << endl;
+		//cout << enemies[i]->getPos() << endl;
 		theScreenMap[(int)enemies[i]->getPos().y][(int)enemies[i]->getPos().x] = 2;
 	}
 }

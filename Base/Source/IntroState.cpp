@@ -46,7 +46,7 @@ void CIntroState::Init()
 	IntroStateBackground = Create::Sprite2DObject("INTROSTATE_BKGROUND",
 										Vector3(halfWindowWidth, halfWindowHeight, 0.0f),
 										Vector3(halfWindowWidth * 2, halfWindowHeight * 2, 0.0f));
-	cout << "CIntroState loaded\n" << endl;
+	//cout << "CIntroState loaded\n" << endl;
 
 	timer = 1.f;
 

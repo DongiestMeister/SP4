@@ -54,7 +54,7 @@ void MapController::Update(double dt)
 			{
 				if (!map->GetCharacter(selectedTile.x, selectedTile.y)->b_tookAction)
 				{
-					std::cout << "Unit found!" << std::endl;
+					//std::cout << "Unit found!" << std::endl;
 					selectedUnit = map->GetCharacter(selectedTile.x, selectedTile.y);
 					attackableUnits.clear();
 					OpenButtons();

@@ -45,7 +45,7 @@ void COptionState::Init()
 	OptionStateBackground = Create::Sprite2DObject("OPTIONSTATE_BKGROUND",
 		Vector3(halfWindowWidth, halfWindowHeight, 0.0f),
 		Vector3(halfWindowWidth * 2, halfWindowHeight * 2, 0.0f));
-	cout << "COptionState loaded\n" << endl;
+	//cout << "COptionState loaded\n" << endl;
 
 	arrow[0] = Create::Sprite2DObject("ARROW2",
 		Vector3(halfWindowWidth - 300, halfWindowHeight - 25, 0.1f),
@@ -67,7 +67,7 @@ void COptionState::Update(double dt)
 {
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_BACK))
 	{
-		cout << "Loading Menustate" << endl;
+		//cout << "Loading Menustate" << endl;
 		SceneManager::GetInstance()->SetActiveScene("MenuState");
 	}
 

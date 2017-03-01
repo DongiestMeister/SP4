@@ -50,7 +50,7 @@ void CMenuState::Init()
 	arrow = Create::Sprite2DObject("ARROW",
 		Vector3(halfWindowWidth/2 +250, halfWindowHeight - 70, 0.1f),
 		Vector3(100,100, 0.0f));
-	cout << "CMenuState loaded\n" << endl;
+	//cout << "CMenuState loaded\n" << endl;
 
 	state = PLAY;
 
@@ -95,7 +95,7 @@ void CMenuState::Update(double dt)
 	{
 		if (state == PLAY)
 		{
-			cout << "Loading LevelSelect" << endl;
+			//cout << "Loading LevelSelect" << endl;
 			SceneManager::GetInstance()->SetActiveScene("WarMap");
 		}
 		/*else if (state == OPTIONS)

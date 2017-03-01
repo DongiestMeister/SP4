@@ -26,7 +26,7 @@ void SceneManager::Update(double _dt)
 			else
 			{
 				activeScene->Pause();
-				std::cout << "Scene Paused" << std::endl;
+				//std::cout << "Scene Paused" << std::endl;
 			}	
 		}
 		

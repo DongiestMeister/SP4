@@ -254,6 +254,12 @@ void WarMapScene::MouseControl(double dt)
 		//cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
 	}
 
+	if (KeyboardController::GetInstance()->IsKeyReleased(VK_ESCAPE))
+	{
+		SceneManager::GetInstance()->SetActiveScene("MenuState");
+	}
+
+
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		if (b_displayWin)
@@ -436,11 +442,17 @@ void WarMapScene::Render()
 		}
 
 		if (numWon > levelList.size() / 2)
+		{
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "You won the war!", Vector3(-28, 20, 3.5), 15, Color(0, 1, 0));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + to_string(200 * numWon) + " Gold", Vector3(-15, 0, 3.5), 10, Color(1, 1, 0));
+		}
 		else
+		{
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "You lost the war!", Vector3(-28, 20, 3.5), 15, Color(1, 0, 0));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + to_string(100 * numWon) + " Gold", Vector3(-15, 0, 3.5), 10, Color(1, 1, 0));
+		}
 
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "+" + to_string(200 * numWon) + " Gold", Vector3(-15, 0, 3.5), 10, Color(1, 1, 0));
+
 	}
 	if (f_displayText > 0)
 	{
@@ -652,6 +664,14 @@ void WarMapScene::FinishWar()
 			numWon++;
 		}
 	}
-	PlayerInfo::GetInstance()->gold += numWon * 200;
+
+	if (numWon > levelList.size() / 2)
+	{
+		PlayerInfo::GetInstance()->gold += numWon * 200;
+	}
+	else
+	{
+		PlayerInfo::GetInstance()->gold += numWon * 100;
+	}
 	RandomLevels();
 }

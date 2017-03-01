@@ -1,1 +1,1 @@
-characters="Lucy,Kirito,Ossas,Corrine,Ray,Sinon,"
+characters="Corrine,Lucy,Lucid,Kirito,Ray,"

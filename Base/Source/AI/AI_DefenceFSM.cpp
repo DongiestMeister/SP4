@@ -76,11 +76,6 @@ void AI_DefenceFSM::Idle(double dt, bool is_stationary)
 	{
 		if (target != nullptr && !b_foundEnemyPath)
 		{
-			if (character->getCurrentHP() <= 20)
-			{
-				state = RETREAT;
-			}
-			else
 			{
 				state = CHASE_DEF;
 			}
@@ -124,7 +119,14 @@ void AI_DefenceFSM::Stationary(double dt)
 			if (b_reachEnd)
 			{
 				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-				map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+				if (unitPath.size() >= 2)
+				{
+					map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+				}
+				else
+				{
+					map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+				}
 			}
 			else
 			{
@@ -202,14 +204,14 @@ void AI_DefenceFSM::ReturnToPosition(double dt)
 	{
 		//look for return path
 		//b_foundReturnPath = SearchForPath(character->i_movementCost, originalPosition);
-		std::cout << "move cost : " << character->i_movementCost << std::endl;
+		//std::cout << "move cost : " << character->i_movementCost << std::endl;
 
 		if (b_foundReturnPath)
 		{
 			//set start and end if found return path
 			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
 			map->theScreenMap[unitPath[unitPath.size() -1 ].y][unitPath[unitPath.size() - 1].x] = 2;
-			std::cout << "setting : " << unitPath[unitPath.size() - 1].x << " , " << unitPath[unitPath.size() - 1].y << std::endl;
+			//std::cout << "setting : " << unitPath[unitPath.size() - 1].x << " , " << unitPath[unitPath.size() - 1].y << std::endl;
 
 			/*Return path found path, but short of one unit away (detect player offset)*/
 		}
@@ -224,7 +226,7 @@ void AI_DefenceFSM::ReturnToPosition(double dt)
 	
 	if (b_foundReturnPath)
 	{
-		std::cout << "dest : " << unitPath[unitPath.size() - 1].x << " , " << unitPath[unitPath.size() - 1].y << std::endl;
+		//std::cout << "dest : " << unitPath[unitPath.size() - 1].x << " , " << unitPath[unitPath.size() - 1].y << std::endl;
 		if (!character->b_tookAction)
 		{
 			MoveUnit(dt);
@@ -233,21 +235,21 @@ void AI_DefenceFSM::ReturnToPosition(double dt)
 			{
 				if (b_reachEnd)
 				{
-					std::cout << "search" << std::endl;
+					//std::cout << "search" << std::endl;
 					b_reachEnd = false;
 					state = IDLE;
 				}
 				else
 				{
-					std::cout << "stop" << std::endl;
+					//std::cout << "stop" << std::endl;
 					b_isDone = true;
 				}
 			}
 			else
 			{
-				std::cout << "case" << std::endl;
-				std::cout << "currPos : " << character->getPos().x << " , " << character->getPos().y << std::endl;
-				std::cout << "target : " << target->getPos().x << " , " << target->getPos().y << std::endl;
+				//std::cout << "case" << std::endl;
+				//std::cout << "currPos : " << character->getPos().x << " , " << character->getPos().y << std::endl;
+				//std::cout << "target : " << target->getPos().x << " , " << target->getPos().y << std::endl;
 				state = IDLE;
 				b_isDone = true;
 			}
@@ -280,7 +282,14 @@ void AI_DefenceFSM::Chase(double dt)
 			if (b_reachEnd)
 			{
 				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-				map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+				if (unitPath.size() >= 2)
+				{
+					map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+				}
+				else
+				{
+					map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+				}
 			}
 			else
 			{
