@@ -144,7 +144,7 @@ void CLuaInterface::SaveFloatValue(const char* varName, const float value, const
 void CLuaInterface::SaveStringValue(const char* varName, const string value, const bool bOverWrite, string filepath)
 {
 	lua_getglobal(theLuaState, "SaveToLuaFile");
-	string outputString = (string)varName + "=\"" + value + "\"";
+	string outputString = (string)varName + "=\"" + value + "\"\n";
 	lua_pushstring(theLuaState, outputString.c_str());
 	lua_pushinteger(theLuaState, bOverWrite);
 	lua_pushstring(theLuaState, filepath.c_str());

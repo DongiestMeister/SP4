@@ -333,6 +333,27 @@ void PlayerInfo::LoadPlayerCharacters()
 			}
 		}
 	}
+
+	string items = CLuaInterface::GetInstance()->getStringValue("items", CLuaInterface::GetInstance()->theCharactersState);
+
+	std::istringstream iss2(items);
+	while (getline(iss2, token, ','))
+	{
+		for (ItemList::iterator it = shop.begin(); it != shop.end();)
+		{
+			Item *unit = *it;
+			if (unit->s_Name == token)
+			{
+				inventory.push_back(unit);
+				it = shop.erase(it);
+				break;
+			}
+			else
+			{
+				it++;
+			}
+		}
+	}
 }
 
 void PlayerInfo::SavePlayerCharacters()
@@ -344,4 +365,12 @@ void PlayerInfo::SavePlayerCharacters()
 	}
 
 	CLuaInterface::GetInstance()->SaveStringValue("characters", save, true, "Image//Lua//Characters.lua");
+
+	string save2;
+	for (int i = 0; i < inventory.size(); ++i)
+	{
+		save2 += inventory[i]->s_Name + ",";
+	}
+
+	CLuaInterface::GetInstance()->SaveStringValue("items", save2, false, "Image//Lua//Characters.lua");
 }

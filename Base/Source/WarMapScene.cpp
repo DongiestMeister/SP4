@@ -135,6 +135,8 @@ void WarMapScene::Init()
 	MeshBuilder::GetInstance()->GetMesh("RedSphere")->textureID = LoadTGA("Image//redsphere.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("GreenSphere", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("GreenSphere")->textureID = LoadTGA("Image//greensphere.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("GraySphere", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("GraySphere")->textureID = LoadTGA("Image//graysphere.tga");
 
 	MeshBuilder::GetInstance()->GenerateQuad("Frame", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("Frame")->textureID = LoadTGA("Image//frame.tga");
@@ -599,13 +601,20 @@ void WarMapScene::RenderLevels()
 		modelStack.PushMatrix();
 		modelStack.Translate(levelList[i].pos.x, levelList[i].pos.y, 0.2);
 		modelStack.Scale(9, 16, 10);
-		if (!levelList[i].b_win)
+		if (levelList[i].b_completed)
 		{
-			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("RedSphere"));
+			if (!levelList[i].b_win)
+			{
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GraySphere"));
+			}
+			else
+			{
+				RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GreenSphere"));
+			}
 		}
 		else
 		{
-			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GreenSphere"));
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("RedSphere"));
 		}
 		modelStack.PopMatrix();
 
