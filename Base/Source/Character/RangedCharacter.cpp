@@ -35,19 +35,17 @@ bool RangedCharacter::attack(Character* opponent)
 	}
 	else
 	{
-		 hitRate = (i_DEX - opponent->getLUK()) - (int)distanceToEnemy;
+		 hitRate = (i_DEX - opponent->getLUK()) - (int)distanceToEnemy + 70;
 	}
 	int hitResult = Math::RandIntMinMax(0, 100);
 	if (hitRate >= hitResult)
 	{
 		opponent->takeDamage(i_Damage);
-		std::cout << "att went tru" << std::endl;
 		b_tookAction = true;
 		return true;
 	}
 	if (hitRate < hitResult)
 	{
-		std::cout << "attack failed" << std::endl;
 		b_tookAction = true;
 		return false;
 	}

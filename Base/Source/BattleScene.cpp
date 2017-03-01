@@ -42,8 +42,8 @@ void BattleScene::Init()
 {
 	currProg = GraphicsManager::GetInstance()->GetActiveShader();
 
-	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
-	BGM->setVolume(0.3);
+	//BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
+	//BGM->setVolume(0.3);
 
 	//lights[0] = new Light();
 	//GraphicsManager::GetInstance()->AddLight("lights[0]", lights[0]);
@@ -884,10 +884,7 @@ void BattleScene::RenderProps()
 {
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 
-
 	RenderUnitsModels(modelStack);
-
-
 
 	modelStack.PushMatrix();
 	modelStack.Translate(100, 0, 100);
@@ -1096,8 +1093,8 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 void BattleScene::Exit()
 {
 	// Detach camera from other entities
-	BGM->stop();
-	BGM->drop();
+	//BGM->stop();
+	//BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
 
 	EntityManager::GetInstance()->RemoveEntity(groundEntity);

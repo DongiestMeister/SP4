@@ -706,7 +706,6 @@ void MapController::RenderUI()
 	{
 		if (selectedUnit)
 		{
-			selectedUnit->calculateStats();
 			string Name = "Name:" + selectedUnit->getName();
 			string HP = "HP:" + std::to_string(selectedUnit->getCurrentHP()) + "/" + std::to_string(selectedUnit->getMaxHP());
 			string DMG = "DMG:" + std::to_string(selectedUnit->getDamage());
@@ -722,7 +721,6 @@ void MapController::RenderUI()
 		else if (map->GetCharacter(selectedTile.x, selectedTile.y))
 		{
 			Character* temp = map->GetCharacter(selectedTile.x, selectedTile.y);
-			temp->calculateStats();
 			string Name = "Name:" + temp->getName();
 			string HP = "HP:" + std::to_string(temp->getCurrentHP()) + "/" + std::to_string(temp->getMaxHP());
 			string DMG = "DMG:" + std::to_string(temp->getDamage());
@@ -739,7 +737,6 @@ void MapController::RenderUI()
 		if (map->GetEnemy(selectedTile.x, selectedTile.y))
 		{
 			Character* temp = map->GetEnemy(selectedTile.x, selectedTile.y);
-			temp->calculateStats();
 			string Name = "Name:" + temp->getName();
 			string HP = "HP:" + std::to_string(temp->getCurrentHP()) + "/" + std::to_string(temp->getMaxHP());
 			string DMG = "DMG:" + std::to_string(temp->getDamage());

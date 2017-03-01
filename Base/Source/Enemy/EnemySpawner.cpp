@@ -26,12 +26,12 @@ void EnemySpawner::Init(TileMap *map)
 
 void EnemySpawner::SpawnWave(int i_turn)
 {
-	int spawnpointIterator = 0;
 	for (vector<Enemy>::iterator it = spawnEnemyList.begin(); it != spawnEnemyList.end();)
 	{
 		Enemy *enemy = &*it;
 		if (enemy->i_Spawnturn == i_turn)
 		{
+			bool b_runThrough = false;
 			for (int i = 0; i < map->enemySpawnPoints.size(); ++i)
 			{
 				Vector2 spawnPoint = map->enemySpawnPoints[i];
@@ -68,12 +68,13 @@ void EnemySpawner::SpawnWave(int i_turn)
 					knight->calculateStats();
 					map->AddEnemy(spawnPoint.x, spawnPoint.y, knight);
 					it = spawnEnemyList.erase(it);
+					b_runThrough = true;
 					break;
 				}
 			}
-			if (spawnpointIterator == map->enemySpawnPoints.size())
+			if (!b_runThrough)
 			{
-				break;
+				++it;
 			}
 		}
 		else

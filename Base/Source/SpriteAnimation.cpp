@@ -66,11 +66,11 @@ void SpriteAnimation::Render()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(Position));
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(Position)+sizeof(Color)));
-	//if (textureID > 0)
-	//{
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(Position)+sizeof(Color)+sizeof(Vector3)));
-	//}
+	if (textureID > 0)
+	{
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(Position)+sizeof(Color)+sizeof(Vector3)));
+	}
 
 	//glDrawArrays(GL_TRIANGLES, offset, count);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -86,8 +86,8 @@ void SpriteAnimation::Render()
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 
-	//if (textureID > 0)
-	//{
-	glDisableVertexAttribArray(3);
-	//}
+	if (textureID > 0)
+	{
+		glDisableVertexAttribArray(3);
+	}
 }

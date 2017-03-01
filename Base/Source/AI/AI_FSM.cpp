@@ -76,7 +76,6 @@ void AI_FSM::SearchNearestWithHP()
 	{
 		if (targetVector[i]->getCurrentHP() < maxHP)
 		{
-			targetVector.clear();
 			maxHP = targetVector[i]->getCurrentHP();
 			target = targetVector[i];
 			tempPath2 = tempPath[i];

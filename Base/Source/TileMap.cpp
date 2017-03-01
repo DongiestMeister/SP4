@@ -414,6 +414,7 @@ void TileMap::RemovePlayer(Character* character)
 		Character* temp = *it;
 		if (temp == character)
 		{
+			theScreenMap[temp->getPos().y][temp->getPos().x] = 0;
 			delete *it;
 			characters.erase(it);
 			break;

@@ -228,7 +228,7 @@ void Character::calculateStats()
 	}
 	else
 	{
-		i_Damage = (0.2 * i_STR) + 2;
+		i_Damage = (0.2 * i_STR) + 25;
 	}
 }
 

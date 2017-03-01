@@ -1,3 +1,4 @@
 #Name,FSM,CLASS,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,characterPortrait,Animation,Frames,TileMap ID
-Paul,DEFENCE,MELEE,30,10,5,2,5,Knight,Image//zombie.tga,6,11
-Jeff,DEFENCE,RANGE,30,10,5,2,5,Knight,Image//zombie.tga,6,12
+Paul,DEFENCE,MELEE,30,30,5,2,5,Knight,Image//zombie.tga,6,11
+Jeff,DEFENCE,RANGE,30,30,5,2,5,Knight,Image//zombie.tga,6,12
+Hid,OFFENCE,RANGE,30,30,5,2,5,Knight,Image//zombie.tga,6,13

@@ -7,6 +7,7 @@
 struct Animation
 {
 	Animation() {}
+	~Animation() {}
 
 	int startFrame, endFrame, repeatCount;
 	float animTime;

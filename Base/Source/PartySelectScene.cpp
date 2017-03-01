@@ -1172,6 +1172,7 @@ void PartySelectScene::Render()
 
 void PartySelectScene::Exit()
 {
+	BGM->stop();
 	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
 }

@@ -211,28 +211,6 @@ void GameplayScene::Init()
 		cout << "Succesfully loaded map!" << endl;
 	}
 
-	//Character *knight = new MeleeCharacter("K1");
-	Character *knight1 = new RangedCharacter("K2");
-	Character *knight2 = new RangedCharacter("K3");
-	Character *knight3 = new RangedCharacter("K4");
-	//Character *knight4 = new MeleeCharacter("K5");
-
-
-	knight1->setPortrait("Knight");
-	knight2->setPortrait("Knight");
-	knight3->setPortrait("Knight");
-
-	knight1->setAnimation("Image//Characters//Ingame//walkinggirl.tga", 4);
-	knight2->setAnimation("Image//zombie.tga", 6);
-	knight3->setAnimation("Image//zombie.tga", 6);
-
-	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
-	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
-	gameMap.AddEnemy(5, 4, knight1);
-	gameMap.AddEnemy(6, 4, knight2);
-	gameMap.AddEnemy(7, 4, knight3);
-
-
 	if (PlayerInfo::GetInstance()->level)
 	{
 		condition = PlayerInfo::GetInstance()->level->condition;
@@ -616,6 +594,7 @@ void GameplayScene::Resume()
 			if (PlayerInfo::GetInstance()->enemy->getCurrentHP() <= 0)
 			{
 				gameMap.RemoveEnemy(PlayerInfo::GetInstance()->enemy);
+				PlayerInfo::GetInstance()->enemy = nullptr;
 			}
 			for (int i = 0; i < gameMap.characters.size(); ++i)
 			{
@@ -637,6 +616,7 @@ void GameplayScene::Resume()
 			if (PlayerInfo::GetInstance()->player->getCurrentHP() <= 0)
 			{
 				gameMap.RemovePlayer(PlayerInfo::GetInstance()->player);
+				PlayerInfo::GetInstance()->player = nullptr;
 			}
 		}
 	}
