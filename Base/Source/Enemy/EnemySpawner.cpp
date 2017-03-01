@@ -112,6 +112,14 @@ bool EnemySpawner::LoadSpawns(const string filename)
 					{
 						enemy.type = Enemy::DEFENCE;
 					}
+					else if (token == "IDLE")
+					{
+						enemy.type = Enemy::NEUTRAL;
+					}
+					else if (token == "OFFENCE")
+					{
+						enemy.type = Enemy::OFFENCE;
+					}
 					break;
 				case 2:
 					enemy.i_Spawnturn = (atoi(token.c_str()));
@@ -176,6 +184,14 @@ bool EnemySpawner::LoadEnemies(const string filename)
 					if (token == "DEFENCE")
 					{
 						enemy.type = Enemy::DEFENCE;
+					}
+					else if (token == "IDLE")
+					{
+						enemy.type = Enemy::NEUTRAL;
+					}
+					else if (token == "OFFENCE")
+					{
+						enemy.type = Enemy::OFFENCE;
 					}
 					break;
 				case 2:

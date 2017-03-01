@@ -202,7 +202,8 @@ void PartySelectScene::Update(double dt)
 			}
 			else if (i_selectedOptionCounter == 3)
 			{
-				SceneManager::GetInstance()->SetActiveScene("GameState");
+				if (PlayerInfo::GetInstance()->party.size() > 0)
+					SceneManager::GetInstance()->SetActiveScene("GameState");
 			}
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)

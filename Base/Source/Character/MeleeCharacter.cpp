@@ -7,7 +7,7 @@ MeleeCharacter::MeleeCharacter(string name)
 	i_baseSTR = 10; // All melee characters have a base STR of 10
 	i_baseDEX = 3; // All melee characters have a base DEX of 3
 	i_baseLUK = 0; // All melee characters have a base LUK of 0
-	i_movementCost = 10; // All melee characters have a base movement cost of 3
+	i_movementCost = 6; // All melee characters have a base movement cost of 3
 	i_attackRange = 1; // All melee characters have a base attack range of 1
 
 	// Damage value of 0, so equivalent to not having a weapon at all

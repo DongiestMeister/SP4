@@ -41,6 +41,7 @@ public:
 	vector<Vector2> movePath;
 
 	vector<Vector2> enemySpawnPoints;
+	vector<Vector2> playerSpawnPoints;
 
 	bool LoadMap(const string mapName);
 	void Render();

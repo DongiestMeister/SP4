@@ -171,7 +171,7 @@ void GameplayScene::Init()
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(200, 0, 200));
-	groundEntity->SetScale(Vector3(2000.0f, 2000.0f, 2000.0f));
+	groundEntity->SetScale(Vector3(2500.0f, 2500.0f, 2500.0f));
 	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
 	//playerInfo->SetTerrain(groundEntity);
 
@@ -211,9 +211,9 @@ void GameplayScene::Init()
 	}
 
 	//Character *knight = new MeleeCharacter("K1");
-	Character *knight1 = new MeleeCharacter("K2");
-	Character *knight2 = new MeleeCharacter("K3");
-	Character *knight3 = new MeleeCharacter("K4");
+	Character *knight1 = new RangedCharacter("K2");
+	Character *knight2 = new RangedCharacter("K3");
+	Character *knight3 = new RangedCharacter("K4");
 	//Character *knight4 = new MeleeCharacter("K5");
 
 
@@ -227,21 +227,28 @@ void GameplayScene::Init()
 
 	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(1, 1), knight,1);
 	//PlayerInfo::GetInstance()->addCharacterToParty(Vector2(2, 1), knight4, 2);
-	//gameMap.AddEnemy(5, 4, knight1);
-	//gameMap.AddEnemy(6, 4, knight2);
+	gameMap.AddEnemy(5, 4, knight1);
+	gameMap.AddEnemy(6, 4, knight2);
 	gameMap.AddEnemy(7, 4, knight3);
 
-	DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
-	b_renderWin = false;
-	b_renderLose = false;
+
 	if (PlayerInfo::GetInstance()->level)
 	{
 		condition = PlayerInfo::GetInstance()->level->condition;
 		if (condition == SURVIVE)
-		{
+		{		
 			i_surviveTurns = 10;
+			DisplayText("Survive " + to_string(i_surviveTurns) + " turns", Vector3(0, 1, 0));
+		}
+		else
+		{
+			DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
 		}
 	}
+	controller.selectedTile = gameMap.characters[0]->getPos();
+	b_renderWin = false;
+	b_renderLose = false;
+
 }
 
 void GameplayScene::Update(double dt)

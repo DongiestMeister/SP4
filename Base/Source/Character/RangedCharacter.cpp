@@ -6,7 +6,7 @@ RangedCharacter::RangedCharacter(string name)
 	i_baseSTR = 3; // All ranged characters have a base STR of 10
 	i_baseDEX = 10; // All ranged characters have a base DEX of 3
 	i_baseLUK = 5; // All ranged characters have a base LUK of 0
-	i_movementCost = 6; // All ranged characters have a base movement cost of 3
+	i_movementCost = 4; // All ranged characters have a base movement cost of 3
 	i_attackRange = 2; // All ranged characters have a base attack range of 2
 
 	// Damage value of 0, so equivalent to not having a weapon at all

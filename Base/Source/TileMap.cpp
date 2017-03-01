@@ -50,12 +50,6 @@ void TileMap::Init(int screenHeight, int screenWidth, int numTilesHeight, int nu
 		characters.push_back(PlayerInfo::GetInstance()->party[i]->clone());
 	}
 
-	for (int i = 0; i < characters.size(); ++i)
-	{
-		characters[i]->setPos(Vector2(i, 0));
-		theScreenMap[0][i] = 2;
-	}
-
 	cout << enemies.size() << endl;
 	for (int i = 0; i < enemies.size(); ++i)
 	{
@@ -69,6 +63,7 @@ bool TileMap::LoadMap(const string mapName)
 	int theLineCounter = numTilesHeight - 1;
 	int theMaxNumOfColumns = 0;
 	enemySpawnPoints.clear();
+	playerSpawnPoints.clear();
 
 	ifstream file(mapName.c_str());
 	if (file.is_open())
@@ -108,6 +103,11 @@ bool TileMap::LoadMap(const string mapName)
 					enemySpawnPoints.push_back(Vector2(theColumnCounter, theLineCounter));
 					theScreenMap[theLineCounter][theColumnCounter++] = 0;
 				}
+				else if (atoi(token.c_str()) == -1)
+				{
+					playerSpawnPoints.push_back(Vector2(theColumnCounter, theLineCounter));
+					theScreenMap[theLineCounter][theColumnCounter++] = 0;
+				}
 				else if (theScreenMap[theLineCounter][theColumnCounter] != 2)
 				{
 					if (spawner->enemyMap.count(atoi(token.c_str())) != 0)
@@ -135,6 +135,16 @@ bool TileMap::LoadMap(const string mapName)
 				}
 			}
 			theLineCounter--;
+		}
+	}
+
+
+	for (int i = 0; i < characters.size(); ++i)
+	{
+		if (i < playerSpawnPoints.size())
+		{
+			characters[i]->setPos(playerSpawnPoints[i]);
+			theScreenMap[playerSpawnPoints[i].y][playerSpawnPoints[i].x] = 2;
 		}
 	}
 

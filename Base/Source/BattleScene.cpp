@@ -35,7 +35,7 @@ BattleScene::BattleScene()
 
 BattleScene::~BattleScene()
 {
-	
+
 }
 
 void BattleScene::Init()
@@ -112,7 +112,7 @@ void BattleScene::Init()
 
 	//textObj[5]->SetPosition(Vector3(-halfWindowWidth * 0.9 - fontSize * 2, -halfWindowHeight * 0.75 + fontSize + halfFontSize, 0.0f));
 	//textObj[5]->SetScale(Vector3(fontSize * 2, fontSize * 2, fontSize * 2));
-	
+
 	//Init Position of models;
 	player_posx = 80;
 	enemy_posx = 120;
@@ -127,8 +127,7 @@ void BattleScene::Init()
 	shake_dir = false;
 
 	b_isClashed = true;	//on start clash is true (clashed)
-	b_bonusRush = PlayerInfo::GetInstance()->b_bonus; //Set if bonus mode is true/false	//IMPORTANT : Decides performance of the BattleScene
-
+	b_bonusRush = PlayerInfo::GetInstance()->b_bonus;
 	if (b_bonusRush)
 	{
 		PlayerInfo::GetInstance()->b_bonus = false;
@@ -145,7 +144,7 @@ void BattleScene::Init()
 	TimerText = Create::Text2DObject(("text"), Vector3(-180, 120, 1), " ", Vector3(15, 15, 15), Color(0.7, 0.7, 1));
 
 	fps = 0.f;
-	
+
 	/*player = new MeleeCharacter();
 	Weapon* wtf = new Weapon(100, 50, false);
 	player->equipWeapon(wtf);*/
@@ -160,15 +159,15 @@ void BattleScene::Update(double dt)
 	EntityManager::GetInstance()->Update(dt);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
-	
+
 	fps = 1 / dt;
 
 	if (f_shakedelay > 0)
 		f_shakedelay -= dt;
 	/*if (f_shakedelayReturn > 0)
-		f_shakedelayReturn -= dt;*/
-	
-	
+	f_shakedelayReturn -= dt;*/
+
+
 	if (f_SceneIntroDelay > 0)
 		f_SceneIntroDelay -= dt;
 	else
@@ -182,39 +181,52 @@ void BattleScene::Update(double dt)
 		}
 		else
 		{
-			if ((!b_bonusRush || !b_spamLock))
+			if ((!b_bonusRush && !b_spamLock))
 			{
 				b_isClashed = false;
 			}
 		}
 	}
 
-	/*if (b_shaking)
-	{*/
-		TakenHitAnimation(dt);
-	//}
-	//animation always running
-	
-
 	if (PlayerInfo::GetInstance()->b_attacking)
 	{
-		RunBattleAnimation(dt, false, player->getDamage());
+		if (PlayerInfo::GetInstance()->player->i_attackRange > 1)
+			RunBattleAnimation(dt, true, player->getDamage());
+		else
+			RunBattleAnimation(dt, false, player->getDamage());
 	}
 	else
 	{
-		RunBattleAnimation(dt, false, enemy->getDamage());
+		if (PlayerInfo::GetInstance()->enemy->i_attackRange > 1)
+			RunBattleAnimation(dt, true, enemy->getDamage());
+		else
+			RunBattleAnimation(dt, false, enemy->getDamage());
+	}
+
+
+	for (vector<float>::iterator it = f_projectiles.begin(); it != f_projectiles.end();)
+	{
+		float *posX = &*it;
+
+		if (*posX < 30)
+		{
+			(*posX) += 10 * dt;
+			it++;
+		}
+		else
+		{
+			it = f_projectiles.erase(it);
+		}
 	}
 
 
 
 	LightMouseControl(dt);
-	
-
 
 	//camera.Update(dt);
 
+	TakenHitAnimation(dt);
 
-	
 	// <THERE>
 
 	// Update the player position and other details based on keyboard and mouse inputs
@@ -312,16 +324,18 @@ void BattleScene::LightMouseControl(double dt)
 	}
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 	{
-		f_shakedelay = 0.3f;
-		//b_shaking = true;
 
+		f_projectiles.push_back(0.f);
+
+		//f_shakedelay = 0.3f;
+		//b_shaking = true;
 		//i_shakecounter = 5;
 		//TakenHitAnimation(dt);
 		//CameraClash(true, dt);
 	}
 	/*if (KeyboardController::GetInstance()->IsKeyDown('O'))
 	{
-		CameraClashReturn(dt);
+	CameraClashReturn(dt);
 	}*/
 
 
@@ -374,7 +388,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 	//{
 	//	dmgvalue = 0;
 	//}
-	
+
 	RenderTextStuff(dt, dmgvalue);
 
 	//if player attacking
@@ -385,7 +399,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 			if (player_posx <= maxdist_forward)		//Move from left to right
 			{
 				CameraClash(false, dt);
-				
+
 				if (player_posx >= maxdist_forward - 10)
 				{
 					if (b_bonusRush)
@@ -404,7 +418,7 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				/*i_shakecounter = 5;
 				TakenHitAnimation(dt);*/
 				f_shakedelay = 0.2f;
-			
+
 				if (player->attack(enemy))
 				{
 					//cout << enemy->getHP() << endl;
@@ -425,8 +439,8 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				}
 
 
-				
-				TotalDamage->SetText("TOTAL DAMAGE:"+std::to_string(i_totaldmg_txt));
+
+				TotalDamage->SetText("TOTAL DAMAGE:" + std::to_string(i_totaldmg_txt));
 				TotalDamage->SetScale(Vector3(23, 35, 20));
 
 				if (!b_bonusRush)
@@ -500,19 +514,18 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 				//TakenHitAnimation(player_posx);
 
 				//if (!b_bonusRush)
-					b_spamLock = true;
-				
+				b_spamLock = true;
 			}
 		}
 		else
 		{
-			
+
 			//CameraClashReturn(dt);
 			if (enemy_posx < 120)		//Return to right from left(original position)
 			{
 				enemy_posx += dt * 50;
 			}
-			
+
 			else
 			{
 				//SceneManager::GetInstance()->SetActiveScene("GameState");
@@ -528,8 +541,6 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 
 void BattleScene::TakenHitAnimation(double dt)
 {
-
-	
 	if (f_shakedelay > 0)
 	{
 		if (!shake_dir)
@@ -558,16 +569,6 @@ void BattleScene::TakenHitAnimation(double dt)
 	{
 		CameraClashReturn(dt);
 	}
-	
-
-
-
-
-
-
-
-
-
 
 }
 
@@ -589,7 +590,7 @@ void BattleScene::CameraClash(bool is_player, double dt)
 				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
 			}
 		}
-	}		
+	}
 	else		//Zoom to Enemy
 	{
 		if (camera.GetCameraTarget().x <= (120 - 3))
@@ -644,8 +645,8 @@ void BattleScene::Render()
 
 	RenderSkyBox();
 	RenderProps();
-	
-	
+
+
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
@@ -657,25 +658,31 @@ void BattleScene::Render()
 
 	EntityManager::GetInstance()->RenderUI();
 
-	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(fps), Vector3(-200, 180, 10),  10, Color(1, 1, 1));
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(fps), Vector3(-200, 180, 10), 10, Color(1, 1, 1));
 	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Cam:" + std::to_string(camera.GetCameraPos().x) + "," + std::to_string(camera.GetCameraPos().y) + "," + std::to_string(camera.GetCameraPos().z), Vector3(-200, 160, 10), 10, Color(1, 1, 1));
-
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
-	modelStack.PushMatrix();
-	modelStack.Translate(-130, -150, 10);
-	modelStack.Scale(player->getCurrentHP(), 10, 5);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
-	modelStack.PopMatrix();
 
-	modelStack.PushMatrix();
-	modelStack.Translate(80, -150, 10);
-	modelStack.Scale(enemy->getCurrentHP(), 10, 5);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
-	modelStack.PopMatrix();
+	if (player)
+	{
+
+		modelStack.PushMatrix();
+		modelStack.Translate(-130, -150, 10);
+		modelStack.Scale(player->getCurrentHP(), 10, 5);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
+		modelStack.PopMatrix();
+	}
+	if (enemy)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(80, -150, 10);
+		modelStack.Scale(enemy->getCurrentHP(), 10, 5);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
+		modelStack.PopMatrix();
+	}
 
 	modelStack.PushMatrix();
 	modelStack.Translate(-140, 120, 0);
-	modelStack.Scale(f_bonus_time*50, 10, 10);
+	modelStack.Scale(f_bonus_time * 50, 10, 10);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
 	modelStack.PopMatrix();
 
@@ -686,10 +693,10 @@ void BattleScene::RenderSkyBox()
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(100,-100,700);
-	modelStack.Scale(1000,1000,1000);
-	modelStack.Rotate(180,0,1,0);
-	modelStack.Rotate(180,0, 0, 1);
+	modelStack.Translate(100, -100, 700);
+	modelStack.Scale(1000, 1000, 1000);
+	modelStack.Rotate(180, 0, 1, 0);
+	modelStack.Rotate(180, 0, 0, 1);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("SKYBOX_FRONT"));
 	modelStack.PopMatrix();
 
@@ -824,6 +831,18 @@ void BattleScene::RenderUnitsModels(MS& _ms)
 	_ms.Rotate(-110, 0, 1, 0);
 	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT"));
 	_ms.PopMatrix();
+
+
+
+	for (int i = 0; i < f_projectiles.size(); ++i)
+	{
+		_ms.PushMatrix();
+		_ms.Translate(f_projectiles[i], 0, 0);
+		_ms.Scale(10, 10, 10);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("sphere"));
+		_ms.PopMatrix();
+	}
+
 }
 
 void BattleScene::RenderTextStuff(double dt, int dmgvalue)
@@ -847,7 +866,7 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 
 	if (!b_bonus_start && b_bonusRush && PlayerInfo::GetInstance()->b_attacking)
 	{
-		
+
 		TotalDmgCheer->SetPosition(Vector3(-100, 130, 0));
 		TotalDmgCheer->SetScale(Vector3(30, 30, 30));
 		TotalDmgCheer->SetColor(Color(1, 1, 0));
@@ -857,11 +876,11 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 
 		TimerText->SetPosition(Vector3(-80, 100, 0));
 		TimerText->SetText("(Mash M to Begin!)");
-		
+
 	}
 	else
 	{
-		
+
 	}
 
 	if (f_bonus_time > 0)
@@ -882,7 +901,7 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 		}
 	}
 
-	
+
 
 	if (TotalDamage->GetScale().y > 20)
 	{
@@ -916,14 +935,14 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 			TotalDmgCheer->SetScale(Vector3(TotalDmgCheer->GetScale().x, TotalDmgCheer->GetScale().y, TotalDmgCheer->GetScale().z) - Vector3(0, dt * 50, 0));
 			TotalDmgCheer->SetPosition(Vector3(-180, 140, 1));
 			TotalDmgCheer->SetText(" ");
-			
+
 		}
-		
+
 
 	}
-	
 
-	if (i_totaldmg_txt >= (dmgvalue*10) && f_textDelayOnScreen > 0)
+
+	if (i_totaldmg_txt >= (dmgvalue * 10) && f_textDelayOnScreen > 0)
 	{
 		if (dmgvalue > 0)
 		{
@@ -960,6 +979,8 @@ void BattleScene::Exit()
 	//groundEntity->SetIsDone(true);
 	//TotalDmgCheer->SetIsDone(true);
 	//TotalDamage->SetIsDone(true);
+	enemy = nullptr;
+	player = nullptr;
 
 	for (vector<DamageText*>::iterator it = storeDmgTxt.begin(); it != storeDmgTxt.end();)
 	{

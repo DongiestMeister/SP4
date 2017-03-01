@@ -153,9 +153,6 @@ void AI_FSM::MoveUnit(double dt)
 			character->setPos(unitPath[0]);
 			//delete 1st unitpath, unitPath[1] become unitPath[0]
 			unitPath.erase(unitPath.begin());
-
-			//????
-			//std::cout << "loop22222" << std::endl;
 		}
 	}
 }

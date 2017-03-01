@@ -46,7 +46,7 @@ public:
 	void CameraClash(bool is_player, double dt);
 	void CameraClashReturn(double dt);
 
-	/*RenderTextStuff 
+	/*RenderTextStuff
 	- runs animation and appearance of Totaldamage Counter and Effects
 	- Removes completed damage text through list*/
 	void RenderTextStuff(double dt, int dmgvalue);
@@ -74,7 +74,7 @@ private:
 	float f_bonus_time;
 	float f_shakedelay;
 	//float f_shakedelayReturn;
-	
+
 	bool b_bonus_start;
 	bool b_isClashed;
 	bool b_bonusRush;
@@ -85,16 +85,14 @@ private:
 
 
 	vector<DamageText*> storeDmgTxt;
+	vector<float> f_projectiles;
+	vector<float> f_projectiles_enemy;
 	TextEntity* TotalDamage;
 	TextEntity* TotalDmgCheer;
 	TextEntity* TimerText;
 
 	int i_totaldmg_txt;
 	int i_shakecounter;
-	
-	
-
-	
 
 	ISound* BGM;
 };

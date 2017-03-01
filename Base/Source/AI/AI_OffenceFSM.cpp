@@ -26,6 +26,7 @@ bool AI_OffenceFSM::Update(double dt)
 		{
 		case ATTACK:
 			Attack(); 
+			state = CHASE_ALL;
 			break;
 		case CHASE_ALL:
 			Chase(dt);
@@ -72,7 +73,14 @@ void AI_OffenceFSM::Chase(double dt)
 				if (b_reachEnd)
 				{
 					map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-					map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+					if (unitPath.size() >= 2)
+					{
+						map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
+					}
+					else
+					{
+						map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
+					}	
 				}
 				else
 				{
