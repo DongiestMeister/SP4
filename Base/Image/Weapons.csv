@@ -1,3 +1,16 @@
-//Name,Damage,Accuracy,Equipped to?,Equipped by anyone?,Price
-Test,6969,100,No One,FALSE,100
-Lmao,1234,90,No One,FALSE,69
+//Name,Damage,Accuracy,Equipped to?,Equipped by anyone?,Price,itemPortrait
+Rainbow Sword,1234,90,default,FALSE,69,RainbowSword
+Voltexes,513,90,default,FALSE,513,Voltexes
+Yato Blade,6969,100,default,FALSE,100,YatoBlade
+ExSword,666,96,default,FALSE,666,ExSword
+Gungnir,666,96,default,FALSE,667,Gungnir
+Uvuvwevwevwe,666,96,default,FALSE,668,Uvuvwevwevwe
+PGM Ultima II,666,96,default,FALSE,669,PGMUltimaII
+T54 BlackStar,666,96,default,FALSE,670,T54BlackStar
+Akasha Sword,9889,100,default,FALSE,2444,AkashaSword
+Broken Sword,1,0,default,FALSE,1,BrokenSword
+Butterfly Bow,231232,100,default,FALSE,9209,ButterflyBow
+Elucidator,877,100,default,FALSE,6554,Elucidator
+X-Gloves,101010,100,default,FALSE,1010,XGloves
+Glob of Slime,999999,200,default,FALSE,1,GlobOfSlime
+Camael,145,100,default,FALSE,199,Camael
