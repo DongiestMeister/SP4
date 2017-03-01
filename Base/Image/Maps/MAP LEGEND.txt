@@ -1,0 +1,9 @@
+-1 = Player spawn point
+0 = Empty
+1 = Obstacle
+3 = Forest (2 Movement penalty)
+4 = Ocean (3 movement penalty)
+5 = Flag (Only for capture)
+10 = Enemy Spawn Point (Edit enemy in EnemyType.csv,enemy spawns in EnemySpawn.csv)
+
+11-whatever = Whatever enemy you made
