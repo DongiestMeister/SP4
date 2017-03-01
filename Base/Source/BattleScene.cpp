@@ -125,7 +125,8 @@ void BattleScene::Init()
 
 	b_shaking = false;
 	shake_dir = false;
-
+	shoot_once = false; //Non-bonus mode, caps and checks for single shot to return
+	shoot_hit = false;
 	b_isClashed = true;	//on start clash is true (clashed)
 	b_bonusRush = PlayerInfo::GetInstance()->b_bonus;
 	if (b_bonusRush)
@@ -181,7 +182,7 @@ void BattleScene::Update(double dt)
 		}
 		else
 		{
-			if ((!b_bonusRush && !b_spamLock))
+			if ((!b_bonusRush || !b_spamLock))
 			{
 				b_isClashed = false;
 			}
@@ -208,9 +209,9 @@ void BattleScene::Update(double dt)
 	{
 		float *posX = &*it;
 
-		if (*posX < 30)
+		if (*posX < 120)
 		{
-			(*posX) += 10 * dt;
+			(*posX) += 100 * dt;
 			it++;
 		}
 		else
@@ -219,7 +220,27 @@ void BattleScene::Update(double dt)
 		}
 	}
 
+	for (vector<float>::iterator it = f_projectiles_enemy.begin(); it != f_projectiles_enemy.end();)
+	{
+		float *posXene = &*it;
+		
 
+		if (*posXene > 70)
+		{
+			
+
+			
+				*posXene -= 100 * dt;
+			
+			it++;
+		}
+		else
+		{
+			
+			it = f_projectiles_enemy.erase(it);
+			shoot_hit = true;
+		}
+	}
 
 	LightMouseControl(dt);
 
@@ -325,7 +346,7 @@ void BattleScene::LightMouseControl(double dt)
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 	{
 
-		f_projectiles.push_back(0.f);
+		f_projectiles_enemy.push_back(110);
 
 		//f_shakedelay = 0.3f;
 		//b_shaking = true;
@@ -367,6 +388,202 @@ void BattleScene::LightMouseControl(double dt)
 
 }
 
+void BattleScene::PlayerAnimation(double dt, bool ranged, int dmgvalue, float maxdist)
+{
+	if (!b_isClashed)
+	{
+		if (player_posx <= maxdist)		//Move from left to right
+		{
+			CameraClash(false, ranged, dt);
+
+			if (!ranged)
+			{
+				if (player_posx >= maxdist - 10)
+				{
+					if (b_bonusRush)	//Dont slow down on Bonus
+						player_posx += dt * 100;
+					else
+						player_posx += dt * 5;
+				}
+				else
+					player_posx += dt * 100;
+			}
+			else
+			{
+				if (player_posx >= maxdist - 5)
+				{
+					if (b_bonusRush)	//Dont slow down on Bonus
+						player_posx += dt * 100;
+					else
+						player_posx += dt * 5;
+				}
+				else
+					player_posx += dt * 100;
+			}
+
+		}
+		else	//reached right
+		{
+
+			b_isClashed = true;	//clash true
+			/*i_shakecounter = 5;
+			TakenHitAnimation(dt);*/
+			f_shakedelay = 0.2f;
+			if (ranged)
+			{
+				f_projectiles.push_back(85.f);
+			}
+
+			if (player->attack(enemy))
+			{
+				//cout << enemy->getHP() << endl;
+				f_textDelayOnScreen = 5;
+
+				DamageText* tempdmg = new DamageText();
+				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx - 6, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
+				storeDmgTxt.push_back(tempdmg);
+				i_totaldmg_txt += dmgvalue;
+			}
+			else if (!player->attack(enemy))
+			{
+				f_textDelayOnScreen = 5;
+
+				DamageText* tempdmg = new DamageText();
+				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx - 6, -20, 60), "MISS", Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
+				storeDmgTxt.push_back(tempdmg);
+			}
+
+
+
+			TotalDamage->SetText("TOTAL DAMAGE:" + std::to_string(i_totaldmg_txt));
+			TotalDamage->SetScale(Vector3(23, 35, 20));
+
+			if (!b_bonusRush)
+				b_spamLock = true;
+			//PlayerInfo::GetInstance()->player->attack();
+			//TakenHitAnimation(enemy_posx);
+		}
+	}
+	else
+	{
+		//if clash is true
+		//CameraClashReturn(dt);
+		if (player_posx > 80)		//Return to left from right(original position)
+		{
+			player_posx -= dt * 50;
+		}
+		else
+		{
+			if (!b_bonusRush && b_spamLock && f_textDelayOnScreen <= 3)
+			{
+				SceneManager::GetInstance()->SetActiveScene("GameState");
+			}
+		}
+	}
+}
+
+void BattleScene::EnemyAnimation(double dt, bool ranged, int dmgvalue, float maxdist)
+{
+
+
+	if (!b_isClashed)
+	{
+
+		if (enemy_posx >= maxdist)		//Move from right to left
+		{
+			CameraClash(true, ranged, dt);
+
+			if (enemy_posx <= maxdist + 10)
+			{
+				if (ranged)
+				{
+					enemy_posx -= dt * 5;
+					shoot_once = true;
+				}
+				else
+					enemy_posx -= dt * 5;
+			}
+			else
+			{
+				enemy_posx -= dt * 100;
+			}
+
+		}
+
+		else
+		{
+			b_isClashed = true;
+			/*i_shakecounter = 5;
+			TakenHitAnimation(dt);*/
+			f_shakedelay = 0.2f;
+
+			if (enemy->attack(player))
+			{
+				f_textDelayOnScreen = 5;
+
+				DamageText* tempdmg = new DamageText();
+				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
+				storeDmgTxt.push_back(tempdmg);
+				i_totaldmg_txt += dmgvalue;
+			}
+			else if (!enemy->attack(player))
+			{
+				f_textDelayOnScreen = 5;
+
+				DamageText* tempdmg = new DamageText();
+				tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), "MISS", Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
+				storeDmgTxt.push_back(tempdmg);
+			}
+
+
+
+			//i_totaldmg_txt += dmgvalue;
+			TotalDamage->SetText("TOTAL DAMAGE:" + std::to_string(i_totaldmg_txt));
+			TotalDamage->SetScale(Vector3(23, 35, 20));
+
+			//PlayerInfo::GetInstance()->enemy->attack();
+			//TakenHitAnimation(player_posx);
+
+			//if (!b_bonusRush)
+			b_spamLock = true;
+
+		}
+	}
+	else	//clash is true
+	{
+		if (shoot_once)
+		{
+			f_projectiles_enemy.push_back(110);
+			shoot_once = false;
+		}
+
+		//CameraClashReturn(dt);
+		if (enemy_posx < 120)		//Return to right from left(original position)
+		{
+			enemy_posx += dt * 50;
+		}
+
+		else
+		{
+			//SceneManager::GetInstance()->SetActiveScene("GameState");
+			if (b_spamLock)
+			{
+				if (ranged)
+				{
+					if (shoot_hit)
+					{
+						SceneManager::GetInstance()->SetActiveScene("GameState");
+						shoot_hit = false;
+					}
+				}
+				else
+					SceneManager::GetInstance()->SetActiveScene("GameState");
+			}
+			//std::cout << "do something" << std::endl;
+		}
+	}
+}
+
 void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 {
 
@@ -394,148 +611,11 @@ void BattleScene::RunBattleAnimation(double dt, bool ranged, int dmgvalue)
 	//if player attacking
 	if (PlayerInfo::GetInstance()->b_attacking)
 	{
-		if (!b_isClashed)
-		{
-			if (player_posx <= maxdist_forward)		//Move from left to right
-			{
-				CameraClash(false, dt);
-
-				if (player_posx >= maxdist_forward - 10)
-				{
-					if (b_bonusRush)
-						player_posx += dt * 100;
-					else
-						player_posx += dt * 5;
-				}
-				else
-					player_posx += dt * 100;
-
-			}
-			else	//reached right
-			{
-
-				b_isClashed = true;	//clash true
-				/*i_shakecounter = 5;
-				TakenHitAnimation(dt);*/
-				f_shakedelay = 0.2f;
-
-				if (player->attack(enemy))
-				{
-					//cout << enemy->getHP() << endl;
-					f_textDelayOnScreen = 5;
-
-					DamageText* tempdmg = new DamageText();
-					tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx - 6, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
-					storeDmgTxt.push_back(tempdmg);
-					i_totaldmg_txt += dmgvalue;
-				}
-				else if (!player->attack(enemy))
-				{
-					f_textDelayOnScreen = 5;
-
-					DamageText* tempdmg = new DamageText();
-					tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(enemy_posx - 6, -20, 60), "MISS", Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3, 0.3));
-					storeDmgTxt.push_back(tempdmg);
-				}
-
-
-
-				TotalDamage->SetText("TOTAL DAMAGE:" + std::to_string(i_totaldmg_txt));
-				TotalDamage->SetScale(Vector3(23, 35, 20));
-
-				if (!b_bonusRush)
-					b_spamLock = true;
-				//PlayerInfo::GetInstance()->player->attack();
-				//TakenHitAnimation(enemy_posx);
-			}
-		}
-		else
-		{
-			//if clash is true
-			//CameraClashReturn(dt);
-			if (player_posx > 80)		//Return to left from right(original position)
-			{
-				player_posx -= dt * 50;
-			}
-			else
-			{
-				if (!b_bonusRush && b_spamLock && f_textDelayOnScreen <= 3)
-				{
-					SceneManager::GetInstance()->SetActiveScene("GameState");
-				}
-			}
-		}
+		PlayerAnimation(dt, ranged, dmgvalue, maxdist_forward);
 	}
 	else
 	{
-		if (!b_isClashed)
-		{
-
-			if (enemy_posx >= ene_maxdist_forward)		//Move from right to left
-			{
-				CameraClash(true, dt);
-				if (enemy_posx <= ene_maxdist_forward + 10)
-					enemy_posx -= dt * 5;
-				else
-					enemy_posx -= dt * 100;
-			}
-			else
-			{
-				b_isClashed = true;
-				/*i_shakecounter = 5;
-				TakenHitAnimation(dt);*/
-				f_shakedelay = 0.2f;
-
-				if (enemy->attack(player))
-				{
-					f_textDelayOnScreen = 5;
-
-					DamageText* tempdmg = new DamageText();
-					tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), std::to_string(dmgvalue*-1), Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
-					storeDmgTxt.push_back(tempdmg);
-					i_totaldmg_txt += dmgvalue;
-				}
-				else if (!enemy->attack(player))
-				{
-					f_textDelayOnScreen = 5;
-
-					DamageText* tempdmg = new DamageText();
-					tempdmg->dmgTxt = Create::Text3DObject(("text"), Vector3(player_posx - 3, -20, 60), "MISS", Vector3(5, 5, 5), Vector3(1, 0, 0), 180.f, Color(1, 0.3f, .3f));
-					storeDmgTxt.push_back(tempdmg);
-				}
-
-
-
-				//i_totaldmg_txt += dmgvalue;
-				TotalDamage->SetText("TOTAL DAMAGE:" + std::to_string(i_totaldmg_txt));
-				TotalDamage->SetScale(Vector3(23, 35, 20));
-
-				//PlayerInfo::GetInstance()->enemy->attack();
-				//TakenHitAnimation(player_posx);
-
-				//if (!b_bonusRush)
-				b_spamLock = true;
-			}
-		}
-		else
-		{
-
-			//CameraClashReturn(dt);
-			if (enemy_posx < 120)		//Return to right from left(original position)
-			{
-				enemy_posx += dt * 50;
-			}
-
-			else
-			{
-				//SceneManager::GetInstance()->SetActiveScene("GameState");
-				if (b_spamLock)
-				{
-					SceneManager::GetInstance()->SetActiveScene("GameState");
-				}
-				//std::cout << "do something" << std::endl;
-			}
-		}
+		EnemyAnimation(dt, ranged, dmgvalue, ene_maxdist_forward);
 	}
 }
 
@@ -572,22 +652,38 @@ void BattleScene::TakenHitAnimation(double dt)
 
 }
 
-void BattleScene::CameraClash(bool is_player, double dt)
+void BattleScene::CameraClash(bool is_player, bool ranged, double dt)
 {
 	//float temp_x = 100;
 	if (is_player)	//Zoom to player
 	{
 		if (camera.GetCameraTarget().x >= (80 + 3))
 		{
-			if (camera.GetCameraTarget().x <= (80 + 8))
+			if (!ranged)
 			{
-				camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 3), camera.GetCameraPos().y + (dt * 1), camera.GetCameraPos().z + (dt * 6)));
-				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 3), camera.GetCameraTarget().y + (dt * 1), 100));
+				if (camera.GetCameraTarget().x <= (80 + 8))
+				{
+					camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 3), camera.GetCameraPos().y + (dt * 1), camera.GetCameraPos().z + (dt * 6)));
+					camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 3), camera.GetCameraTarget().y + (dt * 1), 100));
+				}
+				else
+				{
+					camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraPos().y + (dt * 20), camera.GetCameraPos().z + (dt * 120)));
+					camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
+				}
 			}
 			else
 			{
-				camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraPos().y + (dt * 20), camera.GetCameraPos().z + (dt * 120)));
-				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
+				if (camera.GetCameraTarget().x <= (80 + 15))
+				{
+					camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 3), camera.GetCameraPos().y + (dt * 1), camera.GetCameraPos().z + (dt * 6)));
+					camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 3), camera.GetCameraTarget().y + (dt * 1), 100));
+				}
+				else
+				{
+					camera.SetCameraPos(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraPos().y + (dt * 20), camera.GetCameraPos().z + (dt * 120)));
+					camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x - (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
+				}
 			}
 		}
 	}
@@ -595,15 +691,31 @@ void BattleScene::CameraClash(bool is_player, double dt)
 	{
 		if (camera.GetCameraTarget().x <= (120 - 3))
 		{
-			if (camera.GetCameraTarget().x >= (120 - 8))
+			if (!ranged)
 			{
-				camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 3), camera.GetCameraPos().y + (dt * 1), camera.GetCameraPos().z + (dt * 6)));
-				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 3), camera.GetCameraTarget().y + (dt * 1), 100));
+				if (camera.GetCameraTarget().x >= (120 - 8))
+				{
+					camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 3), camera.GetCameraPos().y + (dt * 1), camera.GetCameraPos().z + (dt * 6)));
+					camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 3), camera.GetCameraTarget().y + (dt * 1), 100));
+				}
+				else
+				{
+					camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraPos().y + (dt * 20), camera.GetCameraPos().z + (dt * 120)));
+					camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
+				}
 			}
-			else
+			else	//ranged type slows camera on the start
 			{
-				camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraPos().y + (dt * 20), camera.GetCameraPos().z + (dt * 120)));
-				camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
+				if (camera.GetCameraTarget().x >= (120 - 15))
+				{
+					camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 3), camera.GetCameraPos().y + (dt * 1), camera.GetCameraPos().z + (dt * 6)));
+					camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 3), camera.GetCameraTarget().y + (dt * 1), 100));
+				}
+				else
+				{
+					camera.SetCameraPos(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraPos().y + (dt * 20), camera.GetCameraPos().z + (dt * 120)));
+					camera.SetCameraTarget(Vector3(camera.GetCameraTarget().x + (dt * 60), camera.GetCameraTarget().y + (dt * 20), 100));
+				}
 			}
 		}
 	}
@@ -668,7 +780,7 @@ void BattleScene::Render()
 		modelStack.PushMatrix();
 		modelStack.Translate(-130, -150, 10);
 		modelStack.Scale(player->getCurrentHP(), 10, 5);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GREEN_BAR"));
 		modelStack.PopMatrix();
 	}
 	if (enemy)
@@ -676,14 +788,14 @@ void BattleScene::Render()
 		modelStack.PushMatrix();
 		modelStack.Translate(80, -150, 10);
 		modelStack.Scale(enemy->getCurrentHP(), 10, 5);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GREEN_BAR"));
 		modelStack.PopMatrix();
 	}
 
 	modelStack.PushMatrix();
 	modelStack.Translate(-140, 120, 0);
 	modelStack.Scale(f_bonus_time * 50, 10, 10);
-	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BAR_BAR"));
+	RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("YELLOW_BAR"));
 	modelStack.PopMatrix();
 
 }
@@ -753,12 +865,19 @@ void BattleScene::LoadMeshes()
 	MeshBuilder::GetInstance()->GenerateOBJ("ICE_KNIGHT_GREEN", "OBJ//iceknight_obj.obj");
 	MeshBuilder::GetInstance()->GetMesh("ICE_KNIGHT_GREEN")->textureID = LoadTGA("Image//iceknight_green.tga");
 
-	MeshBuilder::GetInstance()->GenerateOBJ("BAR_BAR", "OBJ//bar_bar.obj");
+	MeshBuilder::GetInstance()->GenerateOBJ("GREEN_BAR", "OBJ//bar_bar.obj");
+	MeshBuilder::GetInstance()->GetMesh("GREEN_BAR")->textureID = LoadTGA("Image//greenTexture.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("YELLOW_BAR", "OBJ//bar_bar.obj");
+	MeshBuilder::GetInstance()->GetMesh("YELLOW_BAR")->textureID = LoadTGA("Image//yellowTexture.tga");
 
 	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_TREE", "OBJ//Tree_low.obj");
 	MeshBuilder::GetInstance()->GetMesh("BASIC_TREE")->textureID = LoadTGA("Image//Tree.tga");
 	MeshBuilder::GetInstance()->GenerateOBJ("BASIC_PLANT", "OBJ//Plant_low.obj");
 	MeshBuilder::GetInstance()->GetMesh("BASIC_PLANT")->textureID = LoadTGA("Image//grass_obj.tga");
+
+	MeshBuilder::GetInstance()->GenerateOBJ("PROJECTILE", "OBJ//Arrow.obj");
+	MeshBuilder::GetInstance()->GetMesh("PROJECTILE")->textureID = LoadTGA("Image//grass_lightgreen.tga");
+
 }
 
 void BattleScene::RenderProps()
@@ -837,9 +956,18 @@ void BattleScene::RenderUnitsModels(MS& _ms)
 	for (int i = 0; i < f_projectiles.size(); ++i)
 	{
 		_ms.PushMatrix();
-		_ms.Translate(f_projectiles[i], 0, 0);
-		_ms.Scale(10, 10, 10);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("sphere"));
+		_ms.Translate(f_projectiles[i], -10, 100);
+		_ms.Scale(50, 25, 50);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("PROJECTILE"));
+		_ms.PopMatrix();
+	}
+	for (int i = 0; i < f_projectiles_enemy.size(); ++i)
+	{
+		_ms.PushMatrix();
+		_ms.Translate(f_projectiles_enemy[i], -10, 100);
+		_ms.Scale(50, 25, 50);
+		_ms.Rotate(180, 0, 1, 0);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("PROJECTILE"));
 		_ms.PopMatrix();
 	}
 

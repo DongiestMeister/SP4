@@ -69,6 +69,7 @@ private:
 	bool b_renderLose;
 	Vector2 bannerPos;
 
+	
 
 	void LightMouseControl(double dt);
 

@@ -122,7 +122,6 @@ bool AI_FSM::SearchForPath(int move_cost,  vector<Vector2> searchPath)
 
 void AI_FSM::Attack()
 {
-
 	PlayerInfo::GetInstance()->player = target;
 	PlayerInfo::GetInstance()->enemy = this->character;
 

@@ -43,8 +43,10 @@ public:
 	void TakenHitAnimation(double dt);	//shake it shake it
 	void RenderSkyBox();
 	void LightMouseControl(double dt);
-	void CameraClash(bool is_player, double dt);
+	void CameraClash(bool is_player, bool ranged, double dt);
 	void CameraClashReturn(double dt);
+	void PlayerAnimation(double dt, bool ranged, int dmgvalue, float maxdist);
+	void EnemyAnimation(double dt, bool ranged , int dmgvalue, float maxdist);
 
 	/*RenderTextStuff
 	- runs animation and appearance of Totaldamage Counter and Effects
@@ -82,6 +84,8 @@ private:
 
 	bool b_shaking;
 	bool shake_dir;
+	bool shoot_once;
+	bool shoot_hit;
 
 
 	vector<DamageText*> storeDmgTxt;
@@ -93,6 +97,10 @@ private:
 
 	int i_totaldmg_txt;
 	int i_shakecounter;
+
+
+
+
 
 	ISound* BGM;
 };
