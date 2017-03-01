@@ -1,3 +1,3 @@
-//Name,FSM,CLASS,TileMap ID
-Paul,DEFENCE,MELEE,11
-Jeff,DEFENCE,RANGE,12
+#Name,FSM,CLASS,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,characterPortrait,Animation,Frames,TileMap ID
+Paul,DEFENCE,MELEE,30,10,5,2,5,Knight,Image//zombie.tga,6,11
+Jeff,DEFENCE,RANGE,30,10,5,2,5,Knight,Image//zombie.tga,6,12

@@ -55,6 +55,8 @@ public:
 	void loadArmorFromCSV(const string filepath);
 	void loadCharactersFromCSV(const string filepath);
 	void saveInventoryToCSV(const string filepath);
+	void LoadPlayerCharacters();
+	void SavePlayerCharacters();
 protected:
 
 

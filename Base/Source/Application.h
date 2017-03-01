@@ -9,7 +9,6 @@
 #include "IntroState.h"
 #include "MenuState.h"
 #include "OptionState.h"
-#include "ScoreState.h"
 #include "GameplayScene.h"
 #include "BattleScene.h"
 #include "PartySelectScene.h"

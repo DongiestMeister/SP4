@@ -113,15 +113,35 @@ bool TileMap::LoadMap(const string mapName)
 					if (spawner->enemyMap.count(atoi(token.c_str())) != 0)
 					{
 						Character *knight;
-						if (spawner->enemyMap[atoi(token.c_str())].c_class == Enemy::MELEE)
+						Enemy *enemy = &spawner->enemyMap[atoi(token.c_str())];
+						if (enemy->c_class == Enemy::MELEE)
 						{
-							knight = new MeleeCharacter(spawner->enemyMap[atoi(token.c_str())].s_name);
+							knight = new MeleeCharacter(enemy->s_name);
 						}
-						else if (spawner->enemyMap[atoi(token.c_str())].c_class == Enemy::RANGE)
+						else if (enemy->c_class == Enemy::RANGE)
 						{
-							knight = new RangedCharacter(spawner->enemyMap[atoi(token.c_str())].s_name);
+							knight = new RangedCharacter(enemy->s_name);
 						}
-						knight->setPortrait("Knight");
+						if (enemy->type == Enemy::DEFENCE)
+						{
+							knight->strategy = Character::DEFENCE;
+						}
+						else if (enemy->type == Enemy::NEUTRAL)
+						{
+							knight->strategy = Character::NEUTRAL;
+						}
+						else if (enemy->type == Enemy::OFFENCE)
+						{
+							knight->strategy = Character::OFFENCE;
+						}
+						knight->setPortrait(enemy->s_charPortrait);
+						knight->setAnimation(enemy->s_animation, enemy->i_frames);
+						knight->setHP(enemy->i_maxHP);
+						knight->setBaseSTR(enemy->i_baseStr);
+						knight->setBaseDEX(enemy->i_baseDex);
+						knight->setBaseLUK(enemy->i_baseLuk);
+						knight->i_movementCost = enemy->i_movement;
+						knight->calculateStats();
 						AddEnemy(theColumnCounter++, theLineCounter, knight);
 					}
 					else
@@ -143,6 +163,10 @@ bool TileMap::LoadMap(const string mapName)
 	{
 		if (i < playerSpawnPoints.size())
 		{
+			if (characters[i]->i_frames > 0)
+			{
+				characters[i]->setAnimation(characters[i]->s_animationName, characters[i]->i_frames);
+			}
 			characters[i]->setPos(playerSpawnPoints[i]);
 			theScreenMap[playerSpawnPoints[i].y][playerSpawnPoints[i].x] = 2;
 		}
@@ -159,7 +183,22 @@ void TileMap::Update(double dt)
 		Character *unit = *it;
 		if (unit->animation)
 		{
-			unit->animation->Update(dt);
+			if (!unit->b_tookAction)
+				unit->animation->Update(dt);
+			else
+				unit->animation->m_currentFrame = 1;
+		}
+	}
+
+	for (vector<Character*>::iterator it = characters.begin(); it != characters.end(); ++it)
+	{
+		Character *unit = *it;
+		if (unit->animation)
+		{
+			if (!unit->b_tookAction)
+				unit->animation->Update(dt);
+			else
+				unit->animation->m_currentFrame = 1;
 		}
 	}
 }
@@ -202,7 +241,10 @@ void TileMap::Render()
 		modelStack.Translate(unit->getPos().x * tileSizeX + tileSizeX / 2, -0.4, unit->getPos().y * tileSizeY + tileSizeY / 2);
 		modelStack.Rotate(90, 1, 0, 0);
 		modelStack.Scale(tileSizeX, tileSizeY, 1);
-		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BlueKnight"));
+		if (unit->animation)
+			RenderHelper::RenderMesh(unit->animation);
+		else
+			RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("BlueKnight"));
 		modelStack.PopMatrix();
 	}
 

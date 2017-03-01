@@ -23,7 +23,7 @@ bool CLuaInterface::Init()
 	{
 		luaL_openlibs(theLuaState);
 
-		luaL_dofile(theLuaState, "Image//GameSettings.lua");
+		luaL_dofile(theLuaState, "Image//Lua//GameSettings.lua");
 
 		result = true;
 	}
@@ -34,34 +34,25 @@ bool CLuaInterface::Init()
 	{
 		luaL_openlibs(theErrorState);
 
-		luaL_dofile(theErrorState, "Image//errorLookup.lua");
+		luaL_dofile(theErrorState, "Image//Lua//errorLookup.lua");
 	}
 
-	theScoreState = lua_open();
+	theCharactersState = lua_open();
 
-	if (theScoreState)
+	if ((theCharactersState))
 	{
-		luaL_openlibs(theScoreState);
+		luaL_openlibs(theCharactersState);
 
-		luaL_dofile(theScoreState, "Image//DM2240_HighScore.lua");
+		luaL_dofile(theCharactersState, "Image//Lua//Characters.lua");
 	}
 
-	theOptionState = lua_open();
+	thePlayerState = lua_open();
 
-	if (theOptionState)
+	if ((thePlayerState))
 	{
-		luaL_openlibs(theOptionState);
+		luaL_openlibs(thePlayerState);
 
-		luaL_dofile(theOptionState, "Image//Options.lua");
-	}
-
-	theOBJState = lua_open();
-
-	if (theOBJState)
-	{
-		luaL_openlibs(theOBJState);
-
-		luaL_dofile(theOBJState, "Image//OBJs.lua");
+		luaL_dofile(thePlayerState, "Image//Lua//Player.lua");
 	}
 
 	return result;
@@ -100,50 +91,64 @@ void CLuaInterface::Drop()
 	{
 		lua_close(theErrorState);
 	}
-	if (theScoreState)
+	if (theCharactersState)
 	{
-		lua_close(theScoreState);
+		lua_close(theCharactersState);
 	}
-	if (theOptionState)
+	if (thePlayerState)
 	{
-		lua_close(theOptionState);
-	}
-	if (theOBJState)
-	{
-		lua_close(theOBJState);
+		lua_close(thePlayerState);
 	}
 }
 
-int CLuaInterface::getIntValue(const char* varName)
+int CLuaInterface::getIntValue(const char* varName, lua_State *state)
 {
-	lua_getglobal(theLuaState, varName);
-	return lua_tointeger(theLuaState, -1);
+	lua_getglobal(state, varName);
+	return lua_tointeger(state, -1);
 }
 
-float CLuaInterface::getFloatValue(const char* varName)
+float CLuaInterface::getFloatValue(const char* varName, lua_State *state)
 {
-	lua_getglobal(theLuaState, varName);
-	return (float)lua_tonumber(theLuaState, -1);
+	lua_getglobal(state, varName);
+	return (float)lua_tonumber(state, -1);
 }
 
-void CLuaInterface::SaveIntValue(const char* varName, const int value, const bool bOverWrite)
+string CLuaInterface::getStringValue(const char* varName, lua_State *state)
+{
+	lua_getglobal(state, varName);
+	return lua_tostring(state, -1);
+}
+
+void CLuaInterface::SaveIntValue(const char* varName, const int value, const bool bOverWrite, string filepath)
 {
 	lua_getglobal(theLuaState, "SaveToLuaFile");
 	char outputString[80];
 	sprintf(outputString, "%s= %d\n", varName, value);
 	lua_pushstring(theLuaState, outputString);
 	lua_pushinteger(theLuaState, bOverWrite);
-	lua_call(theLuaState, 2, 0);
+	lua_pushstring(theLuaState, filepath.c_str());
+	lua_call(theLuaState, 3, 0);
 }
 
-void CLuaInterface::SaveFloatValue(const char* varName, const float value, const bool bOverWrite)
+void CLuaInterface::SaveFloatValue(const char* varName, const float value, const bool bOverWrite, string filepath)
 {
 	lua_getglobal(theLuaState, "SaveToLuaFile");
 	char outputString[80];
 	sprintf(outputString, "%s= %6.4f\n", varName, value);
 	lua_pushstring(theLuaState, outputString);
 	lua_pushinteger(theLuaState, bOverWrite);
-	lua_call(theLuaState, 2, 0);
+	lua_pushstring(theLuaState, filepath.c_str());
+	lua_call(theLuaState, 3, 0);
+}
+
+void CLuaInterface::SaveStringValue(const char* varName, const string value, const bool bOverWrite, string filepath)
+{
+	lua_getglobal(theLuaState, "SaveToLuaFile");
+	string outputString = (string)varName + "=\"" + value + "\"";
+	lua_pushstring(theLuaState, outputString.c_str());
+	lua_pushinteger(theLuaState, bOverWrite);
+	lua_pushstring(theLuaState, filepath.c_str());
+	lua_call(theLuaState, 3, 0);
 }
 
 void CLuaInterface::GetGlobal(const char* varName)
@@ -167,41 +172,6 @@ float CLuaInterface::GetField(const char* key)
 	return result;
 }
 
-std::vector<int> CLuaInterface::GetHighscores()
-{
-	std::vector<int> temp;
-
-	lua_getglobal(theScoreState, "Highscores");
-
-	if (!lua_istable(theScoreState, -1))
-		error("error100");
-
-	lua_pushstring(theScoreState, "one");
-	lua_gettable(theScoreState, -2);
-	if (!lua_isnumber(theScoreState, -1))
-		error("error101");
-	temp.push_back((int)lua_tonumber(theScoreState, -1));
-
-	lua_pop(theScoreState, 1);
-
-	lua_pushstring(theScoreState, "two");
-	lua_gettable(theScoreState, -2);
-	if (!lua_isnumber(theScoreState, -1))
-		error("error101");
-	temp.push_back((int)lua_tonumber(theScoreState, -1));
-
-	lua_pop(theScoreState, 1);
-
-	lua_pushstring(theScoreState, "three");
-	lua_gettable(theScoreState, -2);
-	if (!lua_isnumber(theScoreState, -1))
-		error("error101");
-	temp.push_back((int)lua_tonumber(theScoreState, -1));
-
-	lua_pop(theScoreState, 1);
-
-	return temp;
-}
 
 void CLuaInterface::error(const char *errorCode)
 {
@@ -222,35 +192,6 @@ void CLuaInterface::error(const char *errorCode)
 		cout << errorCode << " is not valid.\nPlease forward this to me :)" << endl;
 	}
 }
-
-void CLuaInterface::SetHighscore(int score)
-{
-	std::vector<int> temp = GetHighscores();
-	if (score > temp[0])
-	{
-		temp[2] = temp[1];
-		temp[1] = temp[0];
-		temp[0] = score;
-	}
-	else if (score > temp[1])
-	{
-		temp[2] = temp[1];
-		temp[1] = score;
-	}
-	else if (score > temp[2])
-	{
-		temp[2] = score;
-	}
-
-	string output = "Highscores = { one = " + std::to_string(temp[0]) + ", two = " + std::to_string(temp[1]) + ", three = " + std::to_string(temp[2]) + " }";
-
-	lua_getglobal(theLuaState, "SaveToLuaFile");
-	lua_pushstring(theLuaState, output.c_str());
-	lua_pushinteger(theLuaState, true);
-	lua_call(theLuaState, 2, 0);
-
-}
-
 
 Vector3 CLuaInterface::GetVector3(const char *key)
 {

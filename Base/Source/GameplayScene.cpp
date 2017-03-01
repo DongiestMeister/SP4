@@ -200,8 +200,9 @@ void GameplayScene::Init()
 	controller.Init(&gameMap, &camera,&b_playerTurn);
 	spawner.Init(&gameMap);
 
-	spawner.LoadSpawns("Image//EnemySpawns.csv");
 	spawner.LoadEnemies("Image//EnemyTypes.csv");
+	spawner.LoadSpawns("Image//EnemySpawns.csv");
+	
 
 	gameMap.Init(400, 400, 20, 20,&spawner);
 
@@ -221,7 +222,7 @@ void GameplayScene::Init()
 	knight2->setPortrait("Knight");
 	knight3->setPortrait("Knight");
 
-	knight1->setAnimation("Image//zombie.tga", 6);
+	knight1->setAnimation("Image//Characters//Ingame//walkinggirl.tga", 4);
 	knight2->setAnimation("Image//zombie.tga", 6);
 	knight3->setAnimation("Image//zombie.tga", 6);
 
@@ -599,8 +600,8 @@ void GameplayScene::Resume()
 
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 	// Customise the ground entity
-	groundEntity->SetPosition(Vector3(100, 0, 100));
-	groundEntity->SetScale(Vector3(750.0f, 750.0f, 750.0f));
+	groundEntity->SetPosition(Vector3(200, 0, 200));
+	groundEntity->SetScale(Vector3(2500.0f, 2500.0f, 2500.0f));
 	groundEntity->SetGrids(Vector3(1.0f, 1.0f, 1.0f));
 
 	float fontSize = 5.0f;

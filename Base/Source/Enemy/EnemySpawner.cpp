@@ -46,7 +46,26 @@ void EnemySpawner::SpawnWave(int i_turn)
 					{
 						knight = new RangedCharacter(enemy->s_name);
 					}
-					knight->setPortrait("Knight");
+					if (enemy->type == Enemy::DEFENCE)
+					{
+						knight->strategy = Character::DEFENCE;
+					}
+					else if (enemy->type == Enemy::NEUTRAL)
+					{
+						knight->strategy = Character::NEUTRAL;
+					}
+					else if (enemy->type == Enemy::OFFENCE)
+					{
+						knight->strategy = Character::OFFENCE;
+					}
+					knight->setPortrait(enemy->s_charPortrait);
+					knight->setAnimation(enemy->s_animation, enemy->i_frames);
+					knight->setHP(enemy->i_maxHP);
+					knight->setBaseSTR(enemy->i_baseStr);
+					knight->setBaseDEX(enemy->i_baseDex);
+					knight->setBaseLUK(enemy->i_baseLuk);
+					knight->i_movementCost = enemy->i_movement;
+					knight->calculateStats();
 					map->AddEnemy(spawnPoint.x, spawnPoint.y, knight);
 					it = spawnEnemyList.erase(it);
 					break;
@@ -86,7 +105,7 @@ bool EnemySpawner::LoadSpawns(const string filename)
 			string aLineOfText = "";
 			getline(file, aLineOfText);
 
-			size_t pos = aLineOfText.find("/");
+			size_t pos = aLineOfText.find("#");
 			if (pos != string::npos)
 			{
 				aLineOfText = aLineOfText.substr(0, pos);
@@ -97,7 +116,6 @@ bool EnemySpawner::LoadSpawns(const string filename)
 			string token;
 			istringstream iss(aLineOfText);
 			int i_typeCounter = 0;
-
 			Enemy enemy;
 
 			while (getline(iss, token, ','))
@@ -105,34 +123,10 @@ bool EnemySpawner::LoadSpawns(const string filename)
 				switch (i_typeCounter)
 				{
 				case 0:
-					enemy.s_name = token;
+					enemy = enemyMap[atoi(token.c_str())];
 					break;
 				case 1:
-					if (token == "DEFENCE")
-					{
-						enemy.type = Enemy::DEFENCE;
-					}
-					else if (token == "IDLE")
-					{
-						enemy.type = Enemy::NEUTRAL;
-					}
-					else if (token == "OFFENCE")
-					{
-						enemy.type = Enemy::OFFENCE;
-					}
-					break;
-				case 2:
-					enemy.i_Spawnturn = (atoi(token.c_str()));
-					break;
-				case 3:
-					if (token == "MELEE")
-					{
-						enemy.c_class = Enemy::MELEE;
-					}
-					else if (token == "RANGE")
-					{
-						enemy.c_class = Enemy::RANGE;
-					}
+					enemy.i_Spawnturn = atoi(token.c_str());
 					break;
 				}
 
@@ -159,7 +153,7 @@ bool EnemySpawner::LoadEnemies(const string filename)
 			string aLineOfText = "";
 			getline(file, aLineOfText);
 
-			size_t pos = aLineOfText.find("/");
+			size_t pos = aLineOfText.find("#");
 			if (pos != string::npos)
 			{
 				aLineOfText = aLineOfText.substr(0, pos);
@@ -205,7 +199,33 @@ bool EnemySpawner::LoadEnemies(const string filename)
 					}
 					break;
 				case 3:
+					enemy.i_maxHP = atoi(token.c_str());
+					break;
+				case 4:
+					enemy.i_baseStr = atoi(token.c_str());
+					break;
+				case 5:
+					enemy.i_baseDex = atoi(token.c_str());
+					break;
+				case 6:
+					enemy.i_baseLuk = atoi(token.c_str());
+					break;
+				case 7:
+					enemy.i_movement = atoi(token.c_str());
+					break;
+				case 8:
+					enemy.s_charPortrait = token;
+					break;
+				case 9:
+					enemy.s_animation = token;
+					break;
+				case 10:
+					enemy.i_frames = atoi(token.c_str());
+					break;
+				case 11:
 					enemyMap[atoi(token.c_str())] = enemy;
+					break;
+					
 				}
 				i_typeCounter++;
 			}

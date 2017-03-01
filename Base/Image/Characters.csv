@@ -1,4 +1,4 @@
-//Attack Type,Name,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,AttRange,characterPortrait,Animation
+#Attack Type,Name,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,AttRange,characterPortrait,Animation
 Melee,Lucy,50,10,5,2,3,1,Lucy,Knight
 Melee,Rasis,50,15,2,2,3,1,Rasis,Knight
 Melee,Corrine,50,6,5,6,3,1,Corrine,Knight

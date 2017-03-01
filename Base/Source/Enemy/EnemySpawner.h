@@ -30,14 +30,36 @@ struct Enemy
 	};
 
 
-	Enemy(TYPE type, int i_Spawnturn) { this->type = type; this->i_Spawnturn = i_Spawnturn; s_name = "Knight"; c_class = MELEE; }
-	Enemy() { this->type = DEFENCE; this->i_Spawnturn = 0; s_name = "Knight"; c_class = MELEE; }
+	Enemy(TYPE type, int i_Spawnturn) {
+		this->type = type; this->i_Spawnturn = i_Spawnturn; s_name = "Knight"; c_class = MELEE; i_maxHP = 0;
+		i_baseStr = 0;
+		i_baseDex = 0;
+		i_baseLuk = 0;
+		i_movement = 0;
+		i_frames = 0;
+	}
+	Enemy() {
+		this->type = DEFENCE; this->i_Spawnturn = 0; s_name = "Knight"; c_class = MELEE; i_maxHP = 0;
+		i_baseStr = 0;
+		i_baseDex = 0;
+		i_baseLuk = 0;
+		i_movement = 0;
+		i_frames = 0;
+	}
 	~Enemy() {}
 
 	TYPE type;
 	string s_name;
 	int i_Spawnturn;
 	CLASS c_class;
+	int i_maxHP;
+	int i_baseStr;
+	int i_baseDex;
+	int i_baseLuk;
+	int i_movement;
+	string s_charPortrait;
+	string s_animation;
+	int i_frames;
 };
 
 class EnemySpawner

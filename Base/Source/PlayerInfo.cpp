@@ -1,5 +1,6 @@
 #include "PlayerInfo.h"
 #include "MeshBuilder.h"
+#include "Lua\LuaInterface.h"
 
 PlayerInfo::PlayerInfo()
 {
@@ -14,7 +15,7 @@ PlayerInfo::PlayerInfo()
 PlayerInfo::~PlayerInfo()
 {
 	party.clear();
-	
+
 	for (CharactersList::iterator it = availableUnits.begin(); it != availableUnits.end();)
 	{
 		if (*it)
@@ -204,7 +205,7 @@ void PlayerInfo::loadCharactersFromCSV(const string filepath)
 			getline(file, aLineOfText);
 
 
-			size_t pos = aLineOfText.find("/");
+			size_t pos = aLineOfText.find("#");
 			if (pos != string::npos)
 			{
 				aLineOfText = aLineOfText.substr(0, pos);
@@ -251,7 +252,10 @@ void PlayerInfo::loadCharactersFromCSV(const string filepath)
 					character->setPortrait(token);
 					break;
 				case 10:
-					character->set2DMesh(token);
+					character->s_animationName = token;
+					break;
+				case 11:
+					character->i_frames = atoi(token.c_str());
 					break;
 				}
 				counter += 1;
@@ -262,4 +266,40 @@ void PlayerInfo::loadCharactersFromCSV(const string filepath)
 		}
 	}
 	file.close();
+}
+
+void PlayerInfo::LoadPlayerCharacters()
+{
+	string charnames = CLuaInterface::GetInstance()->getStringValue("characters", CLuaInterface::GetInstance()->theCharactersState);
+	
+	string token;
+	std::istringstream iss(charnames);
+	while (getline(iss, token, ','))
+	{
+		for (CharactersList::iterator it = unitsNotOwned.begin(); it != unitsNotOwned.end();)
+		{
+			Character *unit = *it;
+			if (unit->getName() == token)
+			{
+				availableUnits.push_back(unit);
+				it = unitsNotOwned.erase(it);
+				break;
+			}
+			else
+			{
+				it++;
+			}
+		}
+	}
+}
+
+void PlayerInfo::SavePlayerCharacters()
+{
+	string save;
+	for (int i = 0; i < availableUnits.size(); ++i)
+	{
+		save += availableUnits[i]->getName() + ",";
+	}
+
+	CLuaInterface::GetInstance()->SaveStringValue("characters", save, true, "Image//Lua//Characters.lua");
 }

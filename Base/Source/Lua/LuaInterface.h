@@ -2,6 +2,9 @@
 #include <lua.hpp>
 #include <vector>
 #include "Vector3.h"
+#include <string>
+
+using std::string;
 
 #include <SingletonTemplate.h>
 
@@ -11,16 +14,19 @@ class CLuaInterface : public Singleton<CLuaInterface>
 protected:
 	CLuaInterface();
 	~CLuaInterface();
+
 public:
 	bool Init();
 	void Run();
 	void Drop();
 
-	int getIntValue(const char* varName);
-	float getFloatValue(const char* varName);
+	int getIntValue(const char* varName, lua_State *state);
+	float getFloatValue(const char* varName, lua_State *state);
+	string getStringValue(const char* varName, lua_State *state);
 
-	void SaveIntValue(const char* varName,const int value, const bool bOverWrite = NULL);
-	void SaveFloatValue(const char* varName, const float value, const bool bOverWrite = NULL);
+	void SaveIntValue(const char* varName, const int value, const bool bOverWrite = NULL, string filepath = "");
+	void SaveFloatValue(const char* varName, const float value, const bool bOverWrite = NULL, string filepath = "");
+	void SaveStringValue(const char* varName, const string value, const bool bOverWrite = NULL, string filepath = "");
 
 	float GetField(const char *key);
 	void GetGlobal(const char* varName);
@@ -29,17 +35,10 @@ public:
 
 	void error(const char *errorCode);
 
-	void SetHighscore(int score);
-
-	void SetAudio(bool value);
-	bool GetAudio();
-
-
-	std::vector<int> GetHighscores();
 
 	lua_State *theLuaState;
 	lua_State *theErrorState;
-	lua_State *theScoreState;
-	lua_State *theOptionState;
-	lua_State *theOBJState;
+	lua_State *theCharactersState;
+	lua_State *thePlayerState;
+
 };

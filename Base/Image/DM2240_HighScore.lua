@@ -1,1 +1,0 @@
-Highscores = { one = 3, two = 1, three = 0 }

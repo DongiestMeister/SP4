@@ -27,6 +27,8 @@ Character::Character() : i_strBoostFromTerrain(0), i_dexBoostFromTerrain(0), i_l
 
 	FSM = nullptr;
 	animation = nullptr;
+
+	i_frames = 0;
 }
 
 Character::~Character()
@@ -158,7 +160,7 @@ void Character::setDamage(int newDamage)
 
 void Character::setHP(int newHP)
 {
-	i_HP = newHP;
+	i_baseHP = newHP;
 }
 
 void Character::setPos(Vector2 newPos)
@@ -179,7 +181,7 @@ void Character::set2DMesh(string meshName)
 void Character::setAnimation(string filename,int frames)
 {
 	animation = MeshBuilder::GetInstance()->GenerateSpriteAnimation("Animation", 1, frames, 1);
-	animation->textureID = LoadTGA("Image//zombie.tga");
+	animation->textureID = LoadTGA(filename.c_str());
 
 	if (animation)
 	{

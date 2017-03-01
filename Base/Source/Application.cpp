@@ -114,8 +114,8 @@ void Application::Init()
 {
 	CLuaInterface::GetInstance()->Init();
 
-	m_window_width = CLuaInterface::GetInstance()->getIntValue("width");
-	m_window_height = CLuaInterface::GetInstance()->getIntValue("height");
+	m_window_width = CLuaInterface::GetInstance()->getIntValue("width",CLuaInterface::GetInstance()->theLuaState);
+	m_window_height = CLuaInterface::GetInstance()->getIntValue("height", CLuaInterface::GetInstance()->theLuaState);
 
 	m_window_width = 1920;
 	m_window_height = 1080;
@@ -179,6 +179,8 @@ void Application::Init()
 	PlayerInfo::GetInstance()->loadCharactersFromCSV("Image//Characters.csv");
 	PlayerInfo::GetInstance()->loadWeaponsFromCSV("Image//Weapons.csv");
 	PlayerInfo::GetInstance()->loadArmorFromCSV("Image//Armors.csv");
+	PlayerInfo::GetInstance()->LoadPlayerCharacters();
+	PlayerInfo::GetInstance()->gold = CLuaInterface::GetInstance()->getIntValue("gold", CLuaInterface::GetInstance()->thePlayerState);
 
 	// Load meshs
 	MeshBuilder::GetInstance()->GenerateQuad("Sinon", Color(1, 1, 1));
@@ -193,7 +195,6 @@ void Application::Init()
 	SceneManager::GetInstance()->AddScene("MenuState", new CMenuState());
 	SceneManager::GetInstance()->AddScene("GameState", new GameplayScene());
 	SceneManager::GetInstance()->AddScene("OptionState", new COptionState());
-	SceneManager::GetInstance()->AddScene("ScoreState", new CScoreState());
 	SceneManager::GetInstance()->AddScene("BattleState", new BattleScene());
 	SceneManager::GetInstance()->AddScene("PartySelect", new PartySelectScene());
 	SceneManager::GetInstance()->AddScene("WarMap", new WarMapScene());
@@ -225,7 +226,8 @@ void Application::Run()
 
 		PostInputUpdate();
 	}
-
+	PlayerInfo::GetInstance()->SavePlayerCharacters();
+	CLuaInterface::GetInstance()->SaveIntValue("gold", PlayerInfo::GetInstance()->gold, true, "Image//Lua//Player.lua");
 	CLuaInterface::GetInstance()->Destroy();
 	SceneManager::GetInstance()->Destroy();
 	PlayerInfo::GetInstance()->Destroy();

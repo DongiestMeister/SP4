@@ -120,9 +120,6 @@
     <ClCompile Include="Source\OptionState.cpp">
       <Filter>GameStateManagement</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ScoreState.cpp">
-      <Filter>GameStateManagement</Filter>
-    </ClCompile>
     <ClCompile Include="Source\TileMap.cpp">
       <Filter>Tilemap</Filter>
     </ClCompile>
@@ -267,9 +264,6 @@
       <Filter>Lua</Filter>
     </ClInclude>
     <ClInclude Include="Source\OptionState.h">
-      <Filter>GameStateManagement</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ScoreState.h">
       <Filter>GameStateManagement</Filter>
     </ClInclude>
     <ClInclude Include="Source\TileMap.h">

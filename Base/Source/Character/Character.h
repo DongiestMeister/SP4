@@ -81,6 +81,9 @@ public:
 
 	STRATEGY strategy;
 	SpriteAnimation *animation;
+
+	string s_animationName;
+	int i_frames;
 protected:
 	Weapon* weapon;
 	Armor* armor;

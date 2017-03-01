@@ -1,0 +1,1 @@
+characters="Kaneki,Lucy,Paul,Strea,Eren,Kirito,Sam,Ossas,Corrine,Ray,Sinon,"
