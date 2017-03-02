@@ -39,50 +39,12 @@ PartySelectScene::~PartySelectScene()
 void PartySelectScene::Init()
 {
 	Math::InitRNG();
-	currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
-	Music::GetInstance()->Init();
-
-	BGM = Music::GetInstance()->playSound("Sounds//bossfight.mp3", true, false, true);
-	BGM->setVolume(0.3);
-
-
-	srand(NULL);
-
-	// Tell the graphics manager to use the shader we just loaded
-	GraphicsManager::GetInstance()->SetActiveShader("default");
-
-
-	lights[0] = new Light();
-	GraphicsManager::GetInstance()->AddLight("lights[0]", lights[0]);
-	lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	lights[0]->position.Set(0, -10, 0);
-	lights[0]->color.Set(1, 1, 0.7);
-	lights[0]->power = 1;
-	lights[0]->kC = 1.f;
-	lights[0]->kL = 0.01f;
-	lights[0]->kQ = 0.001f;
-	lights[0]->cosCutoff = cos(Math::DegreeToRadian(45));
-	lights[0]->cosInner = cos(Math::DegreeToRadian(30));
-	lights[0]->exponent = 3.f;
-	lights[0]->spotDirection.Set(0.f, 1.f, 0.f);
-	lights[0]->name = "lights[0]";
-
-	lights[1] = new Light();
-	GraphicsManager::GetInstance()->AddLight("lights[1]", lights[1]);
-	lights[1]->type = Light::LIGHT_DIRECTIONAL;
-	lights[1]->position.Set(1, 1, 0);
-	lights[1]->color.Set(1, 1, 0.5f);
-	lights[1]->power = 0.4f;
-	lights[1]->name = "lights[1]";
-
-	currProg->UpdateInt("numLights", 1);
-	currProg->UpdateInt("textEnabled", 0);
 
 	// Create and attach the camera to the scene
 	camera.Init(Vector3(100, -10, 100), Vector3(100, 0, 100), Vector3(0, 0, 1));
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
-	// Load all the meshes
+	// Load all the meshes for this scene
 	MeshBuilder::GetInstance()->GenerateQuad("PartySelectBG", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("PartySelectBG")->textureID = LoadTGA("Image//PartySelect//PartySelectBackground.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("test", Color(1, 1, 1), 1.f);
@@ -202,6 +164,8 @@ void PartySelectScene::Update(double dt)
 			{
 				if (PlayerInfo::GetInstance()->party.size() > 0)
 					SceneManager::GetInstance()->SetActiveScene("GameState");
+				else
+					message = "Your party is empty!";
 			}
 		}
 		else if (currentScreen == CURR_SCREEN_SELECT_UNITS)
@@ -330,6 +294,7 @@ void PartySelectScene::Update(double dt)
 	}
 	if (KeyboardController::GetInstance()->IsKeyReleased('X'))
 	{
+		message = "";
 		if (currentScreen == CURR_SCREEN_SELECT_OPTION)
 		{
 			// go back to level select
@@ -776,21 +741,10 @@ void PartySelectScene::Render()
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Setup 3D pipeline then render 3D
-	//GraphicsManager::GetInstance()->SetPerspectiveProjection(45.0f, 4.0f / 3.0f, 0.1f, 10000.0f);
-	GraphicsManager::GetInstance()->SetOrthographicProjection(-100, 100, -100, 100, -2000, 2000);
-	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
-	GraphicsManager::GetInstance()->UpdateLightUniforms();
-
-	EntityManager::GetInstance()->Render();
-
-	
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
 	int halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2;
-
-	//GraphicsManager::GetInstance()->SetOrthographicProjection(-200, 200, -200, 200, -2000, 2000);
 	GraphicsManager::GetInstance()->DetachCamera();
 
 	EntityManager::GetInstance()->RenderUI();
@@ -808,6 +762,8 @@ void PartySelectScene::Render()
 		modelStack.Scale(87, 40 * 16 / 9, 1);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("selected"));
 		modelStack.PopMatrix();
+
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), message, Vector3(-30, 15, 10), 15.f, Color(0, 0, 1));
 	}
 	else if (currentScreen == CURR_SCREEN_SELECT_UNITS) // In the select units screen
 	{
@@ -1178,7 +1134,5 @@ void PartySelectScene::Render()
 
 void PartySelectScene::Exit()
 {
-	BGM->stop();
-	BGM->drop();
 	GraphicsManager::GetInstance()->DetachCamera();
 }
