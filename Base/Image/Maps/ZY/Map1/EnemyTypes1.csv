@@ -1,0 +1,5 @@
+#Name,FSM,CLASS,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,characterPortrait,Animation,Frames,TileMap ID
+Vanguard,DEFENCE,MELEE,300,17,5,2,4,Knight,Image//greenzombie.tga,6,11
+RottenKnight,OFFENCE,RANGE,30,30,5,2,3,Knight,Image//redzombie.tga,6,13
+Scout,OFFENCE,MELEE,140,10,5,2,6,Knight,Image//yellowzombie.tga,6,15
+Sniper,OFFENCE,RANGE,100,30,5,2,4,Knight,Image//yellowzombie.tga,6,16

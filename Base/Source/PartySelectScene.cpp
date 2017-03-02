@@ -926,7 +926,7 @@ void PartySelectScene::Render()
 			{
 				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->s_ownerName), Vector3(50, 30.5f, 1), 12.f, Color(1, 1, 1));
 				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_damageValue), Vector3(50, 15.5f, 1), 12.f, Color(1, 1, 1));
-				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_weaponAccuracy), Vector3(50, 0.5f, 1), 12.f, Color(1, 1, 1));
+				RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->i_weaponAccuracy) + "%", Vector3(50, 0.5f, 1), 12.f, Color(1, 1, 1));
 			}
 			else if (PlayerInfo::GetInstance()->inventory.at(i_selectedEquipmentCounter + i_eqToShow)->b_isArmor)
 			{
@@ -1008,7 +1008,7 @@ void PartySelectScene::Render()
 				if (PlayerInfo::GetInstance()->shop.at(i_shopCursor)->b_isWeapon)
 				{
 					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_damageValue), Vector3(-35, -23, 5), 15.f, Color(1, 1, 1));
-					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_weaponAccuracy), Vector3(-35, -38, 5), 15.f, Color(1, 1, 1));
+					RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), std::to_string(PlayerInfo::GetInstance()->shop.at(i_shopCursor)->i_weaponAccuracy) + "%", Vector3(-35, -38, 5), 15.f, Color(1, 1, 1));
 				}
 				else if (PlayerInfo::GetInstance()->shop.at(i_shopCursor)->b_isArmor)
 				{

@@ -25,11 +25,11 @@ bool MeleeCharacter::attack(Character* opponent)
 	int hitRate =0;
 	if (weapon != nullptr)
 	{
-		hitRate = i_DEX + weapon->i_weaponAccuracy - opponent->getLUK();
+		hitRate = (0.1 * i_DEX) + weapon->i_weaponAccuracy - (0.1 * opponent->getLUK());
 	}
 	else
 	{
-		hitRate = i_DEX - opponent->getLUK() + 70;
+		hitRate = 0.1 * i_DEX - (opponent->getLUK() * 0.1) + 70;
 	}
 	
 	int hitResult = Math::RandIntMinMax(0, 100);

@@ -205,16 +205,12 @@ void GameplayScene::Init()
 	controller.Init(&gameMap, &camera,&b_playerTurn);
 	spawner.Init(&gameMap);
 
-	spawner.LoadEnemies("Image//EnemyTypes.csv");
+	spawner.LoadEnemies("Image//Maps//ZY//Map1//EnemyTypes1.csv");
 	spawner.LoadSpawns("Image//EnemySpawns.csv");
 	
 
-	gameMap.Init(400, 400, 21, 23,&spawner);
-
-	if (gameMap.LoadMap("Image//MapDesignR.csv"))
-	{
-		//cout << "Succesfully loaded map!" << endl;
-	}
+	gameMap.Init(400, 400, 10, 10,&spawner);
+	gameMap.LoadMap("Image//Maps//ZY//Map1//MapDesign1.csv");
 
 	if (PlayerInfo::GetInstance()->level)
 	{

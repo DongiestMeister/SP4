@@ -34,9 +34,7 @@ void AI_FSM::SearchNearestWithHP()
 
 	//run list of units
 	for (CharactersList::iterator it = map->characters.begin(); it != map->characters.end(); ++it)
-	{
-		
-		
+	{	
 		Character* enemy = *it;
 		//Check nearest target
 		AStar search((int)character->getPos().x, (int)character->getPos().y, enemy->getPos().x, enemy->getPos().y, map);
@@ -81,8 +79,10 @@ void AI_FSM::SearchNearestWithHP()
 			tempPath2 = tempPath[i];
 		}
 	}
-
-	SearchForPath(this->character->i_movementCost,tempPath2);
+	if (tempPath2.size() > 0)
+	{
+		SearchForPath(this->character->i_movementCost, tempPath2);
+	}
 }
 
 bool AI_FSM::SearchForPath(int move_cost,  vector<Vector2> searchPath)
@@ -95,12 +95,14 @@ bool AI_FSM::SearchForPath(int move_cost,  vector<Vector2> searchPath)
 		//AStar search((int)character->getPos().x, (int)character->getPos().y, (int)targetPosition.x, (int)targetPosition.y, map);
 		//if (search.Search())//search.Search() = Finds the nearest path between parameters
 		//{
+		if (searchPath.size() >= 1)
+		{
 			if (move_cost >= searchPath.size() - 1)
 			{
 				b_reachEnd = true;
 				//std::cout << "1" << std::endl;
 			}
-		
+
 			for (int i = 0; i < move_cost && i < searchPath.size() - 1; ++i)
 			{
 				unitPath.push_back(searchPath[i]);
@@ -109,7 +111,7 @@ bool AI_FSM::SearchForPath(int move_cost,  vector<Vector2> searchPath)
 			//std::cout << "UnitpAthSize : " << unitPath.size() << std::endl;
 			//std::cout << "new path" << std::endl;
 			return true;
-
+		}
 		//else
 		//{
 		//	return false;

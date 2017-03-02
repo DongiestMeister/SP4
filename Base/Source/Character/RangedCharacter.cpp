@@ -31,11 +31,11 @@ bool RangedCharacter::attack(Character* opponent)
 
 	if (weapon != nullptr)
 	{
-		hitRate = (i_DEX + weapon->i_weaponAccuracy - opponent->getLUK()) - (int)(distanceToEnemy);
+		hitRate = ((0.1 * i_DEX) + weapon->i_weaponAccuracy - (opponent->getLUK() * 0.1)) - (int)(distanceToEnemy);
 	}
 	else
 	{
-		 hitRate = (i_DEX - opponent->getLUK()) - (int)distanceToEnemy + 70;
+		 hitRate = (((0.1*i_DEX) - opponent->getLUK()*0.1)) - (int)distanceToEnemy + 70;
 	}
 	int hitResult = Math::RandIntMinMax(0, 100);
 	if (hitRate >= hitResult)
