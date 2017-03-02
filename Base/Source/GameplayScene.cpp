@@ -523,6 +523,7 @@ void GameplayScene::LightMouseControl(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
 	{
 		//cout << "Right Mouse Button was released!" << endl;
+		DisplayWin(false);
 	}
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
 	{

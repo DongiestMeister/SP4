@@ -32,6 +32,8 @@ void CMenuState::Init()
 	BGM = Music::GetInstance()->playSound("Sounds//badass.mp3", true, false, true);
 	BGM->setVolume(0.3);
 
+	b_renderInstructions = false;
+
 	camera.Init(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 
@@ -41,6 +43,9 @@ void CMenuState::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("ARROW", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("ARROW")->textureID = LoadTGA("Image//arrowSwords.tga");
 
+	MeshBuilder::GetInstance()->GenerateQuad("Instructions", Color(1, 1, 1), 1.f);
+	MeshBuilder::GetInstance()->GetMesh("Instructions")->textureID = LoadTGA("Image//Instructions.tga");
+
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
 	MenuStateBackground = Create::Sprite2DObject("MENUSTATE_BKGROUND",
@@ -48,7 +53,7 @@ void CMenuState::Init()
 		Vector3(halfWindowWidth * 2, halfWindowHeight * 2, 0.0f));
 
 	arrow = Create::Sprite2DObject("ARROW",
-		Vector3(halfWindowWidth/2 +250, halfWindowHeight - 70, 0.1f),
+		Vector3(halfWindowWidth/2, halfWindowHeight - 70, 0.1f),
 		Vector3(100,100, 0.0f));
 	//cout << "CMenuState loaded\n" << endl;
 
@@ -72,7 +77,7 @@ void CMenuState::Update(double dt)
 		}
 		float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
 		float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
-		arrow->SetPosition(Vector3(halfWindowWidth / 2 + 250, halfWindowHeight - 70 - (int)state * 210, 0.1f));
+		arrow->SetPosition(Vector3(halfWindowWidth / 2, halfWindowHeight - 70 - (int)state * 120, 0.1f));
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_DOWN))
@@ -88,7 +93,7 @@ void CMenuState::Update(double dt)
 		}
 		float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
 		float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
-		arrow->SetPosition(Vector3(halfWindowWidth / 2 + 250, halfWindowHeight - 70 - (int)state * 210, 0.1f));
+		arrow->SetPosition(Vector3(halfWindowWidth / 2, halfWindowHeight - 70 - (int)state * 120, 0.1f));
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
@@ -98,6 +103,11 @@ void CMenuState::Update(double dt)
 			//cout << "Loading LevelSelect" << endl;
 			Music::GetInstance()->playSound("Sounds//toggle.mp3");
 			SceneManager::GetInstance()->SetActiveScene("WarMap");
+		}
+		if (state == INSTRUCTIONS)
+		{
+			//cout << "Loading LevelSelect" << endl;
+			b_renderInstructions = true;
 		}
 		/*else if (state == OPTIONS)
 		{
@@ -113,6 +123,12 @@ void CMenuState::Update(double dt)
 		{
 			Application::GetInstance().ExitProgram = true;
 		}
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyReleased('X'))
+	{
+		Music::GetInstance()->playSound("Sounds//toggle.mp3");
+		b_renderInstructions = false;
 	}
 }
 
@@ -134,6 +150,16 @@ void CMenuState::Render()
 	GraphicsManager::GetInstance()->DetachCamera();
 
 	EntityManager::GetInstance()->RenderUI();
+
+	if (b_renderInstructions)
+	{
+		MS &modelStack = GraphicsManager::GetInstance()->GetModelStack();
+		modelStack.PushMatrix();
+		modelStack.Translate(Application::GetInstance().GetWindowWidth() / 2, Application::GetInstance().GetWindowHeight() / 2, 5);
+		modelStack.Scale(Application::GetInstance().GetWindowWidth(), Application::GetInstance().GetWindowHeight(), 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("Instructions"));
+		modelStack.PopMatrix();
+	}
 }
 
 void CMenuState::Exit()

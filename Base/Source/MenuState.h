@@ -28,6 +28,7 @@ private:
 		PLAY = 0,
 		//OPTIONS,
 		//HIGHSCORES,
+		INSTRUCTIONS,
 		EXIT,
 		STATE_TOTAL
 	};
@@ -39,4 +40,6 @@ private:
 	MENU_STATE state;
 
 	ISound* BGM;
+
+	bool b_renderInstructions;
 };
