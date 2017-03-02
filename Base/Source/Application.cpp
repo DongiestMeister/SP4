@@ -139,7 +139,7 @@ void Application::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //We don't want the old OpenGL 
 
 	//Create a window and create its OpenGL context
-	m_window = glfwCreateWindow(m_window_width, m_window_height, "NYP Framework", NULL, NULL);
+	m_window = glfwCreateWindow(m_window_width, m_window_height, "Crusader Tactics", glfwGetPrimaryMonitor(), NULL);
 
 	//If the window couldn't be created
 	if (!m_window)
@@ -168,7 +168,7 @@ void Application::Init()
 	}
 
 	// Hide the cursor
-	//glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	glfwSetMouseButtonCallback(m_window, &Application::MouseButtonCallbacks);
 	glfwSetScrollCallback(m_window, &Application::MouseScrollCallbacks);
 

@@ -34,11 +34,7 @@ void COptionState::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("OPTIONSTATE_BKGROUND", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("OPTIONSTATE_BKGROUND")->textureID = LoadTGA("Image//OptionState.tga");
 
-	MeshBuilder::GetInstance()->GenerateQuad("ARROW", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("ARROW")->textureID = LoadTGA("Image//arrow.tga");
-
-	MeshBuilder::GetInstance()->GenerateQuad("ARROW2", Color(1, 1, 1), 1.f);
-	MeshBuilder::GetInstance()->GetMesh("ARROW2")->textureID = LoadTGA("Image//arrow2.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("yellowsquare", Color(1, 1, 0), 1.f);
 
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
@@ -47,78 +43,33 @@ void COptionState::Init()
 		Vector3(halfWindowWidth * 2, halfWindowHeight * 2, 0.0f));
 	//cout << "COptionState loaded\n" << endl;
 
-	arrow[0] = Create::Sprite2DObject("ARROW2",
-		Vector3(halfWindowWidth - 300, halfWindowHeight - 25, 0.1f),
-		Vector3(100, 100, 0.0f));
-
-	arrow[1] = Create::Sprite2DObject("ARROW",
-		Vector3(halfWindowWidth + 300, halfWindowHeight - 25, 0.1f),
-		Vector3(100, 100, 0.0f));
-	arrow[1]->SetRotation(Vector3(180, 0, 0));
-
-	float fontSize = 50.0f;
-
-	state = AUDIO;
-
-	textObj = Create::Text2DObject("text", Vector3(halfWindowWidth / 2 + 100.f, halfWindowHeight + 200, 0.1f), "AUDIO", Vector3(fontSize, fontSize, fontSize), Color(1.f, 1.f, 1.f));
 }
 
 void COptionState::Update(double dt)
 {
-	if (KeyboardController::GetInstance()->IsKeyReleased(VK_BACK))
+	if (KeyboardController::GetInstance()->IsKeyReleased('X'))
 	{
 		//cout << "Loading Menustate" << endl;
-		SceneManager::GetInstance()->SetActiveScene("MenuState");
+		SceneManager::GetInstance()->SetActiveScene("WarMap");
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_LEFT))
 	{
+		if (Music::GetInstance()->theSoundEngine->getSoundVolume() > 0)
+		{
+			Music::GetInstance()->theSoundEngine->setSoundVolume(Music::GetInstance()->theSoundEngine->getSoundVolume() - 0.1f);
+		}
 		Music::GetInstance()->playSound("Sounds//ding.wav");
-		if (state == AUDIO)
-		{
-			state = INPUT;
-		}
-		else
-		{
-			state = (OPTIONS)(state - 1);
-		}
-		switch (state)
-		{
-		case AUDIO:
-			textObj->SetText("AUDIO");
-			break;
-		case VIDEO:
-			textObj->SetText("VIDEO");
-			break;
-		case INPUT:
-			textObj->SetText("INPUT");
-			break;
-		}
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyReleased(VK_RIGHT))
 	{
+		Music::GetInstance()->theSoundEngine->setSoundVolume(Music::GetInstance()->theSoundEngine->getSoundVolume() + 0.1f);
+		if (Music::GetInstance()->theSoundEngine->getSoundVolume() > 1)
+		{
+			Music::GetInstance()->theSoundEngine->setSoundVolume(1);
+		}
 		Music::GetInstance()->playSound("Sounds//ding.wav");
-		if (state == INPUT)
-		{
-			state = AUDIO;
-		}
-		else
-		{
-			state = (OPTIONS)(state + 1);
-		}
-		switch (state)
-		{
-		case AUDIO:
-			textObj->SetText("AUDIO");
-			break;
-		case VIDEO:
-			textObj->SetText("VIDEO");
-			break;
-		case INPUT:
-			textObj->SetText("INPUT");
-			break;
-		}
 	}
 }
 
@@ -140,19 +91,28 @@ void COptionState::Render()
 	GraphicsManager::GetInstance()->DetachCamera();
 
 	EntityManager::GetInstance()->RenderUI();
+
+	MS &modelStack = GraphicsManager::GetInstance()->GetModelStack();
+
+	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.f;
+	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.f;
+
+	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Volume " + to_string((int)((Music::GetInstance()->theSoundEngine->getSoundVolume() + 0.005f) * 100)) + "%", Vector3(halfWindowWidth - 45, halfWindowHeight * 1.2f, 1), 80, Color(1, 1, 0));
+
+	for (float i = 0; i < Music::GetInstance()->theSoundEngine->getSoundVolume(); i += 0.1)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(halfWindowWidth / 2 + (i * halfWindowWidth), halfWindowHeight, 1);
+		modelStack.Scale(halfWindowWidth / 10, halfWindowHeight / 10, 1);
+		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("yellowsquare"));
+		modelStack.PopMatrix();
+	}
 }
 
 void COptionState::Exit()
 {
 	EntityManager::GetInstance()->RemoveEntity(OptionStateBackground);
 
-	EntityManager::GetInstance()->RemoveEntity(textObj);
-
-	EntityManager::GetInstance()->RemoveEntity(arrow[0]);
-	EntityManager::GetInstance()->RemoveEntity(arrow[1]);
-
-	MeshBuilder::GetInstance()->RemoveMesh("ARROW");
-	MeshBuilder::GetInstance()->RemoveMesh("ARROW2");
 	MeshBuilder::GetInstance()->RemoveMesh("OPTIONSTATE_BKGROUND");
 
 	GraphicsManager::GetInstance()->DetachCamera();

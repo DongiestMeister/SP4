@@ -745,7 +745,7 @@ void MapController::RenderUI()
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(50, 40, 1), 5.f, Color(1, 0.3, 0.3));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(50, 30, 1), 5.f, Color(1, 0.3, 0.3));
 			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(65, 35, 0.9), Vector3(60, 60, 50), Vector3(0, 0, 0));
-			RenderHelper::Render2DMesh(temp->getPortrait(), Vector3(68, 40, 1), Vector3(15, 15 * 16 / 9, 20), Vector3(0, 0, 0));
+			RenderHelper::Render2DMesh(temp->getPortrait(), Vector3(75, 40, 1), Vector3(15, 15 * 16 / 9, 20), Vector3(0, 0, 0));
 		}
 	}
 }

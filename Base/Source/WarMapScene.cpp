@@ -147,7 +147,7 @@ void WarMapScene::Init()
 	float fontSize = 5.0f;
 	float halfFontSize = fontSize / 2.0f;
 
-	fps = Create::Text2DObject("text", Vector3(-100, -95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
+	//fps = Create::Text2DObject("text", Vector3(-100, -95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
 	select = Create::Sprite2DObject("SelectedArrow", Vector3(50, 50, 0.5), Vector3(40, 40, 40));
 
 	f_buttonXoffset = 0.f;
@@ -172,12 +172,12 @@ void WarMapScene::Update(double dt)
 
 	// Update the 2 text object values. NOTE: Can do this in their own class but i'm lazy to do it now :P
 	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
-	std::ostringstream ss;
-	ss.precision(5);
-	float fps2 = (float)(1.f / dt);
-	ss << "FPS: " << fps2;
-	//ss << "FPS: " << camera.GetCameraPos();
-	fps->SetText(ss.str());
+	//std::ostringstream ss;
+	//ss.precision(5);
+	//float fps2 = (float)(1.f / dt);
+	//ss << "FPS: " << fps2;
+	////ss << "FPS: " << camera.GetCameraPos();
+	//fps->SetText(ss.str());
 
 	i_numCompleted = 0;
 	for (int i = 0; i < levelList.size(); ++i)
@@ -284,7 +284,7 @@ void WarMapScene::MouseControl(double dt)
 			}
 			else if (currentButton == OPTIONS)
 			{
-
+				SceneManager::GetInstance()->SetActiveScene("OptionState", true);
 			}
 			else if (currentButton == RECRUIT)
 			{
@@ -482,7 +482,7 @@ void WarMapScene::Exit()
 	//playerInfo->DetachCamera();
 	//fps->SetIsDone(true);
 	EntityManager::GetInstance()->RemoveEntity(select);
-	EntityManager::GetInstance()->RemoveEntity(fps);
+	//EntityManager::GetInstance()->RemoveEntity(fps);
 	//	if (playerInfo->DropInstance() == false)
 	//	{
 	//#if _DEBUGMODE==1
@@ -500,9 +500,9 @@ void WarMapScene::Exit()
 void WarMapScene::Pause()
 {
 	BGM->setIsPaused(true);
-	EntityManager::GetInstance()->RemoveEntity(fps);
+	//EntityManager::GetInstance()->RemoveEntity(fps);
 	EntityManager::GetInstance()->RemoveEntity(select);
-	fps = nullptr;
+	//fps = nullptr;
 }
 
 void WarMapScene::Resume()
@@ -512,7 +512,7 @@ void WarMapScene::Resume()
 	float fontSize = 5.0f;
 
 	select = Create::Sprite2DObject("SelectedArrow", Vector3(50, 50, 0.4), Vector3(40, 40, 40));
-	fps = Create::Text2DObject("text", Vector3(-100, -95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
+	//fps = Create::Text2DObject("text", Vector3(-100, -95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
 }
 
 void WarMapScene::RenderBackground()

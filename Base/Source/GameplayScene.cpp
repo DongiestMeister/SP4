@@ -50,6 +50,7 @@ void GameplayScene::Init()
 	b_textRunning = false;
 	i_turn = 1;
 	i_enemyIterator = 0;
+	b_FastForward = false;
 
 	f_timeDelay = 1.f;
 
@@ -185,7 +186,7 @@ void GameplayScene::Init()
 	float fontSize = 5.0f;
 	float halfFontSize = fontSize / 2.0f;
 
-	fps = Create::Text2DObject("text", Vector3(-100,-95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
+	//fps = Create::Text2DObject("text", Vector3(-100,-95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
 	//for (int i = 0; i < 6; ++i)
 	//{
 	//	textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,1.0f,0.0f));
@@ -238,6 +239,12 @@ void GameplayScene::Init()
 void GameplayScene::Update(double dt)
 {
 	// Update our entities
+
+	if (b_FastForward)
+	{
+		dt *= 1.5f;
+	}
+
 	EntityManager::GetInstance()->Update(dt);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
@@ -323,7 +330,10 @@ void GameplayScene::Update(double dt)
 			// Enemies movement
 			if (!b_playerTurn)
 			{
-				controller.selectedTile = gameMap.enemies[i_enemyIterator]->getPos();
+				if (!controller.b_cameraTransition)
+				{
+					controller.selectedTile = gameMap.enemies[i_enemyIterator]->getPos();
+				}
 				controller.b_forceCamera = true;
 				if ((f_timeDelay -= dt) < 0)
 				{
@@ -339,6 +349,10 @@ void GameplayScene::Update(double dt)
 									controller.b_cameraTransition = true;
 									camera.SetCameraPos(Vector3(controller.selectedTile.x * gameMap.tileSizeX + gameMap.tileSizeX / 2, camera.GetCameraPos().y, controller.selectedTile.y * gameMap.tileSizeY + gameMap.tileSizeY / 2));
 									camera.SetCameraTarget(Vector3(controller.selectedTile.x * gameMap.tileSizeX + gameMap.tileSizeX / 2, camera.GetCameraTarget().y, controller.selectedTile.y * gameMap.tileSizeY + gameMap.tileSizeY / 2));
+									if (PlayerInfo::GetInstance()->player)
+									{
+										controller.selectedTile = PlayerInfo::GetInstance()->player->getPos();
+									}
 								}
 								else
 								{
@@ -403,12 +417,12 @@ void GameplayScene::Update(double dt)
 
 	// Update the 2 text object values. NOTE: Can do this in their own class but i'm lazy to do it now :P
 	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
-	std::ostringstream ss;
-	ss.precision(5);
-	float fps2 = (float)(1.f / dt);
-	ss << "FPS: " << fps2;
-	//ss << "FPS: " << camera.GetCameraPos();
-	fps->SetText(ss.str());
+	//std::ostringstream ss;
+	//ss.precision(5);
+	//float fps2 = (float)(1.f / dt);
+	//ss << "FPS: " << fps2;
+	////ss << "FPS: " << camera.GetCameraPos();
+	//fps->SetText(ss.str());
 
 	//std::ostringstream ss1;
 	//ss1.precision(4);
@@ -442,6 +456,15 @@ void GameplayScene::LightMouseControl(double dt)
 	if (KeyboardController::GetInstance()->IsKeyPressed(VK_ESCAPE))
 	{
 		b_renderQuit = true;
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyDown('F'))
+	{
+		b_FastForward = true;
+	}
+	else
+	{
+		b_FastForward = false;
 	}
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
@@ -565,7 +588,7 @@ void GameplayScene::Exit()
 	BGM = nullptr;
 	EntityManager::GetInstance()->RemoveEntity(turnDisplay);
 	EntityManager::GetInstance()->RemoveEntity(groundEntity);
-	EntityManager::GetInstance()->RemoveEntity(fps);
+	//EntityManager::GetInstance()->RemoveEntity(fps);
 	turnDisplay = nullptr;
 	groundEntity = nullptr;
 	//playerInfo->DetachCamera();
@@ -593,10 +616,10 @@ void GameplayScene::Pause()
 	//fps->SetIsDone(true);
 	//turnDisplay->SetIsDone(true);
 	EntityManager::GetInstance()->RemoveEntity(groundEntity);
-	EntityManager::GetInstance()->RemoveEntity(fps);
+	//EntityManager::GetInstance()->RemoveEntity(fps);
 	EntityManager::GetInstance()->RemoveEntity(turnDisplay);
 	groundEntity = nullptr;
-	fps = nullptr;
+	//fps = nullptr;
 	turnDisplay = nullptr;
 	b_textRunning = false;
 }
@@ -616,7 +639,7 @@ void GameplayScene::Resume()
 
 	float fontSize = 5.0f;
 
-	fps = Create::Text2DObject("text", Vector3(-100, -95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
+	//fps = Create::Text2DObject("text", Vector3(-100, -95, 1.0f), "", Vector3(fontSize, fontSize, fontSize), Color(1.0f, 1.0f, 1.0f));
 
 	if (PlayerInfo::GetInstance()->b_attacking)
 	{

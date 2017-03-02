@@ -18,10 +18,10 @@ public:
 	ISound* play3DSound(string fileName, float x, float y, float z, bool loop = false, bool startPaused = false, bool track = false);
 	void Init();
 	void Exit();
+	ISoundEngine* theSoundEngine;
 private:
 	Music();
 	~Music();
-	ISoundEngine* theSoundEngine;
 };
 
 #endif

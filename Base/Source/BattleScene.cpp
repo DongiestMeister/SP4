@@ -78,13 +78,6 @@ void BattleScene::Init()
 	// Load all the meshes
 	LoadMeshes();
 
-
-
-
-
-
-
-
 	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
 
 	// Customise the ground entity
@@ -296,29 +289,29 @@ void BattleScene::Update(double dt)
 
 void BattleScene::LightMouseControl(double dt)
 {
-	if (KeyboardController::GetInstance()->IsKeyDown('1'))
-		glEnable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('2'))
-		glDisable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('3'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (KeyboardController::GetInstance()->IsKeyDown('4'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//if (KeyboardController::GetInstance()->IsKeyDown('1'))
+	//	glEnable(GL_CULL_FACE);
+	//if (KeyboardController::GetInstance()->IsKeyDown('2'))
+	//	glDisable(GL_CULL_FACE);
+	//if (KeyboardController::GetInstance()->IsKeyDown('3'))
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//if (KeyboardController::GetInstance()->IsKeyDown('4'))
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	if (KeyboardController::GetInstance()->IsKeyDown('5'))
-	{
-		lights[0]->type = Light::LIGHT_POINT;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('6'))
-	{
-		lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	}
-	else if (KeyboardController::GetInstance()->IsKeyDown('7'))
-	{
-		lights[0]->type = Light::LIGHT_SPOT;
-	}
+	//if (KeyboardController::GetInstance()->IsKeyDown('5'))
+	//{
+	//	lights[0]->type = Light::LIGHT_POINT;
+	//}
+	//else if (KeyboardController::GetInstance()->IsKeyDown('6'))
+	//{
+	//	lights[0]->type = Light::LIGHT_DIRECTIONAL;
+	//}
+	//else if (KeyboardController::GetInstance()->IsKeyDown('7'))
+	//{
+	//	lights[0]->type = Light::LIGHT_SPOT;
+	//}
 
-	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
+	if (KeyboardController::GetInstance()->IsKeyReleased('Z'))
 	{
 		//Feel free to Remove/Edit.
 
@@ -338,22 +331,22 @@ void BattleScene::LightMouseControl(double dt)
 	//RunBattleAnimation(dt, false, 123);
 
 
-	if (KeyboardController::GetInstance()->IsKeyPressed('K'))
+	if (KeyboardController::GetInstance()->IsKeyPressed('C'))
 	{
 		if (b_bonusRush && b_spamLock)
 			SceneManager::GetInstance()->SetActiveScene("GameState");
 	}
-	if (KeyboardController::GetInstance()->IsKeyDown('P'))
-	{
+	//if (KeyboardController::GetInstance()->IsKeyDown('P'))
+	//{
 
-		f_projectiles_enemy.push_back(110);
+	//	f_projectiles_enemy.push_back(110);
 
-		//f_shakedelay = 0.3f;
-		//b_shaking = true;
-		//i_shakecounter = 5;
-		//TakenHitAnimation(dt);
-		//CameraClash(true, dt);
-	}
+	//	//f_shakedelay = 0.3f;
+	//	//b_shaking = true;
+	//	//i_shakecounter = 5;
+	//	//TakenHitAnimation(dt);
+	//	//CameraClash(true, dt);
+	//}
 	/*if (KeyboardController::GetInstance()->IsKeyDown('O'))
 	{
 	CameraClashReturn(dt);
@@ -770,8 +763,8 @@ void BattleScene::Render()
 
 	EntityManager::GetInstance()->RenderUI();
 
-	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(fps), Vector3(-200, 180, 10), 10, Color(1, 1, 1));
-	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Cam:" + std::to_string(camera.GetCameraPos().x) + "," + std::to_string(camera.GetCameraPos().y) + "," + std::to_string(camera.GetCameraPos().z), Vector3(-200, 160, 10), 10, Color(1, 1, 1));
+	//RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Fps:" + std::to_string(fps), Vector3(-200, 180, 10), 10, Color(1, 1, 1));
+	//RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Cam:" + std::to_string(camera.GetCameraPos().x) + "," + std::to_string(camera.GetCameraPos().y) + "," + std::to_string(camera.GetCameraPos().z), Vector3(-200, 160, 10), 10, Color(1, 1, 1));
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 
 	if (player)
@@ -1000,7 +993,7 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 
 
 		TimerText->SetPosition(Vector3(-80, 100, 0));
-		TimerText->SetText("(Mash M to Begin!)");
+		TimerText->SetText("(Mash Z to Begin!)");
 
 	}
 	else
@@ -1022,7 +1015,7 @@ void BattleScene::RenderTextStuff(double dt, int dmgvalue)
 			TotalDmgCheer->SetColor(Color(1, 1, 0));
 			TotalDmgCheer->SetScale(TotalDamage->GetScale());
 			TotalDmgCheer->SetText("TIME OVER!");
-			TimerText->SetText("(Press K to return...)");
+			TimerText->SetText("(Press C to return...)");
 		}
 	}
 

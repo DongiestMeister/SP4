@@ -79,6 +79,8 @@ private:
 
 	VICTORY_CONDITION condition;
 	int i_surviveTurns;
+
+	bool b_FastForward;
 };
 
 #endif
