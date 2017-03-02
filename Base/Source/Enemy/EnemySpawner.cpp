@@ -180,7 +180,7 @@ bool EnemySpawner::LoadEnemies(const string filename)
 					{
 						enemy.type = Enemy::DEFENCE;
 					}
-					else if (token == "IDLE")
+					else if (token == "NEUTRAL")
 					{
 						enemy.type = Enemy::NEUTRAL;
 					}

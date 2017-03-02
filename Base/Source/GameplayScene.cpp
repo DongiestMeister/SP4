@@ -209,7 +209,7 @@ void GameplayScene::Init()
 	spawner.LoadSpawns("Image//EnemySpawns.csv");
 	
 
-	gameMap.Init(400, 400, 20, 20,&spawner);
+	gameMap.Init(400, 400, 21, 23,&spawner);
 
 	if (gameMap.LoadMap("Image//MapDesignR.csv"))
 	{

@@ -103,38 +103,12 @@ void AI_DefenceFSM::Stationary(double dt)
 
 		b_foundEnemyPath = true;
 		//total unit path is less than cost left
-		if (unitPath.size() < character->i_movementCost)
+		if (unitPath.size() < character->i_attackRange + 1 && b_reachEnd)
 		{
-			b_reachEnd = true;
+			std::cout << "UnitPath size : " << unitPath.size() << std::endl;
+			//b_reachEnd = true;
 		}
 		//if melee and unitPath is less than 3
-		if (character->i_attackRange <= 1 && unitPath.size() <= 2)
-		{
-			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-			map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
-		}
-		//limit movement for defence unit
-		else if (unitPath.size() <= 2)
-		{
-			if (b_reachEnd)
-			{
-				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-				if (unitPath.size() >= 2)
-				{
-					map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
-				}
-				else
-				{
-					map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
-				}
-			}
-			else
-			{
-				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-				map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
-			}
-		}
-		//if unitPath over size limit, return to idle
 		else
 		{
 			b_foundEnemyPath = false;
@@ -151,45 +125,16 @@ void AI_DefenceFSM::Stationary(double dt)
 	{
 		if (!character->b_tookAction)
 		{
-
-			MoveUnit(dt);
-
-			if (character->i_attackRange == 1)
+			if (b_reachEnd)
 			{
-				if (unitPath.size() <= 0)
-				{
-					if (b_reachEnd)
-					{
-						b_reachEnd = false;
-						state = ATTACK;
-					}
-					else
-					{
-						b_foundEnemyPath = false;
-						target = NULL;
-						b_isDone = true;
-					}
-				}
+				b_reachEnd = false;
+				state = ATTACK;
 			}
-			else if (character->i_attackRange >= 2)
+			else
 			{
-				if (b_reachEnd)
-				{
-					if (unitPath.size() <= 1)
-					{
-						b_reachEnd = false;
-						state = ATTACK;
-					}
-				}
-				else
-				{
-					if (unitPath.size() <= 0)
-					{
-						b_isDone = true;
-						b_foundEnemyPath = false;
-						target = NULL;
-					}
-				}
+				b_foundEnemyPath = false;
+				target = NULL;
+				b_isDone = true;
 			}
 		}
 	}
