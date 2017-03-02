@@ -971,17 +971,20 @@ void PartySelectScene::Render()
 					modelStack.Scale(15, 15 * 16 / 9, 1);
 					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter + i_eqToShow)->itemPortrait));
 					modelStack.PopMatrix();
+					modelStack.PushMatrix();
 					modelStack.Translate(3, -6, 1);
 					modelStack.Scale(7, 7 * 16 / 9, 1);
 					RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh(PlayerInfo::GetInstance()->inventory.at(counter + i_eqToShow)->s_ownerName));
 					modelStack.PopMatrix();
+					if (PlayerInfo::GetInstance()->inventory.at(counter + i_eqToShow)->b_isWeapon)
+						RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "W", Vector3(-3, -6, 1), 7, Color(0, 0, 0));
+					else if (PlayerInfo::GetInstance()->inventory.at(counter + i_eqToShow)->b_isArmor)
+						RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "A", Vector3(-3, -6, 1), 7, Color(0, 0, 0));
+					modelStack.PopMatrix();
 					counter++;
-					
 				}
-				
 			}
 		}
-		
 	}
 	else if (currentScreen == CURR_SCREEN_SHOP)
 	{

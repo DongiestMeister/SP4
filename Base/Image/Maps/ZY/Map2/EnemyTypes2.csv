@@ -1,0 +1,4 @@
+#Name,FSM,CLASS,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,characterPortrait,Animation,Frames,TileMap ID
+SuicideSniper,OFFENCE,RANGE,10,3000,5,2,10,Knight,Image//greenzombie.tga,6,11
+Scout,OFFENCE,MELEE,140,10,5,2,6,Knight,Image//yellowzombie.tga,6,12
+Sniper,OFFENCE,RANGE,100,30,5,2,5,Knight,Image//yellowzombie.tga,6,13
