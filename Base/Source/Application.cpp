@@ -213,6 +213,8 @@ void Application::Init()
 	MeshBuilder::GetInstance()->GetMesh("Slime")->textureID = LoadTGA("Image//Characters//Portraits//Slime.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("Kotori", Color(1, 1, 1));
 	MeshBuilder::GetInstance()->GetMesh("Kotori")->textureID = LoadTGA("Image//Characters//Portraits//Kotori.tga");
+	MeshBuilder::GetInstance()->GenerateQuad("Ray", Color(1, 1, 1));
+	MeshBuilder::GetInstance()->GetMesh("Ray")->textureID = LoadTGA("Image//Characters//Portraits//ray.tga");
 
 	// Load Weapons
 	MeshBuilder::GetInstance()->GenerateQuad("RainbowSword", Color(1, 1, 1));

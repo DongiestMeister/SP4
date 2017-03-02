@@ -96,6 +96,7 @@ void CMenuState::Update(double dt)
 		if (state == PLAY)
 		{
 			//cout << "Loading LevelSelect" << endl;
+			Music::GetInstance()->playSound("Sounds//toggle.mp3");
 			SceneManager::GetInstance()->SetActiveScene("WarMap");
 		}
 		/*else if (state == OPTIONS)

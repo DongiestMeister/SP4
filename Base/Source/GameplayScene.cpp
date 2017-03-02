@@ -214,15 +214,31 @@ void GameplayScene::Init()
 
 	if (PlayerInfo::GetInstance()->level)
 	{
+		spawner.LoadEnemies(PlayerInfo::GetInstance()->level->s_enemyType);
+		spawner.LoadSpawns(PlayerInfo::GetInstance()->level->s_enemySpawn);
+	
+
+		gameMap.Init(400, 400, PlayerInfo::GetInstance()->level->i_mapSizeX, PlayerInfo::GetInstance()->level->i_mapSizeY, &spawner);
+
+		if (gameMap.LoadMap(PlayerInfo::GetInstance()->level->s_mapName))
+		{
+			//cout << "Succesfully loaded map!" << endl;
+		}
+
+
 		condition = PlayerInfo::GetInstance()->level->condition;
 		if (condition == SURVIVE)
 		{		
-			i_surviveTurns = 10;
+			i_surviveTurns = PlayerInfo::GetInstance()->level->i_surviveTurns;
 			DisplayText("Survive " + to_string(i_surviveTurns) + " turns", Vector3(0, 1, 0));
+		}
+		else if (condition == CAPTURE)
+		{
+			DisplayText("Capture the flag!", Vector3(0, 1, 0));
 		}
 		else
 		{
-			DisplayText("Turn " + to_string(i_turn), Vector3(0, 1, 0));
+			DisplayText("Kill all enemies!", Vector3(0, 1, 0));
 		}
 	}
 	controller.selectedTile = gameMap.characters[0]->getPos();
@@ -499,6 +515,12 @@ void GameplayScene::LightMouseControl(double dt)
 		{
 			gameMap.RemovePlayer(gameMap.characters[0]);
 		}
+	}
+
+	if (KeyboardController::GetInstance()->IsKeyReleased('K'))
+	{
+		if (controller.selectedUnit)
+			controller.selectedUnit->i_specialMeter = 100;
 	}
 
 	// if the left mouse button was released

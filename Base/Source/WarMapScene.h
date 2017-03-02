@@ -74,6 +74,8 @@ private:
 
 	bool b_displayWin;
 
+	bool b_debugLevels;
+
 	void FinishWar();
 	void RandomLevels();
 

@@ -711,7 +711,7 @@ void PartySelectScene::Update(double dt)
 					b_equipmentCursor = 0;
 
 				equipmentCursorPos.y += 30;
-				if (equipmentCursorPos.y > -10)
+				if (equipmentCursorPos.y > -40)
 					equipmentCursorPos.y = -70;
 			}
 		}

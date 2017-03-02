@@ -156,7 +156,7 @@ void WarMapScene::Init()
 	levelIterator = 0;
 
 	b_displayWin = false;
-
+	b_debugLevels = false;
 	f_displayText = 0.f;
 }
 
@@ -224,14 +224,14 @@ void WarMapScene::Update(double dt)
 
 void WarMapScene::MouseControl(double dt)
 {
-	if (KeyboardController::GetInstance()->IsKeyDown('1'))
-		glEnable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('2'))
-		glDisable(GL_CULL_FACE);
-	if (KeyboardController::GetInstance()->IsKeyDown('3'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if (KeyboardController::GetInstance()->IsKeyDown('4'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//if (KeyboardController::GetInstance()->IsKeyDown('1'))
+	//	glEnable(GL_CULL_FACE);
+	//if (KeyboardController::GetInstance()->IsKeyDown('2'))
+	//	glDisable(GL_CULL_FACE);
+	//if (KeyboardController::GetInstance()->IsKeyDown('3'))
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//if (KeyboardController::GetInstance()->IsKeyDown('4'))
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 	// if the left mouse button was released
@@ -246,6 +246,7 @@ void WarMapScene::MouseControl(double dt)
 	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
 	{
 		//cout << "Middle Mouse Button was released!" << endl;
+		b_debugLevels = !b_debugLevels;
 	}
 	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
 	{
@@ -266,6 +267,7 @@ void WarMapScene::MouseControl(double dt)
 	{
 		if (b_displayWin)
 		{
+			Music::GetInstance()->playSound("Sounds//toggle.mp3");
 			b_displayWin = false;
 			FinishWar();
 		}
@@ -273,6 +275,7 @@ void WarMapScene::MouseControl(double dt)
 		{
 			if (currentButton == PLAY)
 			{
+				Music::GetInstance()->playSound("Sounds//toggle.mp3");
 				if (PlayerInfo::GetInstance()->availableUnits.size() != 0)
 				{
 					currentButton = B_TOTAL;
@@ -284,18 +287,60 @@ void WarMapScene::MouseControl(double dt)
 			}
 			else if (currentButton == OPTIONS)
 			{
+				Music::GetInstance()->playSound("Sounds//toggle.mp3");
 				SceneManager::GetInstance()->SetActiveScene("OptionState", true);
 			}
 			else if (currentButton == RECRUIT)
 			{
+				Music::GetInstance()->playSound("Sounds//toggle.mp3");
 				SceneManager::GetInstance()->SetActiveScene("RecruitState", true);
 			}
 
 			else if (currentButton == B_TOTAL)
 			{
+				Music::GetInstance()->playSound("Sounds//toggle.mp3");
 				if (!levelList[levelIterator].b_completed)
 				{
 					PlayerInfo::GetInstance()->level = &levelList[levelIterator];
+					if (levelList[levelIterator].condition == VICTORY_CONDITION::KILL)
+					{
+						if (b_debugLevels)
+						{
+						}
+						else
+						{
+							int random = Math::RandIntMinMax(1, 2);
+							if (random == 1)
+							{
+								levelList[levelIterator].s_enemyType = "Image//Maps//Keith//EnemyTypes1.csv";
+								levelList[levelIterator].s_mapName = "Image//Maps//Keith//KillMap2.csv";
+								levelList[levelIterator].s_enemySpawn = "Image//Maps//Keith//KillMapSpawns2.csv";
+								levelList[levelIterator].i_mapSizeX = 10;
+								levelList[levelIterator].i_mapSizeY = 10;
+							}
+							else
+							{
+								levelList[levelIterator].s_enemyType = "Image//Maps//Keith//EnemyTypes1.csv";
+								levelList[levelIterator].s_mapName = "Image//Maps//Keith//KillMap1.csv";
+								levelList[levelIterator].s_enemySpawn = "Image//Maps//Keith//KillMapSpawns1.csv";
+								levelList[levelIterator].i_mapSizeX = 20;
+								levelList[levelIterator].i_mapSizeY = 20;
+							}
+						}
+
+					}
+					else if (levelList[levelIterator].condition == VICTORY_CONDITION::CAPTURE)
+					{
+
+					}
+					else if (levelList[levelIterator].condition == VICTORY_CONDITION::SURVIVE)
+					{
+						levelList[levelIterator].s_enemyType = "Image//Maps//Keith//EnemyTypes1.csv";
+						levelList[levelIterator].s_mapName = "Image//Maps//Keith//KillMap1.csv";
+						levelList[levelIterator].s_enemySpawn = "Image//Maps//Keith//KillMapSpawns1.csv";
+						levelList[levelIterator].i_mapSizeX = 20;
+						levelList[levelIterator].i_mapSizeY = 20;
+					}
 					SceneManager::GetInstance()->SetActiveScene("PartySelect", true);
 				}
 			}
@@ -304,6 +349,7 @@ void WarMapScene::MouseControl(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyPressed('X'))
 	{
+		Music::GetInstance()->playSound("Sounds//toggle.mp3");
 		if (currentButton == B_TOTAL)
 		{
 			currentButton = PLAY;
@@ -337,6 +383,7 @@ void WarMapScene::MouseControl(double dt)
 	{
 		if (KeyboardController::GetInstance()->IsKeyPressed(VK_UP))
 		{
+			Music::GetInstance()->playSound("Sounds//ding.wav");
 			if (currentButton == PLAY)
 			{
 				currentButton = (BUTTONS)(B_TOTAL - 1);
@@ -349,6 +396,7 @@ void WarMapScene::MouseControl(double dt)
 
 		if (KeyboardController::GetInstance()->IsKeyPressed(VK_DOWN))
 		{
+			Music::GetInstance()->playSound("Sounds//ding.wav");
 			if (currentButton == (BUTTONS)(B_TOTAL - 1))
 			{
 				currentButton = PLAY;
@@ -466,6 +514,11 @@ void WarMapScene::Render()
 	RenderBackground();
 	RenderLevels();
 	RenderButtons();
+
+	if (b_debugLevels)
+	{
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "RUNNING DEBUG LEVELS", Vector3(-15, -40, 3.5), 10, Color(1, 1, 0));
+	}
 
 	RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Gold:" + to_string(PlayerInfo::GetInstance()->gold), Vector3(-90, 90, 0.2), 8, Color(1, 1, 0));
 

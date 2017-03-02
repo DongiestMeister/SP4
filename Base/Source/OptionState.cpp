@@ -50,6 +50,7 @@ void COptionState::Update(double dt)
 	if (KeyboardController::GetInstance()->IsKeyReleased('X'))
 	{
 		//cout << "Loading Menustate" << endl;
+		Music::GetInstance()->playSound("Sounds//toggle.mp3");
 		SceneManager::GetInstance()->SetActiveScene("WarMap");
 	}
 
