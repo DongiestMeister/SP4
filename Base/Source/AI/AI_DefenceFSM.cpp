@@ -105,15 +105,16 @@ void AI_DefenceFSM::Stationary(double dt)
 		//total unit path is less than cost left
 		if (unitPath.size() < character->i_attackRange + 1 && b_reachEnd)
 		{
-			std::cout << "UnitPath size : " << unitPath.size() << std::endl;
 			//b_reachEnd = true;
 		}
 		//if melee and unitPath is less than 3
 		else
 		{
+			b_reachEnd = false;
 			b_foundEnemyPath = false;
 			b_isDone = true;
 			state = IDLE;
+			target = NULL;
 		}
 	}
 
@@ -129,12 +130,6 @@ void AI_DefenceFSM::Stationary(double dt)
 			{
 				b_reachEnd = false;
 				state = ATTACK;
-			}
-			else
-			{
-				b_foundEnemyPath = false;
-				target = NULL;
-				b_isDone = true;
 			}
 		}
 	}
