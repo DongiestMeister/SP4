@@ -225,7 +225,11 @@ void PartySelectScene::Update(double dt)
 					PlayerInfo::GetInstance()->removeCharacterFromParty(PlayerInfo::GetInstance()->availableUnits.at(i_selectedUnitsCounter)->i_idInParty);
 			}
 			else
+			{
 				currentScreen = CURR_SCREEN_SELECT_UNITS;
+				selectedPos.Set(-60, -10, 0);
+				i_selectedUnitsCounter = 0;
+			}
 		}
 		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
 		{
@@ -342,6 +346,8 @@ void PartySelectScene::Update(double dt)
 		{
 			// return to party select
 			currentScreen = CURR_SCREEN_SELECT_UNITS;
+			selectedPos.Set(-60, -10, 0);
+			i_selectedUnitsCounter = 0;
 		}
 		else if (currentScreen == CURR_SCREEN_CHANGE_EQUIPMENT_SELECT_CHARACTER)
 		{
