@@ -205,18 +205,11 @@ void GameplayScene::Init()
 	controller.Init(&gameMap, &camera,&b_playerTurn);
 	spawner.Init(&gameMap);
 
-	spawner.LoadEnemies("Image//Maps//ZY//Map1//EnemyTypes1.csv");
-	spawner.LoadSpawns("Image//EnemySpawns.csv");
-	
-
-	gameMap.Init(400, 400, 10, 10,&spawner);
-	gameMap.LoadMap("Image//Maps//ZY//Map1//MapDesign1.csv");
-
 	if (PlayerInfo::GetInstance()->level)
 	{
 		spawner.LoadEnemies(PlayerInfo::GetInstance()->level->s_enemyType);
 		spawner.LoadSpawns(PlayerInfo::GetInstance()->level->s_enemySpawn);
-	
+
 
 		gameMap.Init(400, 400, PlayerInfo::GetInstance()->level->i_mapSizeX, PlayerInfo::GetInstance()->level->i_mapSizeY, &spawner);
 
@@ -228,7 +221,7 @@ void GameplayScene::Init()
 
 		condition = PlayerInfo::GetInstance()->level->condition;
 		if (condition == SURVIVE)
-		{		
+		{
 			i_surviveTurns = PlayerInfo::GetInstance()->level->i_surviveTurns;
 			DisplayText("Survive " + to_string(i_surviveTurns) + " turns", Vector3(0, 1, 0));
 		}
@@ -245,7 +238,6 @@ void GameplayScene::Init()
 	b_renderWin = false;
 	b_renderLose = false;
 	b_playerTurn = true;
-
 }
 
 void GameplayScene::Update(double dt)
