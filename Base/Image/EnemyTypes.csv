@@ -1,7 +1,7 @@
 #Name,FSM,CLASS,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,characterPortrait,Animation,Frames,TileMap ID
 Paul,DEFENCE,MELEE,30,30,5,2,3,Knight,Image//greenzombie.tga,6,11
 Jeff,DEFENCE,RANGE,30,30,5,2,3,Knight,Image//greenzombie.tga,6,12
-Hid,OFFENCE,RANGE,30,30,5,2,6,Knight,Image//redzombie.tga,6,13
+Hid,OFFENCE,RANGE,30,5,5,2,6,Knight,Image//redzombie.tga,6,13
 Astaroth,OFFENCE,MELEE,30,30,5,2,6,Knight,Image//redzombie.tga,6,14
 Belphagor,NEUTRAL,MELEE,30,30,5,2,60,Knight,Image//yellowzombie.tga,6,15
 Lucifer,NEUTRAL,RANGE,30,30,5,2,60,Knight,Image//yellowzombie.tga,6,16

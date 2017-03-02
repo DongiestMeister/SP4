@@ -767,12 +767,19 @@ void BattleScene::Render()
 	//RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), "Cam:" + std::to_string(camera.GetCameraPos().x) + "," + std::to_string(camera.GetCameraPos().y) + "," + std::to_string(camera.GetCameraPos().z), Vector3(-200, 160, 10), 10, Color(1, 1, 1));
 	MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
 
+	float playerhptemp;
+	float enemyhptemp;
+
+
+	playerhptemp = ((float)(player->getCurrentHP()) / (float)(player->getMaxHP())) * 50.f;
+	enemyhptemp = ((float)(enemy->getCurrentHP()) / (float)(enemy->getMaxHP())) * 50.f;
+
 	if (player)
 	{
 
 		modelStack.PushMatrix();
 		modelStack.Translate(-130, -150, 10);
-		modelStack.Scale(player->getCurrentHP(), 10, 5);
+		modelStack.Scale(playerhptemp, 10, 5);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GREEN_BAR"));
 		modelStack.PopMatrix();
 	}
@@ -780,7 +787,7 @@ void BattleScene::Render()
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(80, -150, 10);
-		modelStack.Scale(enemy->getCurrentHP(), 10, 5);
+		modelStack.Scale(enemyhptemp, 10, 5);
 		RenderHelper::RenderMesh(MeshBuilder::GetInstance()->GetMesh("GREEN_BAR"));
 		modelStack.PopMatrix();
 	}
