@@ -188,8 +188,8 @@ void MapController::Update(double dt)
 
 
 	// Moving the camera to the selected tile
-	if (!b_cameraTransition)
-	{
+	//if (!b_cameraTransition)
+	//{
 		Vector2 currentPos(camera->GetCameraPos().x, camera->GetCameraPos().z);
 		Vector2 targetPos(selectedTile.x * map->tileSizeX + map->tileSizeX / 2, selectedTile.y * map->tileSizeY + map->tileSizeY / 2);
 		//float Length = (currentPos - targetPos).Length();
@@ -243,7 +243,7 @@ void MapController::Update(double dt)
 			}
 			PanTo(camera->f_OrthoSize * 2 + dist, targetPos, dt);
 		}
-	}
+	//}
 }
 
 void MapController::PanTo(float speed, Vector2 pos, double dt)
