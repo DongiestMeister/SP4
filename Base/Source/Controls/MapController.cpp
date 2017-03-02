@@ -699,7 +699,7 @@ void MapController::RenderUI()
 			textdisplay = "Invalid point";
 		}
 
-		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), textdisplay, Vector3(-30, 50, 1), 7.f, Color(1, 1, 1));
+		RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), textdisplay, Vector3(-10, 50, 1), 7.f, Color(1, 1, 1));
 	}
 
 	if (!b_movingUnit && *b_playerTurn)
@@ -710,11 +710,13 @@ void MapController::RenderUI()
 			string HP = "HP:" + std::to_string(selectedUnit->getCurrentHP()) + "/" + std::to_string(selectedUnit->getMaxHP());
 			string DMG = "DMG:" + std::to_string(selectedUnit->getDamage());
 			string SPL = "Special:" + std::to_string(selectedUnit->i_specialMeter) + "/100";
+			string range = "AtkRange:" + std::to_string(selectedUnit->i_attackRange);
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(-50, 50, 1), 7.f, Color(0.3, 0.3, 1));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(-50, 40, 1), 5.f, Color(0.3, 0.3, 1));
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(-50, 30, 1), 5.f, Color(0.3, 0.3, 1));
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), SPL, Vector3(-50, 20, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(-50, 33, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), SPL, Vector3(-50, 26, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), range, Vector3(-50, 19, 1), 5.f, Color(0.3, 0.3, 1));
 			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(-47, 35, 0.9), Vector3(60, 60, 50), Vector3(0, 0, 0));
 			RenderHelper::Render2DMesh(selectedUnit->getPortrait(), Vector3(-62, 40, 1), Vector3(15, 15 * 16 / 9, 20), Vector3(0, 0, 0));
 		}
@@ -725,11 +727,13 @@ void MapController::RenderUI()
 			string HP = "HP:" + std::to_string(temp->getCurrentHP()) + "/" + std::to_string(temp->getMaxHP());
 			string DMG = "DMG:" + std::to_string(temp->getDamage());
 			string SPL = "Special:" + std::to_string(temp->i_specialMeter) + "/100";
+			string range = "AtkRange:" + std::to_string(temp->i_attackRange);
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(-50, 50, 1), 7.f, Color(0.3, 0.3, 1));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(-50, 40, 1), 5.f, Color(0.3, 0.3, 1));
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(-50, 30, 1), 5.f, Color(0.3, 0.3, 1));
-			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), SPL, Vector3(-50, 20, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(-50, 33, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), SPL, Vector3(-50, 26, 1), 5.f, Color(0.3, 0.3, 1));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), range, Vector3(-50, 19, 1), 5.f, Color(0.3, 0.3, 1));
 			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(-47, 35, 0.9), Vector3(60, 60, 50), Vector3(0, 0, 0));
 			RenderHelper::Render2DMesh(temp->getPortrait(), Vector3(-62, 40, 1), Vector3(15, 15 * 16/9, 20), Vector3(0, 0, 0));
 		}
@@ -740,10 +744,12 @@ void MapController::RenderUI()
 			string Name = "Name:" + temp->getName();
 			string HP = "HP:" + std::to_string(temp->getCurrentHP()) + "/" + std::to_string(temp->getMaxHP());
 			string DMG = "DMG:" + std::to_string(temp->getDamage());
+			string range = "AtkRange:" + std::to_string(temp->i_attackRange);
 
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), Name, Vector3(50, 50, 1), 7.f, Color(1, 0.3, 0.3));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), HP, Vector3(50, 40, 1), 5.f, Color(1, 0.3, 0.3));
 			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), DMG, Vector3(50, 30, 1), 5.f, Color(1, 0.3, 0.3));
+			RenderHelper::RenderTextOnScreen(MeshBuilder::GetInstance()->GetMesh("text"), range, Vector3(50, 20, 1), 5.f, Color(1, 0.3, 0.3));
 			RenderHelper::Render2DMesh(MeshBuilder::GetInstance()->GetMesh("Frame"), Vector3(65, 35, 0.9), Vector3(60, 60, 50), Vector3(0, 0, 0));
 			RenderHelper::Render2DMesh(temp->getPortrait(), Vector3(75, 40, 1), Vector3(15, 15 * 16 / 9, 20), Vector3(0, 0, 0));
 		}

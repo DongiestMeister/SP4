@@ -1,0 +1,5 @@
+#Name,FSM,CLASS,MaxHP,BaseSTR,BaseDEX,BaseLUK,Movement,characterPortrait,Animation,Frames,TileMap ID
+Paul,DEFENCE,MELEE,30,30,5,2,5,Knight,Image//greenzombie.tga,6,11
+Jeff,DEFENCE,RANGE,30,30,5,2,5,Knight,Image//greenzombie.tga,6,12
+Hid,OFFENCE,RANGE,30,30,5,2,5,Knight,Image//redzombie.tga,6,13
+Ken,OFFENCE,MELEE,30,30,5,2,5,Knight,Image//redzombie.tga,6,14
