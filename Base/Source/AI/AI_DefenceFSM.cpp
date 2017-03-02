@@ -211,45 +211,34 @@ void AI_DefenceFSM::Chase(double dt)
 			b_reachEnd = true;
 		}
 		//if melee and unitPath is less than 3
-		if (character->i_attackRange <= 1 && unitPath.size() <= 3)
+		if (character->i_attackRange <= 1 && b_reachEnd)
 		{
 			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
 			map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
 		}
 		//limit movement for defence unit
-		else if (unitPath.size() <= 3)
+		else if (b_reachEnd)
 		{
-			if (b_reachEnd)
+			map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
+			if (unitPath.size() >= 2)
 			{
-				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
-				if (unitPath.size() >= 2)
-				{
-					map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
-				}
-				else
-				{
-					map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
-				}
+				map->theScreenMap[unitPath[unitPath.size() - 2].y][unitPath[unitPath.size() - 2].x] = 2;
 			}
 			else
 			{
-				map->theScreenMap[unitPath[0].y][unitPath[0].x] = 0;
 				map->theScreenMap[unitPath[unitPath.size() - 1].y][unitPath[unitPath.size() - 1].x] = 2;
-			}
+			}	
 		}
 		//if unitPath over size limit, return to idle
 		else
 		{
 			b_foundEnemyPath = false;
 			b_isDone = true;
+			target = NULL;
 			state = IDLE;
 		}
 	}
 	
-
-
-
-
 	if (target != NULL)
 	{
 		if (!character->b_tookAction)
@@ -266,12 +255,6 @@ void AI_DefenceFSM::Chase(double dt)
 						b_reachEnd = false;
 						state = ATTACK;
 					}
-					else
-					{
-						b_foundEnemyPath = false;
-						target = NULL;
-						b_isDone = true;
-					}
 				}
 			}
 			else if (character->i_attackRange >= 2)
@@ -282,15 +265,6 @@ void AI_DefenceFSM::Chase(double dt)
 					{
 						b_reachEnd = false;
 						state = ATTACK;
-					}
-				}
-				else
-				{
-					if (unitPath.size() <= 0)
-					{
-						b_isDone = true;
-						b_foundEnemyPath = false;
-						target = NULL;
 					}
 				}
 			}
